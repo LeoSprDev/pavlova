@@ -2,6 +2,10 @@
 # Setup Script Jules FINAL CORRIGÉ - Budget Workflow Laravel  
 # Version définitive sans IPv6 + Configuration exhaustive
 
+# Redirect all output to a log file in the same directory
+LOG_FILE_PATH="$(dirname "$0")/run_to_validate_errors.log"
+exec > >(tee -a "${LOG_FILE_PATH}") 2>&1
+
 set -e  # Arrêt sur erreur
 
 echo "🚀 SETUP BUDGET WORKFLOW - Configuration Jules Définitive"
