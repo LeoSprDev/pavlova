@@ -25,10 +25,21 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->job(new VerificationBudgetsQuotidienne)->dailyAt('02:00'); // Run daily at 2 AM
 
-        // Example for RelanceFournisseurJob (might need a command to dispatch it or a more complex scheduler)
-        // This job is typically dispatched on demand or after certain events,
-        // but a general check for overdue orders could be scheduled.
-        // $schedule->command('app:dispatch-relances-fournisseurs')->dailyAt('03:00');
+        // AJOUTER:
+        $schedule->job(new \App\Jobs\VerificationBudgetsQuotidienne)->dailyAt('08:00');
+
+        // Vérifier commandes en retard et relancer
+        $schedule->call(function () {
+            \App\Models\Commande::where('date_livraison_prevue', '<', now())
+                ->whereDoesntHave('livraison')
+                ->chunk(50, function ($commandes) {
+                    foreach ($commandes as $commande) {
+                        if ($commande->nb_relances < 3) {
+                            \App\Jobs\RelanceFournisseurJob::dispatch($commande, $commande->nb_relances + 1);
+                        }
+                    }
+                });
+        })->dailyAt('10:00');
     }
 
     /**
