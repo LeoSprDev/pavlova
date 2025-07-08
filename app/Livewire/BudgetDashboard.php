@@ -13,7 +13,8 @@ class BudgetDashboard extends Component
 
     public function mount()
     {
-        if (auth()->user()->hasRole('service-demandeur')) {
+        // Adapté pour agent-service et responsable-service
+        if (auth()->user()->hasAnyRole(['agent-service', 'responsable-service']) && auth()->user()->service_id) {
             $this->serviceId = auth()->user()->service_id;
         }
     }
@@ -39,12 +40,13 @@ class BudgetDashboard extends Component
         $budgetDisponible = $budgetTotal - $budgetConsomme;
         $tauxConsommation = $budgetTotal > 0 ? ($budgetConsomme / $budgetTotal) * 100 : 0;
 
+        // Adapté pour les nouveaux statuts/étapes
         $demandesEnCours = DemandeDevis::where('service_demandeur_id', $this->serviceId)
-            ->whereIn('statut', ['pending', 'approved_budget'])
+            ->whereNotIn('statut', ['delivered', 'rejected', 'cancelled']) // Exclure les états finaux
             ->count();
 
         return [
-            Stat::make('Budget Disponible', number_format($budgetDisponible, 2) . ' €')
+            Stat::make('Budget Disponible Service', number_format($budgetDisponible, 2) . ' €') // Label mis à jour
                 ->description('Sur ' . number_format($budgetTotal, 2) . ' € alloués')
                 ->color($budgetDisponible > 1000 ? 'success' : ($budgetDisponible > 0 ? 'warning' : 'danger'))
                 ->chart($this->getConsommationChart()),
@@ -62,23 +64,32 @@ class BudgetDashboard extends Component
     private function getGlobalStats(): array
     {
         $budgetTotalOrg = BudgetLigne::where('valide_budget', 'oui')->sum('montant_ht_prevu');
-        $budgetConsommeTotal = DemandeDevis::where('statut', 'delivered')->sum('prix_total_ttc');
-        $demandesAValider = DemandeDevis::where('statut', 'pending')->count();
-        $depassements = BudgetLigne::whereRaw('montant_depense_reel > montant_ht_prevu')->count();
+        // $budgetConsommeTotal = DemandeDevis::where('statut', 'delivered')->sum('prix_total_ttc'); // Moins utile que le budget total ici
 
-        return [
+        // Nouvelles demandes en attente de la première validation (par Responsable Service)
+        $nouvellesDemandes = DemandeDevis::where('current_step', 'validation-responsable-service')
+                                     // ->where('statut', 'pending') // Optionnel, current_step devrait suffire
+                                     ->count();
+
+        // $depassements = BudgetLigne::whereRaw('montant_depense_reel > montant_ht_prevu')->count(); // Commenté
+
+        $stats = [
             Stat::make('Budget Total Organisation', number_format($budgetTotalOrg, 2) . ' €')
                 ->description('Tous services confondus')
                 ->color('primary'),
 
-            Stat::make('Demandes à Valider', $demandesAValider)
-                ->description('En attente validation budget')
-                ->color($demandesAValider > 10 ? 'danger' : 'success'),
-
-            Stat::make('Alertes Dépassement', $depassements)
-                ->description('Lignes budget en dépassement')
-                ->color($depassements > 0 ? 'danger' : 'success')
+            Stat::make('Nouvelles Demandes Soumises', $nouvellesDemandes)
+                ->description('En attente validation Responsable Service')
+                ->color($nouvellesDemandes > 10 ? 'warning' : 'success'), // Seuil ajusté
         ];
+
+        // La statistique sur les dépassements est commentée car sa source de données (montant_depense_reel en direct SQL) n'est plus fiable.
+        // Une méthode alternative de calcul est nécessaire pour la réactiver.
+        // Stat::make('Alertes Dépassement', $depassements)
+        //     ->description('Lignes budget en dépassement')
+        //     ->color($depassements > 0 ? 'danger' : 'success')
+
+        return $stats;
     }
 
     private function getConsommationChart(): array

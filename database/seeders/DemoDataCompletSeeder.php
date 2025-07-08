@@ -16,10 +16,79 @@ class DemoDataCompletSeeder extends Seeder
      */
     public function run(): void
     {
+        // Ensure specific services exist for testing roles
+        $serviceIT = Service::firstOrCreate(
+            ['code' => 'IT'],
+            [
+                'nom' => 'Service Informatique',
+                'responsable_email' => 'resp.it@test.local', // Placeholder
+                'budget_annuel_alloue' => 50000,
+                'description' => 'Service de support et développement informatique.'
+            ]
+        );
+
+        $serviceRH = Service::firstOrCreate(
+            ['code' => 'RH'],
+            [
+                'nom' => 'Ressources Humaines',
+                'responsable_email' => 'resp.rh@test.local', // Placeholder
+                'budget_annuel_alloue' => 30000,
+                'description' => 'Service de gestion du personnel.'
+            ]
+        );
+
         // CRÉER SCÉNARIOS DE TEST COMPLETS
-        $services = Service::all();
+        // $services = Service::all(); // We'll use $serviceIT and $serviceRH for specific tests
+                                    // and can still loop all services for generic data.
         
-        foreach ($services as $service) {
+        // Example: Create data for IT service specifically
+        $this_service = $serviceIT;
+        // Créer plusieurs lignes budgétaires par service
+        $ligneNormaleIT = BudgetLigne::create([
+            'service_id' => $this_service->id,
+            'intitule' => "Budget Normal {$this_service->nom}",
+            'montant_ht_prevu' => 10000,
+            'montant_ttc_prevu' => 12000,
+            'valide_budget' => 'oui',
+            'date_prevue' => now()->addMonths(6),
+            'nature' => 'Equipement',
+            'base_calcul' => 'Forfait',
+            'categorie' => 'Informatique',
+            'type_depense' => 'Investissement',
+            'commentaire_service' => "Budget normal pour les besoins du service {$this_service->nom}",
+        ]);
+
+        // Create data for RH service specifically
+        $this_service = $serviceRH;
+        $ligneNormaleRH = BudgetLigne::create([
+            'service_id' => $this_service->id,
+            'intitule' => "Budget Normal {$this_service->nom}",
+            'montant_ht_prevu' => 8000,
+            'montant_ttc_prevu' => 9600,
+            'valide_budget' => 'oui',
+            'date_prevue' => now()->addMonths(6),
+            'nature' => 'Fournitures',
+            'base_calcul' => 'Forfait',
+            'categorie' => 'Bureau',
+            'type_depense' => 'Fonctionnement',
+            'commentaire_service' => "Budget normal pour les besoins du service {$this_service->nom}",
+        ]);
+
+
+        // You can continue to loop through all services for more generic data if needed
+        $allServices = Service::all();
+        foreach ($allServices as $service) {
+            if ($service->code === 'IT' || $service->code === 'RH') {
+                // Already created specific data above, skip or add more specific data
+                // For now, we'll just ensure the loop continues for other services if any
+                // Or add more generic data for IT and RH too
+            }
+
+            // The original generic data creation loop:
+            // This will also run for IT and RH, creating additional lines.
+            // If you want IT/RH to ONLY have the lines above, then add a continue here:
+            // if ($service->code === 'IT' || $service->code === 'RH') { continue; }
+
             // Créer plusieurs lignes budgétaires par service
             $ligneNormale = BudgetLigne::create([
                 'service_id' => $service->id,

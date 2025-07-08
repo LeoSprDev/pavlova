@@ -61,6 +61,7 @@ class RolePermissionSeeder extends Seeder
         Permission::create(['name' => 'approve_budget_demande', 'guard_name' => 'web']); // Step 1 approval
         Permission::create(['name' => 'approve_achat_demande', 'guard_name' => 'web']);  // Step 2 approval
         Permission::create(['name' => 'approve_reception_demande', 'guard_name' => 'web']); // Step 3 approval
+        Permission::create(['name' => 'approve_service_demande', 'guard_name' => 'web']); // NEW: For Responsable Service approval step
         Permission::create(['name' => 'reject_demande', 'guard_name' => 'web']); // General rejection permission for any step
         Permission::create(['name' => 'bulk_validate_demandes', 'guard_name' => 'web']); // For bulk actions
 
@@ -108,6 +109,36 @@ class RolePermissionSeeder extends Seeder
             'view_any_livraison',       // To list their own deliveries
             'view_livraison',           // To view their own delivery
             'create_livraison',         // To record a delivery for their order
+        ]);
+
+        // NOUVEAU RÔLE: AGENT SERVICE (similaire à service-demandeur mais explicitement pour le nouveau workflow)
+        $agent_service = Role::create(['name' => 'agent-service', 'guard_name' => 'web']);
+        $agent_service->givePermissionTo([
+            'view_budget_ligne',        // Policy will enforce own service
+            'create_demande_devis',
+            'view_any_demande_devis',   // Policy will enforce own demands/service
+            'view_demande_devis',       // Policy will enforce own demands/service
+            'update_demande_devis',     // Policy will enforce conditions (e.g. before submission or if rejected by Resp. Service)
+            'delete_demande_devis',     // Policy will enforce conditions (e.g. before submission)
+            'approve_reception_demande',// Dernière étape du workflow, pour ses propres demandes
+            'validate_livraison',       // For confirming their own deliveries
+            'upload_bon_livraison',     // For their deliveries
+            'export_budget_service',    // Policy/Resource will filter for own service
+            'view_analytics_service',   // For their service dashboard
+        ]);
+
+        // NOUVEAU RÔLE: RESPONSABLE SERVICE (valide les demandes de son service)
+        $responsable_service = Role::create(['name' => 'responsable-service', 'guard_name' => 'web']);
+        $responsable_service->givePermissionTo([
+            'view_any_demande_devis',   // Policy will enforce own service
+            'view_demande_devis',       // Policy will enforce own service
+            'approve_service_demande',  // NOUVELLE ÉTAPE WORKFLOW
+            'reject_demande',           // Peut rejeter à son étape
+            'update_demande_devis',     // Peut-être pour corriger avant validation (à définir via Policy)
+            'view_budget_ligne',        // Policy will enforce own service budget lines
+            'view_any_budget_ligne',    // Policy will enforce own service budget lines
+            'export_budget_service',    // Policy/Resource will filter for own service
+            'view_analytics_service',   // For their service dashboard
         ]);
 
         // RÔLE RESPONSABLE BUDGET (GLOBAL)

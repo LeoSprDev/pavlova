@@ -62,8 +62,13 @@ class DemandeDevisResource extends Resource
                             ->required()
                             ->searchable()
                             ->preload()
-                            ->disabled(fn(): bool => $currentUser->hasRole('service-demandeur') || ($record && $record->stattr !== 'pending') )
-                            ->default(fn(): ?int => $currentUser->hasRole('service-demandeur') ? $currentUser->service_id : request()->get('service_id')),
+                            ->disabled(fn(User $currentUserInClosure, ?DemandeDevis $recordInClosure): bool => // Renamed for clarity
+                                $currentUserInClosure->hasRole('agent-service') ||
+                                ($recordInClosure && $recordInClosure->statut !== 'pending' && $recordInClosure->statut !== 'rejected')
+                            )
+                            ->default(fn(User $currentUserInClosure): ?int =>
+                                $currentUserInClosure->hasRole('agent-service') ? $currentUserInClosure->service_id : null
+                            ),
                         Select::make('budget_ligne_id')
                             ->label('Ligne Budgétaire d\'Imputation')
                             ->relationship(
@@ -191,7 +196,7 @@ class DemandeDevisResource extends Resource
                             ->label('Commentaire de validation/rejet')
                             ->rows(3)
                             ->columnSpanFull()
-                            ->visible(fn(): bool => $currentUser->hasAnyRole(['responsable-budget', 'service-achat'])),
+                            ->visible(fn(User $currentUserInClosure): bool => $currentUserInClosure->hasAnyRole(['responsable-service', 'responsable-budget', 'service-achat'])),
                         // Placeholder for approval actions, actual actions are in the table/view page
                         Placeholder::make('approval_status_info')
                             ->label('Statut Actuel')
@@ -221,7 +226,7 @@ class DemandeDevisResource extends Resource
                     ->label('Service')
                     ->searchable()
                     ->sortable()
-                    ->visible(fn() => !$currentUser->hasRole('service-demandeur')),
+                    ->visible(fn(User $currentUserInClosure) => !$currentUserInClosure->hasRole('agent-service')), // Adapté pour agent-service
                 TextColumn::make('budgetLigne.intitule')
                     ->label('Ligne Budgétaire')
                     ->searchable()
@@ -251,9 +256,10 @@ class DemandeDevisResource extends Resource
                     ->badge()
                     ->getStateUsing(fn (DemandeDevis $record) => $record->getCurrentApprovalStepLabel())
                     ->color(fn (DemandeDevis $record): string => match ($record->getCurrentApprovalStepKey()) {
-                        'responsable-budget' => 'warning',
-                        'service-achat' => 'info',
-                        'reception-livraison' => 'primary',
+                        'validation-responsable-service' => 'info', // Nouvelle étape, couleur à choisir (info, primary, etc.)
+                        'validation-budget' => 'warning',
+                        'validation-achat' => 'primary', // Changé 'info' en 'primary' pour distinguer
+                        'controle-reception' => 'success', // Étape finale avant 'Terminé'
                         default => ($record->isFullyApproved() ? 'success' : ($record->isRejected() ? 'danger' : 'gray')),
                     }),
             ])
@@ -271,66 +277,164 @@ class DemandeDevisResource extends Resource
                     ->preload(),
                 SelectFilter::make('statut')
                     ->options(fn() => collect(DemandeDevis::select('statut')->distinct()->pluck('statut','statut'))->map(fn($s) => ucfirst(str_replace('_',' ',$s))) ),
-                Filter::make('mes_demandes')
-                    ->label('Mes Demandes (Service)')
-                    ->query(fn (Builder $query): Builder => $query->where('service_demandeur_id', $currentUser->service_id))
-                    ->visible(fn() => $currentUser->hasRole('service-demandeur')),
+                Filter::make('mes_demandes_agent')
+                    ->label('Mes Demandes (Agent)')
+                    ->query(fn (Builder $query): Builder => $query->where('user_id', Auth::id())) // Basé sur user_id
+                    ->visible(fn(User $currentUserInClosure): bool => $currentUserInClosure->hasRole('agent-service')),
+                Filter::make('demandes_mon_service')
+                    ->label('Demandes de Mon Service')
+                    ->query(fn (Builder $query): Builder => $query->where('service_demandeur_id', Auth::user()->service_id))
+                    ->visible(fn(User $currentUserInClosure): bool => $currentUserInClosure->hasRole('responsable-service')),
+                Filter::make('a_valider_responsable_service')
+                    ->label('À Valider (Resp. Service)')
+                    ->query(fn (Builder $query): Builder => $query->where('current_step', 'validation-responsable-service'))
+                    ->visible(fn(User $currentUserInClosure): bool => $currentUserInClosure->hasRole('responsable-service')),
                 Filter::make('a_valider_budget')
                     ->label('À Valider (Budget)')
-                    ->query(fn (Builder $query): Builder => $query->where('current_step', 'responsable-budget')->where('statut', 'pending'))
-                    ->visible(fn() => $currentUser->hasRole('responsable-budget')),
+                    ->query(fn (Builder $query): Builder => $query->where('current_step', 'validation-budget')) // Étape mise à jour
+                    ->visible(fn(User $currentUserInClosure): bool => $currentUserInClosure->hasRole('responsable-budget')),
                 Filter::make('a_valider_achat')
                     ->label('À Valider (Achat)')
-                    ->query(fn (Builder $query): Builder => $query->where('current_step', 'service-achat')->where('statut', 'approved_budget'))
-                    ->visible(fn() => $currentUser->hasRole('service-achat')),
+                    ->query(fn (Builder $query): Builder => $query->where('current_step', 'validation-achat')) // Étape mise à jour
+                    ->visible(fn(User $currentUserInClosure): bool => $currentUserInClosure->hasRole('service-achat')),
             ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make()
-                    ->visible(fn (DemandeDevis $record) => $record->statut === 'pending' && $currentUser->id === $record->user_id), // Example, policy should handle this
+                    ->visible(fn (DemandeDevis $record): bool => Auth::user()->can('update', $record)),
                 ActionGroup::make([
-                    // SubmitAction::make()->visible(fn(DemandeDevis $record) => $record->canBeSubmitted()), // From laravel-process-approval
-                    // ApproveAction::make()->visible(fn(DemandeDevis $record) => $record->canBeApprovedBy(Auth::user())), // From laravel-process-approval
-                    // RejectAction::make()->visible(fn(DemandeDevis $record) => $record->canBeRejectedBy(Auth::user())),   // From laravel-process-approval
-                    Action::make('approve')
-                        ->label('Approuver')
+                    // --- Actions pour l'étape: validation-responsable-service ---
+                    Action::make('approve_service')
+                        ->label('Approuver (Resp. Service)')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
-                        ->action(function(DemandeDevis $record) {
-                            $record->approve(Auth::user(), 'Approuvé via Filament');
+                        ->form([Textarea::make('approval_comment')->label('Commentaire (optionnel)')])
+                        ->action(function(DemandeDevis $record, array $data) {
+                            $record->approve(Auth::user(), $data['approval_comment']);
+                            $record->statut = 'pending_budget_validation'; // STATUT MIS A JOUR
+                            $record->save();
                         })
-                        ->visible(fn(DemandeDevis $record) => $record->statut === 'pending' && $currentUser->hasRole('responsable-budget')),
-                    Action::make('reject')
-                        ->label('Rejeter')
+                        ->visible(fn(DemandeDevis $record): bool => Auth::user()->can('approveValidationResponsableService', $record)),
+                    Action::make('reject_service')
+                        ->label('Rejeter (Resp. Service)')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->action(function(DemandeDevis $record) {
-                            $record->reject(Auth::user(), 'Rejeté via Filament');
+                        ->form([Textarea::make('rejection_comment')->label('Motif du rejet')->required()])
+                        ->action(function(DemandeDevis $record, array $data) {
+                            $record->reject(Auth::user(), $data['rejection_comment']);
+                            $record->statut = 'rejected'; // STATUT MIS A JOUR
+                            $record->save();
                         })
-                        ->visible(fn(DemandeDevis $record) => $record->statut === 'pending' && $currentUser->hasAnyRole(['responsable-budget', 'service-achat'])),
-                    // Custom action to mark as 'delivered' if needed outside of workflow, or trigger reception step
-                    Action::make('mark_delivered')
-                        ->label('Confirmer Livraison (Manuelle)')
+                        ->visible(fn(DemandeDevis $record): bool => Auth::user()->can('rejectValidationResponsableService', $record)),
+
+                    // --- Actions pour l'étape: validation-budget ---
+                    Action::make('approve_budget')
+                        ->label('Approuver (Budget)')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
                         ->requiresConfirmation()
-                        ->action(function(DemandeDevis $record){
-                            // This should ideally trigger the 'reception-livraison' step
-                            // For now, direct status update if permitted
-                            if ($record->statut === 'approved_achat' && $record->commande()->exists()) {
-                                // $record->statut = 'delivered'; // This is too simple, workflow should handle it.
-                                // $record->save();
-                                // Attempt to trigger the next step if it's reception
-                                if ($record->getCurrentApprovalStepKey() === 'reception-livraison') {
-                                     // $record->approve(Auth::user(), "Livraison confirmée manuellement.");
-                                     // Or, if 'on_delivery_upload' is the trigger, this action might simulate that.
+                        ->form([Textarea::make('approval_comment')->label('Commentaire (optionnel)')])
+                        ->action(function(DemandeDevis $record, array $data) {
+                            $record->approve(Auth::user(), $data['approval_comment']);
+                            $record->statut = 'pending_achat_validation'; // STATUT MIS A JOUR
+                            $record->date_validation_budget = now();
+                            $record->save();
+                        })
+                        ->visible(fn(DemandeDevis $record): bool => Auth::user()->can('approveValidationBudget', $record)),
+                    Action::make('reject_budget')
+                        ->label('Rejeter (Budget)')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->form([Textarea::make('rejection_comment')->label('Motif du rejet')->required()])
+                        ->action(function(DemandeDevis $record, array $data) {
+                            $record->reject(Auth::user(), $data['rejection_comment']);
+                            $record->statut = 'rejected'; // STATUT MIS A JOUR
+                            $record->save();
+                        })
+                        ->visible(fn(DemandeDevis $record): bool => Auth::user()->can('rejectValidationBudget', $record)),
+
+                    // --- Actions pour l'étape: validation-achat ---
+                    Action::make('approve_achat')
+                        ->label('Approuver (Achat)')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->form([Textarea::make('approval_comment')->label('Commentaire (optionnel)')])
+                        ->action(function(DemandeDevis $record, array $data) {
+                            $record->approve(Auth::user(), $data['approval_comment']);
+                            $record->statut = 'awaiting_delivery'; // STATUT MIS A JOUR
+                            $record->date_validation_achat = now();
+
+                            // Créer la Commande
+                            \App\Models\Commande::create([
+                                'demande_devis_id' => $record->id,
+                                'date_commande' => now(),
+                                'commanditaire' => Auth::user()->name, // Ou un nom plus générique
+                                'statut' => 'en_cours', // Statut initial de la commande
+                                'montant_reel' => $record->prix_total_ttc,
+                                'fournisseur_contact' => $record->fournisseur_propose,
+                                // Les autres champs comme date_livraison_prevue, conditions_paiement etc.
+                                // devront être remplis via une interface de gestion des commandes.
+                            ]);
+
+                            $record->save();
+                        })
+                        ->visible(fn(DemandeDevis $record): bool => Auth::user()->can('approveValidationAchat', $record)),
+                    Action::make('reject_achat')
+                        ->label('Rejeter (Achat)')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->form([Textarea::make('rejection_comment')->label('Motif du rejet')->required()])
+                        ->action(function(DemandeDevis $record, array $data) {
+                            $record->reject(Auth::user(), $data['rejection_comment']);
+                            $record->statut = 'rejected'; // STATUT MIS A JOUR
+                            $record->save();
+                        })
+                        ->visible(fn(DemandeDevis $record): bool => Auth::user()->can('rejectValidationAchat', $record)),
+
+                    // --- Actions pour l'étape: controle-reception ---
+                    Action::make('approve_reception')
+                        ->label('Confirmer Réception Conforme')
+                        ->icon('heroicon-o-check-badge') // Changed icon
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->form([Textarea::make('approval_comment')->label('Commentaire de réception (optionnel)')])
+                        ->action(function(DemandeDevis $record, array $data) {
+                            $record->approve(Auth::user(), $data['approval_comment']);
+                            $record->statut = 'delivered';
+                            $record->save();
+
+                            // Mettre à jour la Commande et la Livraison associées
+                            if ($commande = $record->commande) {
+                                $commande->statut = 'livree_validee'; // Ou 'terminee'
+                                $commande->save();
+
+                                if ($livraison = $commande->livraison) {
+                                    $livraison->statut_reception = 'recue_confirmee'; // Statut personnalisé
+                                    $livraison->conforme = true;
+                                    $livraison->commentaire_reception = ($livraison->commentaire_reception ? $livraison->commentaire_reception . "\n" : '') . "Réception confirmée par workflow: " . ($data['approval_comment'] ?? 'OK');
+                                    $livraison->verifie_par = Auth::id(); // Enregistrer qui a vérifié
+                                    $livraison->date_livraison = $livraison->date_livraison ?? now(); // S'assurer qu'une date de livraison est set
+                                    $livraison->save();
                                 }
-                                // This manual action needs careful consideration with the workflow.
                             }
                         })
-                        ->visible(fn(DemandeDevis $record) => $record->statut === 'approved_achat' && $currentUser->hasRole('service-demandeur') && $currentUser->service_id === $record->service_demandeur_id),
+                        ->visible(fn(DemandeDevis $record): bool => Auth::user()->can('approveControleReception', $record)),
+                    Action::make('reject_reception') // Pour signaler un problème à la réception
+                        ->label('Signaler Problème Réception')
+                        ->icon('heroicon-o-exclamation-triangle')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->form([Textarea::make('rejection_comment')->label('Description du problème')->required()])
+                        ->action(function(DemandeDevis $record, array $data) {
+                            // Logique à définir pour le signalement de problème
+                        })
+                        ->visible(false), // Maintenir commenté/invisible pour l'instant
+
                     DeleteAction::make()->visible(fn(DemandeDevis $record) => Auth::user()->can('delete', $record)),
                 ]),
             ])
@@ -368,22 +472,33 @@ class DemandeDevisResource extends Resource
         /** @var User $currentUser */
         $currentUser = Auth::user();
 
-        if ($currentUser->hasRole('service-demandeur') && $currentUser->service_id) {
+        if ($currentUser->hasRole('agent-service')) {
+            // L'agent ne voit que les demandes qu'il a créées (nécessite user_id sur DemandeDevis)
+            // Assumant que user_id sera ajouté et rempli.
+             $query->where('user_id', $currentUser->id);
+        } elseif ($currentUser->hasRole('responsable-service')) {
+            // Le responsable de service voit toutes les demandes de son service
             $query->where('service_demandeur_id', $currentUser->service_id);
         } elseif ($currentUser->hasRole('service-achat')) {
-            // Service Achat should see demands that are at 'service-achat' step or beyond, or assigned to them.
-            // The table filters will handle most of this.
-            // $query->whereIn('statut', ['approved_budget', 'approved_achat', 'delivered', 'rejected', 'cancelled']);
-            // Or based on current_step if that's reliably updated by the approval package
+            // Service Achat voit les demandes à l'étape 'validation-achat' ou celles qu'il a traitées.
             $query->where(function (Builder $q) {
-                $q->where('current_step', 'service-achat')
-                  ->orWhereIn('statut', ['approved_achat', 'delivered']); // Also show those they've processed
+                $q->where('current_step', 'validation-achat') // Nouvelle étape
+                  ->orWhereHas('approvalsHistory', function (Builder $approvalQuery) { // Plus robuste que le statut
+                      $approvalQuery->where('step', 'validation-achat')
+                                    ->where('status', 'approved');
+                  })
+                  ->orWhereIn('statut', ['delivered']); // Et celles qui sont livrées et qu'ils ont approuvées
             });
+        } elseif ($currentUser->hasRole('responsable-budget')) {
+            // Le Responsable Budget voit les demandes à l'étape 'validation-budget' ou celles qu'il a traitées,
+            // ou toutes si admin-like sur les budgets. Pour l'instant, celles à valider par lui.
+            // Les filtres de table permettront de voir plus large.
+            // $query->where('current_step', 'validation-budget'); // Trop restrictif pour la vue générale
+            // Laisser ouvert pour RB, les filtres affineront.
         }
-        // Responsable Budget sees all, filtered by table filters.
-        // Admin sees all.
+        // Admin voit tout par défaut.
 
-        return $query->with(['serviceDemandeur', 'budgetLigne']);
+        return $query->with(['serviceDemandeur', 'budgetLigne', 'creator']); // Ajout de 'creator'
     }
 
      public static function getGlobalSearchEloquentQuery(): Builder

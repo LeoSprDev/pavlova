@@ -52,24 +52,31 @@ return [
     'workflows' => [
         'demande-devis-workflow' => [
             'steps' => [
-                'responsable-budget' => [
-                    'label' => 'Validation budgétaire', // Added from DemandeDevis model spec
-                    'description' => 'Vérification cohérence budget et enveloppe service', // Added
-                    'approver_role' => 'responsable-budget', // This must match a role name in your Spatie roles
-                    'conditions' => ['budget_available', 'line_validated'] // These are symbolic, logic is in canBeApproved or custom condition checkers
+                'validation-responsable-service' => [
+                    'label' => 'Validation Responsable Service',
+                    'description' => 'Validation de la demande par le responsable du service de l\'agent.',
+                    'approver_role' => 'responsable-service', // Nouveau rôle
+                    'conditions' => ['is_service_owner_or_valid_agent'] // Condition à définir: ex: le demandeur est de son service
                 ],
-                'service-achat' => [
-                    'label' => 'Validation achat', // Added
-                    'description' => 'Analyse fournisseur et optimisation commande', // Added
+                'validation-budget' => [ // Anciennement 'responsable-budget'
+                    'label' => 'Validation Budgétaire',
+                    'description' => 'Vérification cohérence budget et enveloppe service.',
+                    'approver_role' => 'responsable-budget',
+                    'conditions' => ['budget_available', 'line_validated'] // Existantes
+                ],
+                'validation-achat' => [ // Anciennement 'service-achat'
+                    'label' => 'Validation Achat',
+                    'description' => 'Analyse fournisseur et optimisation commande.',
                     'approver_role' => 'service-achat',
-                    'conditions' => ['supplier_valid', 'commercial_terms_ok']
+                    'conditions' => ['supplier_valid', 'commercial_terms_ok'] // Existantes
                 ],
-                'reception-livraison' => [
-                    'label' => 'Contrôle réception', // Added
-                    'description' => 'Vérification livraison et conformité produit', // Added
-                    'approver_role' => 'service-demandeur', // This implies the original requester or someone in their service
-                                                           // Ensure this role has permissions to approve this step.
-                    'auto_trigger' => 'on_delivery_upload' // Symbolic, actual trigger mechanism needs implementation (e.g. event listener)
+                'controle-reception' => [ // Anciennement 'reception-livraison'
+                    'label' => 'Contrôle Réception',
+                    'description' => 'Vérification livraison et conformité produit.',
+                    'approver_role' => 'agent-service', // L'agent qui a initié la demande
+                                                        // Policy/Condition s'assurera que c'est le bon agent
+                    'conditions' => ['is_original_requester_or_service_member'], // Condition à définir
+                    'auto_trigger' => 'on_delivery_upload' // Existant
                 ]
             ]
         ]

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\ProcessApproval as Approval; // Alias for clarity
 use App\Traits\Approvable;
 use App\Contracts\Approvable as ApprovableContract; // Corrected Contract name
+use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -20,6 +21,7 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
     use HasFactory, Approvable, InteractsWithMedia; // Removed HasApprovals as Approvable includes it
 
     protected $fillable = [
+        'user_id', // Added user_id
         'service_demandeur_id',
         'budget_ligne_id',
         'denomination',
@@ -48,6 +50,11 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
         'prix_total_ttc' => 'decimal:2',
         'quantite' => 'integer',
     ];
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function serviceDemandeur(): BelongsTo
     {
@@ -100,48 +107,41 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
      * Get the steps for the approval workflow.
      * This is used by the Approvable trait.
      */
-    public function approvalSteps(): array
-    {
-        return [
-            'responsable-budget' => [
-                'label' => 'Validation budgétaire',
-                'description' => 'Vérification cohérence budget et enveloppe service',
-                'role' => 'responsable-budget', // Role name from spatie/laravel-permission
-                'conditions' => ['budget_available', 'line_validated'] // These are example condition names
-            ],
-            'service-achat' => [
-                'label' => 'Validation achat',
-                'description' => 'Analyse fournisseur et optimisation commande',
-                'role' => 'service-achat',
-                'conditions' => ['supplier_valid', 'commercial_terms_ok']
-            ],
-            'reception-livraison' => [
-                'label' => 'Contrôle réception',
-                'description' => 'Vérification livraison et conformité produit',
-                'role' => 'service-demandeur', // This should be the role of the user who initiated
-                                               // or is responsible for receiving in that service.
-                'auto_trigger' => 'on_delivery_upload' // Example auto trigger
-            ]
-        ];
-    }
-    // Compatibility with prompt's naming if needed
-    public function getApprovalSteps(): array
-    {
-        return $this->approvalSteps();
-    }
-
-
     /**
      * Check if the model can be approved for the current step.
      * This is used by the Approvable trait.
      */
     public function canBeApproved(): bool
     {
-        if (!$this->budgetLigne) {
-            return false; // Should not happen if data is consistent
+        $currentStepKey = $this->getCurrentApprovalStepKey();
+
+        // Apply budget validation logic only for the budget validation step
+        if ($currentStepKey === 'validation-budget') {
+            if (!$this->budgetLigne) {
+                // This condition should ideally be checked before even reaching budget validation,
+                // e.g. during form submission or by the Responsable Service.
+                // Adding a log here if it happens at this stage.
+                Log::warning("DemandeDevis ID {$this->id}: Tentative de validation budgétaire sans budgetLigne associée.");
+                return false;
+            }
+            if ($this->budgetLigne->valide_budget !== 'oui') {
+                 Log::info("DemandeDevis ID {$this->id}: Tentative de validation sur ligne budgétaire non validée ('{$this->budgetLigne->valide_budget}').");
+                return false;
+            }
+            if (!$this->budgetLigne->canAcceptNewDemande((float) $this->prix_total_ttc)) {
+                Log::info("DemandeDevis ID {$this->id}: Tentative de validation, mais budget insuffisant sur la ligne {$this->budgetLigne->id}.");
+                return false;
+            }
+            return true; // All budget checks passed for this step
         }
-        return $this->budgetLigne->canAcceptNewDemande((float) $this->prix_total_ttc) &&
-               $this->budgetLigne->valide_budget === 'oui';
+
+        // For other steps, default to true, assuming specific logic will be handled by:
+        // 1. The role assignment itself (user must have the role to approve the step)
+        // 2. Future specific ConditionCheckers if defined in config/approval.php
+        // 3. Policies or canBeApprovedBy(User $user, string $stepName) if more granular checks are needed.
+        // For example, the 'validation-responsable-service' step might have a condition
+        // to ensure the approver is indeed the head of the requester's service.
+        return true;
     }
 
     // Media Library Configuration
@@ -172,36 +172,84 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
 
 
     // SCOPES
+    public function scopeEnAttenteValidationResponsableService(Builder $query): Builder
+    {
+        // Demandes en attente de l'approbation du Responsable Service
+        return $query->where('current_step', 'validation-responsable-service')
+                     ->where(function (Builder $q) {
+                         // Statut 'pending' est le statut initial avant toute action du workflow.
+                         // Ou un statut spécifique si on en définit un après la création par l'agent.
+                         $q->where('statut', 'pending');
+                         // Add other relevant statuses if a demand can reach this step from other states.
+                     });
+    }
+
     public function scopeEnAttenteBudget(Builder $query): Builder
     {
-        // This scope needs to interact with the approval package's way of storing steps.
-        // 'pending' status and not having an 'approved' status for 'responsable-budget' step.
-        return $query->where('statut', 'pending') // General pending status
-                     ->where(function (Builder $q) { // More specific check based on approval steps
-                        $q->where('current_step', 'responsable-budget') // If current_step is tracked
-                          ->orWhereDoesntHave('approvalsHistory', function (Builder $approvalQuery) {
-                              $approvalQuery->where('step', 'responsable-budget')
-                                            ->where('status', 'approved');
-                          });
+        // Demandes en attente de l'approbation du Responsable Budget
+        // Assumes current_step is reliably updated by the approval package.
+        return $query->where('current_step', 'validation-budget')
+                     ->where(function (Builder $q) {
+                        // Le statut pourrait être 'pending_budget_approval' ou un statut générique
+                        // si la demande vient d'être approuvée par le responsable de service.
+                        // Pour l'instant, on se fie surtout à current_step.
+                        // Le statut 'pending' est trop générique ici si on a plusieurs étapes avant.
+                        // On s'attend à ce que le statut soit mis à jour par l'action d'approbation précédente.
+                        // Exemple: ->where('statut', 'pending_budget_validation')
+                        // Ou, si le package ne met pas à jour 'statut' mais seulement 'current_step':
+                        $q->whereNotIn('statut', ['rejected', 'cancelled', 'delivered']); // Exclure les états finaux
                      });
     }
 
     public function scopeEnAttenteAchat(Builder $query): Builder
     {
-        // 'approved_budget' status implies it's waiting for 'service-achat'
-        return $query->where('statut', 'approved_budget')
-                     ->where('current_step', 'service-achat'); // If current_step is tracked
+        // Demandes en attente de l'approbation du Service Achat
+        return $query->where('current_step', 'validation-achat')
+                     ->where(function (Builder $q) {
+                        // सिमिलर to above, statut should reflect it passed budget approval.
+                        // Exemple: ->where('statut', 'pending_achat_validation')
+                        $q->whereNotIn('statut', ['rejected', 'cancelled', 'delivered']);
+                     });
+    }
+
+    public function scopeEnAttenteReception(Builder $query): Builder
+    {
+        // Demandes en attente de la confirmation de réception par l'agent service
+        return $query->where('current_step', 'controle-reception')
+                     ->where(function (Builder $q) {
+                        // Statut pourrait être 'pending_reception' ou 'commande_livree_en_attente_confirmation'
+                        $q->whereNotIn('statut', ['rejected', 'cancelled', 'delivered']);
+                     });
     }
 
 
     // Helper to get current approval step label if needed by Filament/Livewire
     public function getCurrentApprovalStepLabel(): ?string
     {
-        $currentStepKey = $this->getCurrentApprovalStepKey(); // Method from Approvable trait
-        if ($currentStepKey) {
-            $steps = $this->approvalSteps();
-            return $steps[$currentStepKey]['label'] ?? $currentStepKey;
+        $currentStep = $this->getCurrentApprovalStep(); // Method from Approvable trait (RingleSoft)
+
+        if ($currentStep) {
+            // The getCurrentApprovalStep() method from the trait should return an object
+            // that has a 'label' property, as defined in config/approval.php
+            return $currentStep->label ?? $this->getCurrentApprovalStepKey();
         }
-        return $this->isFullyApproved() ? 'Terminé' : ($this->isRejected() ? 'Rejeté' : 'N/A');
+
+        if ($this->isFullyApproved()) {
+            return 'Terminé';
+        }
+
+        if ($this->isRejected()) {
+            return 'Rejeté';
+        }
+
+        // Initial state before workflow starts, or if no step is found (should not happen in normal flow)
+        // Could also check if $this->isSubmitted() is false if the package supports that directly.
+        if (!$this->getApprovalStatusColumn() || $this->getApprovalStatusColumn() === $this->getPendingStatus()) {
+             // Assuming 'pending' is the initial status before first approval step.
+             // Or, if you have a specific status like 'draft' or 'new' before submission to workflow.
+            return 'Nouvelle Demande'; // Or appropriate initial status label
+        }
+
+        return 'N/A'; // Fallback for any other undefined state
     }
 }
