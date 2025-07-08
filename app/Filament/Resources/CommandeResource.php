@@ -125,10 +125,10 @@ class CommandeResource extends Resource
     public static function getPages(): array
     {
         return [
-            // 'index' => Pages\ListCommandes::route('/'),
-            // 'create' => Pages\CreateCommande::route('/create'),
-            // 'view' => Pages\ViewCommande::route('/{record}'),
-            // 'edit' => Pages\EditCommande::route('/{record}/edit'),
+            'index' => Pages\ListCommandes::route('/'),
+            'create' => Pages\CreateCommande::route('/create'),
+            'view' => Pages\ViewCommande::route('/{record}'),
+            'edit' => Pages\EditCommande::route('/{record}/edit'),
         ];
     }
 }

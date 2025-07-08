@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Builder;
-use RingleSoft\LaravelProcessApproval\Models\ProcessApproval as Approval; // Alias for clarity
-use RingleSoft\LaravelProcessApproval\Traits\Approvable;
-use RingleSoft\LaravelProcessApproval\Contracts\Approvable as ApprovableContract; // Corrected Contract name
+use App\Models\ProcessApproval as Approval; // Alias for clarity
+use App\Traits\Approvable;
+use App\Contracts\Approvable as ApprovableContract; // Corrected Contract name
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;

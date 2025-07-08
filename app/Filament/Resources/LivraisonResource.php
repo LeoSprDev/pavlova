@@ -59,14 +59,12 @@ class LivraisonResource extends Resource
             Forms\Components\Section::make('Documents')->schema([
                 Forms\Components\FileUpload::make('bon_livraison')
                     ->label('Bon de livraison')
-                    ->collection('bons_livraison')
                     ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                     ->maxSize(5120)
                     ->downloadable()
                     ->openable(),
                 Forms\Components\FileUpload::make('photos_reception')
                     ->label('Photos réception')
-                    ->collection('photos_reception')
                     ->multiple()
                     ->acceptedFileTypes(['image/jpeg', 'image/png'])
                     ->maxSize(2048)
@@ -123,10 +121,10 @@ class LivraisonResource extends Resource
     public static function getPages(): array
     {
         return [
-            // 'index' => Pages\ListLivraisons::route('/'),
-            // 'create' => Pages\CreateLivraison::route('/create'),
-            // 'view' => Pages\ViewLivraison::route('/{record}'),
-            // 'edit' => Pages\EditLivraison::route('/{record}/edit'),
+            'index' => Pages\ListLivraisons::route('/'),
+            'create' => Pages\CreateLivraison::route('/create'),
+            'view' => Pages\ViewLivraison::route('/{record}'),
+            'edit' => Pages\EditLivraison::route('/{record}/edit'),
         ];
     }
 }

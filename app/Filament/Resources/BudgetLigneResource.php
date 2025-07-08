@@ -175,7 +175,7 @@ class BudgetLigneResource extends Resource
                     ->limit(30)
                     ->tooltip(function (TextColumn $column): ?string {
                         $state = $column->getState();
-                        if (is_string($state) && strlen($state) > $column->getLimit()) {
+                        if (is_string($state) && strlen($state) > 30) {
                             return $state;
                         }
                         return null;
@@ -196,16 +196,13 @@ class BudgetLigneResource extends Resource
                 TextColumn::make('montant_depense_reel_calculated') // Using accessor from model
                     ->money('EUR')
                     ->label('Dépensé Réel HT')
-                    ->color(fn ($record) => $record && $record->montant_depense_reel_calculated > $record->montant_ht_prevu ? 'danger' : 'success')
-                    ->summarize(Sum::make()->money('EUR')->label('Total Dépensé')),
+                    ->getStateUsing(fn (BudgetLigne $record): float => $record->montant_depense_reel_calculated)
+                    ->color(fn ($record) => $record && $record->montant_depense_reel_calculated > $record->montant_ht_prevu ? 'danger' : 'success'),
                 TextColumn::make('budget_restant') // Using method from model
                     ->money('EUR')
                     ->label('Budget Restant HT')
                     ->getStateUsing(fn (BudgetLigne $record): float => $record->calculateBudgetRestant())
-                    ->color(fn ($state): string => $state < 0 ? 'danger' : ($state < 100 ? 'warning' : 'success'))
-                    ->summarize(Sum::make()->money('EUR')->label('Total Restant')
-                        ->query(fn (Builder $query) => $query->sum(DB::raw(static::getBudgetRestantRawExpression())) ) // Custom sum for calculated
-                    ),
+                    ->color(fn ($state): string => $state < 0 ? 'danger' : ($state < 100 ? 'warning' : 'success')),
 
                 BadgeColumn::make('valide_budget')
                     ->label('Statut Validation')
@@ -328,10 +325,10 @@ class BudgetLigneResource extends Resource
     public static function getPages(): array
     {
         return [
-            // 'index' => Pages\ListBudgetLignes::route('/'),
-            // 'create' => Pages\CreateBudgetLigne::route('/create'),
-            // 'edit' => Pages\EditBudgetLigne::route('/{record}/edit'),
-            // 'view' => Pages\ViewBudgetLigne::route('/{record}'), // As per prompt
+            'index' => Pages\ListBudgetLignes::route('/'),
+            'create' => Pages\CreateBudgetLigne::route('/create'),
+            'edit' => Pages\EditBudgetLigne::route('/{record}/edit'),
+            'view' => Pages\ViewBudgetLigne::route('/{record}'),
         ];
     }
 

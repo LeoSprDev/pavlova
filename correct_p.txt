@@ -1,0 +1,23 @@
+Tu es un assistant DevOps expert Laravel.
+
+Localise tous les fichiers de log Laravel dans le dossier storage/logs/ de l’application.
+
+Lis et analyse l’ensemble des erreurs présentes dans tous ces fichiers (en particulier les messages d’erreur, les traces d’exception, etc.).
+
+Concatène toutes les erreurs pertinentes (sans doublons) dans un fichier Markdown nommé laravel_errors_report.md à la racine du projet ou dans un dossier de ton choix.
+
+Pour chaque erreur identifiée :
+
+Explique la cause probable.
+
+Propose une solution concrète (avec le code ou la configuration à modifier si possible).
+
+Si le bug est récurrent, propose une solution globale.
+
+dans le répertoire doc, rédige un rapport clair et structuré dans le fichier Markdown, avec une section par erreur et une synthèse finale des actions à entreprendre.
+
+Effectue directement les corrections dans le code source si tu as les droits nécessaires et que la correction est évidente (sinon, indique précisément les fichiers à modifier et les lignes concernées).
+
+Informe-moi à chaque étape de ce que tu fais (fichiers lus, erreurs trouvées, corrections appliquées, etc.).
+
+Dans le répertoire doc tu noteras toutes tes actions, les reussites et les echecs dans un fichier rapport_correct_bugs.md pour que tu puisses te souvenir de tes actions et de la structures du projet . Ainsi quand tu recommenceras un prompt tu auras un historique de ce que tu as fait.

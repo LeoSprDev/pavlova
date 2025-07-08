@@ -33,9 +33,9 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Support\Facades\Auth;
-use RingleSoft\LaravelProcessApproval\Filament\Actions\ApproveAction;
-use RingleSoft\LaravelProcessApproval\Filament\Actions\RejectAction;
-use RingleSoft\LaravelProcessApproval\Filament\Actions\SubmitAction;
+// use RingleSoft\LaravelProcessApproval\Filament\Actions\ApproveAction;
+// use RingleSoft\LaravelProcessApproval\Filament\Actions\RejectAction;
+// use RingleSoft\LaravelProcessApproval\Filament\Actions\SubmitAction;
 use Illuminate\Support\HtmlString;
 
 class DemandeDevisResource extends Resource
@@ -168,7 +168,6 @@ class DemandeDevisResource extends Resource
                             ->required(),
                         FileUpload::make('devis_fournisseur_upload')
                             ->label('Devis Fournisseur (PDF)')
-                            ->collection('devis_fournisseur') // Spatie Media Library collection
                             ->acceptedFileTypes(['application/pdf'])
                             ->maxSize(5120) // 5MB
                             ->downloadable()
@@ -177,7 +176,6 @@ class DemandeDevisResource extends Resource
                             ->visibility('private'), // Store in private storage
                         FileUpload::make('documents_complementaires_upload')
                             ->label('Documents Complémentaires (PDF, JPG, PNG)')
-                            ->collection('documents_complementaires')
                             ->multiple()
                             ->maxFiles(5)
                             ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
@@ -291,9 +289,27 @@ class DemandeDevisResource extends Resource
                 EditAction::make()
                     ->visible(fn (DemandeDevis $record) => $record->statut === 'pending' && $currentUser->id === $record->user_id), // Example, policy should handle this
                 ActionGroup::make([
-                    SubmitAction::make()->visible(fn(DemandeDevis $record) => $record->canBeSubmitted()), // From laravel-process-approval
-                    ApproveAction::make()->visible(fn(DemandeDevis $record) => $record->canBeApprovedBy(Auth::user())), // From laravel-process-approval
-                    RejectAction::make()->visible(fn(DemandeDevis $record) => $record->canBeRejectedBy(Auth::user())),   // From laravel-process-approval
+                    // SubmitAction::make()->visible(fn(DemandeDevis $record) => $record->canBeSubmitted()), // From laravel-process-approval
+                    // ApproveAction::make()->visible(fn(DemandeDevis $record) => $record->canBeApprovedBy(Auth::user())), // From laravel-process-approval
+                    // RejectAction::make()->visible(fn(DemandeDevis $record) => $record->canBeRejectedBy(Auth::user())),   // From laravel-process-approval
+                    Action::make('approve')
+                        ->label('Approuver')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(function(DemandeDevis $record) {
+                            $record->approve(Auth::user(), 'Approuvé via Filament');
+                        })
+                        ->visible(fn(DemandeDevis $record) => $record->statut === 'pending' && $currentUser->hasRole('responsable-budget')),
+                    Action::make('reject')
+                        ->label('Rejeter')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(function(DemandeDevis $record) {
+                            $record->reject(Auth::user(), 'Rejeté via Filament');
+                        })
+                        ->visible(fn(DemandeDevis $record) => $record->statut === 'pending' && $currentUser->hasAnyRole(['responsable-budget', 'service-achat'])),
                     // Custom action to mark as 'delivered' if needed outside of workflow, or trigger reception step
                     Action::make('mark_delivered')
                         ->label('Confirmer Livraison (Manuelle)')
@@ -330,7 +346,7 @@ class DemandeDevisResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // RelationManagers\CommandeRelationManager::class,
+            RelationManagers\CommandeRelationManager::class,
             // RelationManagers\ApprobationHistoriqueRelationManager::class, // For laravel-process-approval history
             // RelationManagers\MediaRelationManager::class, // If you want to manage media here
         ];
@@ -339,10 +355,10 @@ class DemandeDevisResource extends Resource
     public static function getPages(): array
     {
         return [
-            // 'index' => Pages\ListDemandeDevis::route('/'),
-            // 'create' => Pages\CreateDemandeDevis::route('/create'),
-            // 'edit' => Pages\EditDemandeDevis::route('/{record}/edit'),
-            // 'view' => Pages\ViewDemandeDevis::route('/{record}'),
+            'index' => Pages\ListDemandeDevis::route('/'),
+            'create' => Pages\CreateDemandeDevis::route('/create'),
+            'edit' => Pages\EditDemandeDevis::route('/{record}/edit'),
+            'view' => Pages\ViewDemandeDevis::route('/{record}'),
         ];
     }
 
