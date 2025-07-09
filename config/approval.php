@@ -52,6 +52,12 @@ return [
     'workflows' => [
         'demande-devis-workflow' => [
             'steps' => [
+                'responsable-service' => [
+                    'label' => 'Validation responsable service',
+                    'description' => 'Validation hiérarchique du service',
+                    'approver_role' => 'responsable-service',
+                    'conditions' => ['agent_same_service'],
+                ],
                 'responsable-budget' => [
                     'label' => 'Validation budgétaire', // Added from DemandeDevis model spec
                     'description' => 'Vérification cohérence budget et enveloppe service', // Added

@@ -27,6 +27,8 @@ class User extends Authenticatable implements FilamentUser // MustVerifyEmail (o
         'password',
         'service_id',
         'is_service_responsable',
+        'first_login',
+        'password_changed_at',
         'email_verified_at', // Added for potential MustVerifyEmail
     ];
 
@@ -49,11 +51,18 @@ class User extends Authenticatable implements FilamentUser // MustVerifyEmail (o
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_service_responsable' => 'boolean',
+        'first_login' => 'boolean',
+        'password_changed_at' => 'datetime',
     ];
 
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    public function needsPasswordChange(): bool
+    {
+        return $this->first_login || is_null($this->password_changed_at);
     }
 
     /**

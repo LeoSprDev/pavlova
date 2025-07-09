@@ -27,6 +27,16 @@ class Service extends Model
         return $this->hasMany(User::class);
     }
 
+    public function agents(): HasMany
+    {
+        return $this->hasMany(User::class)->where('is_service_responsable', false);
+    }
+
+    public function responsables(): HasMany
+    {
+        return $this->hasMany(User::class)->where('is_service_responsable', true);
+    }
+
     public function budgetLignes(): HasMany
     {
         return $this->hasMany(BudgetLigne::class);
