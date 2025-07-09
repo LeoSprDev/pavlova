@@ -102,7 +102,13 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
      */
     public function approvalSteps(): array
     {
-        return [
+       return [
+            'responsable-service' => [
+                'label' => 'Validation responsable service',
+                'description' => 'Validation hiérarchique du service',
+                'role' => 'responsable-service',
+                'conditions' => ['agent_same_service'],
+            ],
             'responsable-budget' => [
                 'label' => 'Validation budgétaire',
                 'description' => 'Vérification cohérence budget et enveloppe service',
