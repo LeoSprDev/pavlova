@@ -22,6 +22,7 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
     protected $fillable = [
         'service_demandeur_id',
         'budget_ligne_id',
+        'created_by',
         'denomination',
         'reference_produit',
         'description',

@@ -27,8 +27,8 @@ class User extends Authenticatable implements FilamentUser // MustVerifyEmail (o
         'password',
         'service_id',
         'is_service_responsable',
-        'first_login',
-        'password_changed_at',
+        'force_password_change',
+        'last_password_change',
         'email_verified_at', // Added for potential MustVerifyEmail
     ];
 
@@ -51,8 +51,8 @@ class User extends Authenticatable implements FilamentUser // MustVerifyEmail (o
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_service_responsable' => 'boolean',
-        'first_login' => 'boolean',
-        'password_changed_at' => 'datetime',
+        'force_password_change' => 'boolean',
+        'last_password_change' => 'datetime',
     ];
 
     public function service(): BelongsTo
@@ -62,7 +62,20 @@ class User extends Authenticatable implements FilamentUser // MustVerifyEmail (o
 
     public function needsPasswordChange(): bool
     {
-        return $this->first_login || is_null($this->password_changed_at);
+        return $this->force_password_change === true;
+    }
+
+    public function canValidateForService($serviceId): bool
+    {
+        return $this->hasRole('responsable-service')
+            && $this->service_id === $serviceId
+            && $this->is_service_responsable === true;
+    }
+
+    public function isAgentOfService($serviceId): bool
+    {
+        return $this->hasRole('agent-service')
+            && $this->service_id === $serviceId;
     }
 
     /**
