@@ -56,6 +56,17 @@ class User extends Authenticatable implements FilamentUser // MustVerifyEmail (o
         return $this->belongsTo(Service::class);
     }
 
+    public function isResponsableOfService(Service $service): bool
+    {
+        return $this->service_id === $service->id && $this->is_service_responsable;
+    }
+
+    public function scopeAgentsOfService($query, $serviceId)
+    {
+        return $query->where('service_id', $serviceId)
+                    ->where('is_service_responsable', false);
+    }
+
     /**
      * Determine if the user can access the Filament admin panel.
      * Required by FilamentUser interface.

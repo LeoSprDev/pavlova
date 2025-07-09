@@ -47,13 +47,14 @@ class WorkflowTimeline extends Component
 
     private function canUserTakeAction(): bool
     {
-        $currentStep = $this->demande->getCurrentApprovalStep();
+        $currentStep = $this->demande->getCurrentApprovalStepKey();
         if (!$currentStep) return false;
 
         return match($currentStep) {
-            'responsable-budget' => auth()->user()->hasRole('responsable-budget'),
-            'service-achat' => auth()->user()->hasRole('service-achat'),
-            'reception-livraison' => auth()->user()->hasRole('service-demandeur') &&
+            'validation-responsable-service' => auth()->user()->hasRole('responsable-service'),
+            'validation-budget' => auth()->user()->hasRole('responsable-budget'),
+            'validation-achat' => auth()->user()->hasRole('service-achat'),
+            'controle-reception' => auth()->user()->hasRole('agent-service') &&
                                    auth()->user()->service_id === $this->demande->service_demandeur_id,
             default => false
         };
@@ -96,9 +97,10 @@ class WorkflowTimeline extends Component
     private function getStepTitle($step): string
     {
         return match($step) {
-            'responsable-budget' => 'Validation budgétaire',
-            'service-achat' => 'Validation achat',
-            'reception-livraison' => 'Contrôle réception',
+            'validation-responsable-service' => 'Validation Responsable Service',
+            'validation-budget' => 'Validation Budget',
+            'validation-achat' => 'Validation Achat',
+            'controle-reception' => 'Contrôle Réception',
             default => ucfirst($step)
         };
     }
@@ -108,7 +110,7 @@ class WorkflowTimeline extends Component
         return view('livewire.workflow-timeline', [
             'timelineEvents' => $this->getTimelineEvents(),
             'canUserAct' => $this->canUserTakeAction(),
-            'currentStep' => $this->demande->getCurrentApprovalStep()
+            'currentStep' => $this->demande->getCurrentApprovalStepKey()
         ]);
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\ProcessApproval as Approval; // Alias for clarity
 use App\Traits\Approvable;
@@ -77,7 +78,7 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
      * If a custom name is needed, ensure it doesn't conflict.
      * The prompt uses 'approvalsHistory'.
      */
-    public function approvalsHistory(): HasMany
+    public function approvalsHistory(): MorphMany
     {
         // The Approvable trait should provide an 'approvals()' method.
         // If you need a differently named relationship or specific filtering:
@@ -107,6 +108,32 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
      * Get the steps for the approval workflow.
      * This is used by the Approvable trait.
      */
+    public function approvalSteps(): array
+    {
+        return [
+            'validation-responsable-service' => [
+                'label' => 'Validation Responsable Service',
+                'role' => 'responsable-service',
+                'description' => 'Validation par le responsable du service demandeur'
+            ],
+            'validation-budget' => [
+                'label' => 'Validation Budget',
+                'role' => 'responsable-budget',
+                'description' => 'Validation budgétaire de la demande'
+            ],
+            'validation-achat' => [
+                'label' => 'Validation Achat',
+                'role' => 'service-achat',
+                'description' => 'Validation par le service achat'
+            ],
+            'controle-reception' => [
+                'label' => 'Contrôle Réception',
+                'role' => 'agent-service',
+                'description' => 'Contrôle de réception par l\'agent du service'
+            ]
+        ];
+    }
+
     /**
      * Check if the model can be approved for the current step.
      * This is used by the Approvable trait.
@@ -115,33 +142,34 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
     {
         $currentStepKey = $this->getCurrentApprovalStepKey();
 
-        // Apply budget validation logic only for the budget validation step
-        if ($currentStepKey === 'validation-budget') {
-            if (!$this->budgetLigne) {
-                // This condition should ideally be checked before even reaching budget validation,
-                // e.g. during form submission or by the Responsable Service.
-                // Adding a log here if it happens at this stage.
-                Log::warning("DemandeDevis ID {$this->id}: Tentative de validation budgétaire sans budgetLigne associée.");
-                return false;
-            }
-            if ($this->budgetLigne->valide_budget !== 'oui') {
-                 Log::info("DemandeDevis ID {$this->id}: Tentative de validation sur ligne budgétaire non validée ('{$this->budgetLigne->valide_budget}').");
-                return false;
-            }
-            if (!$this->budgetLigne->canAcceptNewDemande((float) $this->prix_total_ttc)) {
-                Log::info("DemandeDevis ID {$this->id}: Tentative de validation, mais budget insuffisant sur la ligne {$this->budgetLigne->id}.");
-                return false;
-            }
-            return true; // All budget checks passed for this step
+        switch($currentStepKey) {
+            case 'validation-responsable-service':
+                return $this->serviceDemandeur->responsables()->exists();
+            
+            case 'validation-budget':
+                if (!$this->budgetLigne) {
+                    Log::warning("DemandeDevis ID {$this->id}: Tentative de validation budgétaire sans budgetLigne associée.");
+                    return false;
+                }
+                if ($this->budgetLigne->valide_budget !== 'oui') {
+                    Log::info("DemandeDevis ID {$this->id}: Tentative de validation sur ligne budgétaire non validée ('{$this->budgetLigne->valide_budget}').");
+                    return false;
+                }
+                if (!$this->budgetLigne->canAcceptNewDemande((float) $this->prix_total_ttc)) {
+                    Log::info("DemandeDevis ID {$this->id}: Tentative de validation, mais budget insuffisant sur la ligne {$this->budgetLigne->id}.");
+                    return false;
+                }
+                return true;
+            
+            case 'validation-achat':
+                return !empty($this->fournisseur_propose);
+            
+            case 'controle-reception':
+                return true;
+            
+            default:
+                return true;
         }
-
-        // For other steps, default to true, assuming specific logic will be handled by:
-        // 1. The role assignment itself (user must have the role to approve the step)
-        // 2. Future specific ConditionCheckers if defined in config/approval.php
-        // 3. Policies or canBeApprovedBy(User $user, string $stepName) if more granular checks are needed.
-        // For example, the 'validation-responsable-service' step might have a condition
-        // to ensure the approver is indeed the head of the requester's service.
-        return true;
     }
 
     // Media Library Configuration
@@ -226,12 +254,11 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
     // Helper to get current approval step label if needed by Filament/Livewire
     public function getCurrentApprovalStepLabel(): ?string
     {
-        $currentStep = $this->getCurrentApprovalStep(); // Method from Approvable trait (RingleSoft)
-
-        if ($currentStep) {
-            // The getCurrentApprovalStep() method from the trait should return an object
-            // that has a 'label' property, as defined in config/approval.php
-            return $currentStep->label ?? $this->getCurrentApprovalStepKey();
+        $currentStepKey = $this->getCurrentApprovalStepKey();
+        
+        if ($currentStepKey) {
+            $steps = $this->approvalSteps();
+            return $steps[$currentStepKey]['label'] ?? $currentStepKey;
         }
 
         if ($this->isFullyApproved()) {
@@ -242,14 +269,6 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
             return 'Rejeté';
         }
 
-        // Initial state before workflow starts, or if no step is found (should not happen in normal flow)
-        // Could also check if $this->isSubmitted() is false if the package supports that directly.
-        if (!$this->getApprovalStatusColumn() || $this->getApprovalStatusColumn() === $this->getPendingStatus()) {
-             // Assuming 'pending' is the initial status before first approval step.
-             // Or, if you have a specific status like 'draft' or 'new' before submission to workflow.
-            return 'Nouvelle Demande'; // Or appropriate initial status label
-        }
-
-        return 'N/A'; // Fallback for any other undefined state
+        return 'Nouvelle Demande';
     }
 }

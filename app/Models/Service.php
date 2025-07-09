@@ -16,10 +16,12 @@ class Service extends Model
         'responsable_email',
         'budget_annuel_alloue',
         'description',
+        'actif',
     ];
 
     protected $casts = [
         'budget_annuel_alloue' => 'decimal:2',
+        'actif' => 'boolean',
     ];
 
     public function users(): HasMany
@@ -40,5 +42,20 @@ class Service extends Model
     // Helper to get the main manager of the service
     public function responsable() {
         return $this->users()->where('is_service_responsable', true)->first();
+    }
+
+    public function agents(): HasMany
+    {
+        return $this->hasMany(User::class)->where('is_service_responsable', false);
+    }
+
+    public function responsables(): HasMany
+    {
+        return $this->hasMany(User::class)->where('is_service_responsable', true);
+    }
+
+    public function scopeActifs($query)
+    {
+        return $query->where('actif', true);
     }
 }
