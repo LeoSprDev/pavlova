@@ -33,6 +33,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
 // use RingleSoft\LaravelProcessApproval\Filament\Actions\ApproveAction;
 // use RingleSoft\LaravelProcessApproval\Filament\Actions\RejectAction;
 // use RingleSoft\LaravelProcessApproval\Filament\Actions\SubmitAction;
@@ -207,140 +208,86 @@ class DemandeDevisResource extends Resource
 
     public static function table(Table $table): Table
     {
-        /** @var User $currentUser */
         $currentUser = Auth::user();
 
         return $table
             ->columns([
                 TextColumn::make('denomination')
+                    ->label('Produit/Service')
                     ->searchable()
-                    ->sortable()
-                    ->limit(35)
-                    ->tooltip(fn (DemandeDevis $record) => $record->denomination),
+                    ->sortable(),
                 TextColumn::make('serviceDemandeur.nom')
                     ->label('Service')
                     ->searchable()
-                    ->sortable()
-                    ->visible(fn() => !$currentUser->hasRole('service-demandeur')),
-                TextColumn::make('budgetLigne.intitule')
-                    ->label('Ligne Budgétaire')
-                    ->searchable()
-                    ->sortable()
-                    ->limit(25)
-                    ->tooltip(fn (DemandeDevis $record) => $record->budgetLigne?->intitule),
+                    ->sortable(),
                 TextColumn::make('prix_total_ttc')
                     ->label('Montant TTC')
                     ->money('EUR')
                     ->sortable(),
-                TextColumn::make('date_besoin')
-                    ->date('d/m/Y')
-                    ->sortable(),
                 BadgeColumn::make('statut')
-                    ->formatStateUsing(fn (string $state): string => ucfirst(str_replace('_', ' ', $state)))
+                    ->label('Statut')
                     ->colors([
-                        'warning' => 'pending',
+                        'secondary' => 'pending',
+                        'warning' => 'approved_service',
                         'info' => 'approved_budget',
-                        'primary' => 'approved_achat',
-                        'success' => 'delivered',
+                        'success' => 'approved_achat',
                         'danger' => 'rejected',
-                        'gray' => 'cancelled',
                     ])
-                    ->sortable(),
-                TextColumn::make('current_step_label') // Using accessor from model
-                    ->label('Étape Actuelle')
-                    ->badge()
-                    ->getStateUsing(fn (DemandeDevis $record) => $record->getCurrentApprovalStepLabel())
-                    ->color(fn (DemandeDevis $record): string => match ($record->getCurrentApprovalStepKey()) {
-                        'responsable-budget' => 'warning',
-                        'service-achat' => 'info',
-                        'reception-livraison' => 'primary',
-                        default => ($record->isFullyApproved() ? 'success' : ($record->isRejected() ? 'danger' : 'gray')),
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'En attente responsable service',
+                        'approved_service' => 'Validé par service',
+                        'approved_budget' => 'Validé par budget',
+                        'approved_achat' => 'Validé par achat',
+                        'rejected' => 'Rejeté',
+                        default => $state,
                     }),
+                TextColumn::make('created_at')
+                    ->label('Créé le')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('service_demandeur_id')
-                    ->label('Service Demandeur')
-                    ->relationship('serviceDemandeur', 'nom')
-                    ->searchable()
-                    ->preload()
-                    ->visible(fn() => $currentUser->hasAnyRole(['responsable-budget', 'service-achat'])),
-                SelectFilter::make('budget_ligne_id')
-                    ->label('Ligne Budgétaire')
-                    ->relationship('budgetLigne', 'intitule')
-                    ->searchable()
-                    ->preload(),
                 SelectFilter::make('statut')
-                    ->options(fn() => collect(DemandeDevis::select('statut')->distinct()->pluck('statut','statut'))->map(fn($s) => ucfirst(str_replace('_',' ',$s))) ),
+                    ->options([
+                        'pending' => 'En attente responsable service',
+                        'approved_service' => 'Validé par service',
+                        'approved_budget' => 'Validé par budget',
+                        'approved_achat' => 'Validé par achat',
+                        'rejected' => 'Rejeté',
+                    ]),
                 Filter::make('mes_demandes')
-                    ->label('Mes Demandes (Service)')
-                    ->query(fn (Builder $query): Builder => $query->where('service_demandeur_id', $currentUser->service_id))
-                    ->visible(fn() => $currentUser->hasRole('service-demandeur')),
-                Filter::make('a_valider_budget')
-                    ->label('À Valider (Budget)')
-                    ->query(fn (Builder $query): Builder => $query->where('current_step', 'responsable-budget')->where('statut', 'pending'))
-                    ->visible(fn() => $currentUser->hasRole('responsable-budget')),
-                Filter::make('a_valider_achat')
-                    ->label('À Valider (Achat)')
-                    ->query(fn (Builder $query): Builder => $query->where('current_step', 'service-achat')->where('statut', 'approved_budget'))
-                    ->visible(fn() => $currentUser->hasRole('service-achat')),
+                    ->label('Mes Demandes')
+                    ->query(fn (Builder $query): Builder =>
+                        $query->where('created_by', auth()->id()))
+                    ->visible(fn() => $currentUser->hasRole('agent-service')),
+                Filter::make('mon_service')
+                    ->label('Mon Service')
+                    ->query(fn (Builder $query): Builder =>
+                        $query->where('service_demandeur_id', auth()->user()->service_id))
+                    ->visible(fn() => $currentUser->hasRole('responsable-service')),
             ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make()
-                    ->visible(fn (DemandeDevis $record) => $record->statut === 'pending' && $currentUser->id === $record->user_id), // Example, policy should handle this
-                ActionGroup::make([
-                    // SubmitAction::make()->visible(fn(DemandeDevis $record) => $record->canBeSubmitted()), // From laravel-process-approval
-                    // ApproveAction::make()->visible(fn(DemandeDevis $record) => $record->canBeApprovedBy(Auth::user())), // From laravel-process-approval
-                    // RejectAction::make()->visible(fn(DemandeDevis $record) => $record->canBeRejectedBy(Auth::user())),   // From laravel-process-approval
-                    Action::make('approve')
-                        ->label('Approuver')
-                        ->icon('heroicon-o-check-circle')
-                        ->color('success')
-                        ->requiresConfirmation()
-                        ->action(function(DemandeDevis $record) {
-                            $record->approve(Auth::user(), 'Approuvé via Filament');
-                        })
-                        ->visible(fn(DemandeDevis $record) => $record->statut === 'pending' && $currentUser->hasRole('responsable-budget')),
-                    Action::make('reject')
-                        ->label('Rejeter')
-                        ->icon('heroicon-o-x-circle')
-                        ->color('danger')
-                        ->requiresConfirmation()
-                        ->action(function(DemandeDevis $record) {
-                            $record->reject(Auth::user(), 'Rejeté via Filament');
-                        })
-                        ->visible(fn(DemandeDevis $record) => $record->statut === 'pending' && $currentUser->hasAnyRole(['responsable-budget', 'service-achat'])),
-                    // Custom action to mark as 'delivered' if needed outside of workflow, or trigger reception step
-                    Action::make('mark_delivered')
-                        ->label('Confirmer Livraison (Manuelle)')
-                        ->icon('heroicon-o-check-circle')
-                        ->color('success')
-                        ->requiresConfirmation()
-                        ->action(function(DemandeDevis $record){
-                            // This should ideally trigger the 'reception-livraison' step
-                            // For now, direct status update if permitted
-                            if ($record->statut === 'approved_achat' && $record->commande()->exists()) {
-                                // $record->statut = 'delivered'; // This is too simple, workflow should handle it.
-                                // $record->save();
-                                // Attempt to trigger the next step if it's reception
-                                if ($record->getCurrentApprovalStepKey() === 'reception-livraison') {
-                                     // $record->approve(Auth::user(), "Livraison confirmée manuellement.");
-                                     // Or, if 'on_delivery_upload' is the trigger, this action might simulate that.
-                                }
-                                // This manual action needs careful consideration with the workflow.
-                            }
-                        })
-                        ->visible(fn(DemandeDevis $record) => $record->statut === 'approved_achat' && $currentUser->hasRole('service-demandeur') && $currentUser->service_id === $record->service_demandeur_id),
-                    DeleteAction::make()->visible(fn(DemandeDevis $record) => Auth::user()->can('delete', $record)),
-                ]),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make()
-                    ->visible(fn() => Auth::user()->can('delete_any', DemandeDevis::class)),
-                // Add bulk approval/rejection if needed, using similar logic to BudgetLigneResource
-            ])
-            ->defaultSort('created_at', 'desc')
-            ->striped();
+                    ->visible(fn (DemandeDevis $record): bool =>
+                        $record->statut === 'pending' && $record->created_by === auth()->id()),
+                Action::make('approve_service')
+                    ->label('Valider (Service)')
+                    ->icon('heroicon-o-check')
+                    ->color('success')
+                    ->action(function (DemandeDevis $record) {
+                        $record->update(['statut' => 'approved_service']);
+                        Notification::make()
+                            ->title('Demande validée par le service')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (DemandeDevis $record): bool =>
+                        $record->statut === 'pending'
+                        && auth()->user()->hasRole('responsable-service')
+                        && auth()->user()->canValidateForService($record->service_demandeur_id)),
+                // Actions pour autres niveaux...
+            ]);
     }
 
     public static function getRelations(): array
