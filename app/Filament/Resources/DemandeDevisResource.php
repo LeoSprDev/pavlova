@@ -202,7 +202,43 @@ class DemandeDevisResource extends Resource
                     ->visible(fn(?DemandeDevis $record) => $record !== null && $record->statut !== 'pending'), // Only show if not new
             ])->columnSpanFull()
             // Disable wizard steps if the record is no longer pending (for edit view)
-            ->disabled(fn(?DemandeDevis $record) => $record && $record->statut !== 'pending' && $record->statut !== 'rejected')
+            ->disabled(fn(?DemandeDevis $record) => $record && $record->statut !== 'pending' && $record->statut !== 'rejected'),
+
+            Forms\Components\Section::make('Processus Fournisseur')
+                ->schema([
+                    Forms\Components\DatePicker::make('date_envoi_demande_fournisseur')
+                        ->label('Date envoi demande au fournisseur'),
+                    Forms\Components\FileUpload::make('devis_fournisseur_recu')
+                        ->label('Devis reçu du fournisseur (OBLIGATOIRE)')
+                        ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                        ->directory('devis-fournisseurs')
+                        ->required()
+                        ->downloadable()
+                        ->openable()
+                        ->maxSize(10240)
+                        ->helperText('Upload du devis final reçu du fournisseur'),
+                    Forms\Components\DatePicker::make('date_reception_devis')
+                        ->label('Date réception devis')
+                        ->required(),
+                    Forms\Components\TextInput::make('prix_fournisseur_final')
+                        ->label('Prix final confirmé fournisseur')
+                        ->numeric()
+                        ->prefix('€')
+                        ->required()
+                        ->helperText('Prix final après négociation'),
+                    Forms\Components\Toggle::make('devis_fournisseur_valide')
+                        ->label('Devis fournisseur validé et commande passée')
+                        ->live(),
+                    Forms\Components\TextInput::make('numero_commande_fournisseur')
+                        ->label('N° commande fournisseur')
+                        ->visible(fn (Forms\Get $get) => $get('devis_fournisseur_valide'))
+                        ->required(fn (Forms\Get $get) => $get('devis_fournisseur_valide')),
+                ])
+                ->collapsed()
+                ->visible(fn (Forms\Get $get) =>
+                    auth()->user()->hasRole('service-achat') &&
+                    $get('statut') === 'approved_achat'
+                )
         ]);
     }
 

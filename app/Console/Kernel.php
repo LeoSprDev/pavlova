@@ -28,6 +28,8 @@ class Kernel extends ConsoleKernel
         // AJOUTER:
         $schedule->job(new \App\Jobs\VerificationBudgetsQuotidienne)->dailyAt('08:00');
 
+        $schedule->job(\App\Jobs\RelanceLivraisonEnRetard::class)->dailyAt('09:00');
+
         // Vérifier commandes en retard et relancer
         $schedule->call(function () {
             \App\Models\Commande::where('date_livraison_prevue', '<', now())

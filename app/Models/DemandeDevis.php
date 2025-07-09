@@ -37,6 +37,12 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
         'commentaire_validation',
         'date_validation_budget',
         'date_validation_achat',
+        'date_envoi_demande_fournisseur',
+        'date_reception_devis',
+        'prix_fournisseur_final',
+        'devis_fournisseur_valide',
+        'numero_commande_fournisseur',
+        'statut_fournisseur',
         // Process Approval columns (if any not handled by trait directly)
         'current_step',
     ];
@@ -48,6 +54,10 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
         'prix_unitaire_ht' => 'decimal:2',
         'prix_total_ttc' => 'decimal:2',
         'quantite' => 'integer',
+        'date_envoi_demande_fournisseur' => 'date',
+        'date_reception_devis' => 'date',
+        'prix_fournisseur_final' => 'decimal:2',
+        'devis_fournisseur_valide' => 'boolean',
     ];
 
     public function serviceDemandeur(): BelongsTo
@@ -63,6 +73,11 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
     public function commande(): HasOne
     {
         return $this->hasOne(Commande::class);
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**
@@ -144,14 +159,26 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
                $this->budgetLigne->valide_budget === 'oui';
     }
 
+    public function canPasserCommande(): bool
+    {
+        return $this->statut === 'approved_achat' &&
+               $this->devis_fournisseur_valide &&
+               !empty($this->prix_fournisseur_final);
+    }
+
     // Media Library Configuration
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('devis_fournisseur')
             ->acceptsMimeTypes(['application/pdf'])
             ->singleFile()
-            ->useFallbackUrl('/images/no-quote.pdf') // Ensure this path is valid in public/images
-            ->useFallbackPath(public_path('/images/no-quote.pdf')); // For local operations
+            ->useFallbackUrl('/images/no-quote.pdf')
+            ->useFallbackPath(public_path('/images/no-quote.pdf'));
+
+        $this->addMediaCollection('devis_fournisseur_recu')
+            ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
+            ->singleFile()
+            ->useFallbackUrl('/images/no-quote.pdf');
 
         $this->addMediaCollection('documents_complementaires')
             ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
