@@ -122,13 +122,6 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
                 'role' => 'service-achat',
                 'conditions' => ['supplier_valid', 'commercial_terms_ok']
             ],
-            'reception-livraison' => [
-                'label' => 'Contrôle réception',
-                'description' => 'Vérification livraison et conformité produit',
-                'role' => 'service-demandeur', // This should be the role of the user who initiated
-                                               // or is responsible for receiving in that service.
-                'auto_trigger' => 'on_delivery_upload' // Example auto trigger
-            ]
         ];
     }
     // Compatibility with prompt's naming if needed
