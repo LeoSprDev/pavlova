@@ -1,13 +1,14 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Filament\Notifications\Notification;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Livraison extends Model implements HasMedia
 {
@@ -15,21 +16,21 @@ class Livraison extends Model implements HasMedia
 
     protected $fillable = [
         'commande_id',
-        'date_livraison',
-        'statut_reception', // recue, en_attente, probleme_signalé, refusee
-        'commentaire_reception',
-        'verifie_par', // user_id
+        'date_livraison_prevue',
+        'date_livraison_reelle',
+        'statut_reception',
         'conforme',
-        'actions_requises',
-        'litige_en_cours',
-        'note_qualite',
+        'anomalies',
+        'actions_correctives',
+        'verifie_par',
+        'bon_livraison',
+        'photos_reception',
     ];
 
     protected $casts = [
-        'date_livraison' => 'date',
+        'date_livraison_prevue' => 'date',
+        'date_livraison_reelle' => 'date',
         'conforme' => 'boolean',
-        'litige_en_cours' => 'boolean',
-        'note_qualite' => 'integer',
     ];
 
     public function commande(): BelongsTo
@@ -37,71 +38,80 @@ class Livraison extends Model implements HasMedia
         return $this->belongsTo(Commande::class);
     }
 
-    public function verificateur(): BelongsTo
+    protected static function booted(): void
     {
-        return $this->belongsTo(User::class, 'verifie_par');
+        static::updating(function (Livraison $livraison) {
+            if ($livraison->isDirty('conforme') && $livraison->conforme) {
+                $livraison->updateBudgetReel();
+                $livraison->sendNotificationLivraisonConforme();
+            }
+
+            if ($livraison->isDirty('anomalies') && !empty($livraison->anomalies)) {
+                $livraison->sendAlerteAnomalies();
+            }
+
+            if ($livraison->isDirty('statut_reception') && $livraison->statut_reception === 'recu_conforme') {
+                $livraison->finaliserDemandeDevis();
+            }
+        });
     }
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('bons_livraison')
+        $this->addMediaCollection('bon_livraison')
             ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
-            // ->singleFile() // The prompt implies multiple BLs might be possible for one "Livraison" record if it represents an event
-                           // but the Filament form example shows single file. Assuming single for now.
             ->singleFile()
-            ->useFallbackUrl('/images/no-delivery.pdf') // Ensure this path is valid in public/images
-            ->useFallbackPath(public_path('/images/no-delivery.pdf'));
+            ->useFallbackUrl('/images/no-delivery.pdf');
 
         $this->addMediaCollection('photos_reception')
-            ->acceptsMimeTypes(['image/jpeg', 'image/png'])
-            ->useFallbackUrl('/images/no-photo.png')
-            ->useFallbackPath(public_path('/images/no-photo.png'));
+            ->acceptsMimeTypes(['image/jpeg', 'image/png']);
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    public function updateBudgetReel(): void
     {
-        if ($media && str_starts_with($media->mime_type, 'image/')) {
-            $this->addMediaConversion('thumbnail')
-                ->width(150)
-                ->height(150)
-                ->sharpen(10)
-                ->nonQueued(); // NonQueued for faster feedback on upload if displayed immediately
+        $demandeDevis = $this->commande->demandeDevis;
+        $budgetLigne = $demandeDevis->budgetLigne;
 
-            $this->addMediaConversion('preview')
-                ->width(500)
-                ->height(500)
-                ->nonQueued();
+        $montantReel = $demandeDevis->prix_fournisseur_final ?? $demandeDevis->prix_total_ttc;
+        $budgetLigne->increment('montant_depense_reel', $montantReel);
+
+        Log::info("Budget mis à jour automatiquement", [
+            'budget_ligne_id' => $budgetLigne->id,
+            'montant_ajoute' => $montantReel,
+            'nouveau_total' => $budgetLigne->montant_depense_reel
+        ]);
+    }
+
+    public function sendNotificationLivraisonConforme(): void
+    {
+        $demandeDevis = $this->commande->demandeDevis;
+
+        if ($demandeDevis->createdBy) {
+            Mail::to($demandeDevis->createdBy->email)
+                ->send(new \App\Mail\LivraisonConformeConfirmeeEmail($this));
         }
+
+        Notification::make()
+            ->title('✅ Livraison conforme validée')
+            ->body("Livraison {$this->id} - Budget automatiquement mis à jour : {$demandeDevis->prix_fournisseur_final}€")
+            ->success()
+            ->sendToDatabase(User::role('responsable-budget')->get());
     }
 
-    protected static function booted(): void
+    public function sendAlerteAnomalies(): void
     {
-        static::saved(function (Livraison $livraison) {
-            // Logic to update related models if necessary
-            // For example, if this livraison completes a commande and it's conforme:
-            if ($livraison->conforme && $livraison->statut_reception === 'recue') {
-                $commande = $livraison->commande;
-                if ($commande) {
-                    $commande->statut = 'livree'; // Mark commande as delivered
-                    $commande->saveQuietly(); // Avoid triggering other events if not needed
+        Notification::make()
+            ->title('⚠️ Anomalies livraison détectées')
+            ->body("Livraison {$this->id} : {$this->anomalies}")
+            ->warning()
+            ->sendToDatabase(User::role('responsable-budget')->get());
+    }
 
-                    // Update budget ligne's montant_depense_reel
-                    $demandeDevis = $commande->demandeDevis;
-                    if ($demandeDevis && $demandeDevis->statut === 'delivered') { // Assuming DemandeDevis status is also updated
-                        $budgetLigne = $demandeDevis->budgetLigne;
-                        if ($budgetLigne) {
-                            // This assumes that montant_depense_reel is the sum of all delivered items.
-                            // It might be better to recalculate based on all delivered demands for that line.
-                            // For simplicity here, if this is the only/last delivery for the demand, update.
-                            // A more robust way is to sum all related delivered DemandeDevis for the BudgetLigne.
-                            // $budgetLigne->montant_depense_reel = $budgetLigne->demandesApprouvees()->sum('prix_total_ttc');
-                            // $budgetLigne->saveQuietly();
-                            // Or, if montant_depense_reel in BudgetLigne is directly updated, this might not be needed here.
-                            // The prompt for BudgetLigne model has calculateBudgetRestant based on sum of demandesApprouvees
-                        }
-                    }
-                }
-            }
-        });
+    public function finaliserDemandeDevis(): void
+    {
+        $this->commande->demandeDevis->update([
+            'statut' => 'delivered',
+            'date_finalisation' => now()
+        ]);
     }
 }

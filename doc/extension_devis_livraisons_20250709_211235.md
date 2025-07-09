@@ -1,0 +1,7 @@
+- ✅ Étapes devis fournisseur ajoutées après validation achat
+- ✅ LivraisonResource avec upload obligatoire et sécurité stricte
+- ✅ Workflow livraisons : en_attente → reçu_conforme
+- ✅ Budget mis à jour automatiquement avec prix fournisseur final
+- ✅ Notifications emails + Filament + relances configurées
+- ✅ Tests sécurité validés
+- ✅ Workflow 6 étapes end-to-end opérationnel
