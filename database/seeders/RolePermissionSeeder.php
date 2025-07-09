@@ -31,15 +31,15 @@ class RolePermissionSeeder extends Seeder
         // Truncate tables to ensure clean slate, especially for IDs if re-running
         // Be careful with truncate in production if there's existing data not managed by seeders
         if (DB::getDriverName() === 'mysql') {
-            DB::statement('SET FOREIGN_KEY_CHECKS=0;'); // Disable foreign key checks for truncate
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         }
-        Permission::truncate();
-        Role::truncate();
-        DB::table('role_has_permissions')->truncate();
-        DB::table('model_has_roles')->truncate();
-        DB::table('model_has_permissions')->truncate();
+        DB::table('permissions')->delete();
+        DB::table('roles')->delete();
+        DB::table('role_has_permissions')->delete();
+        DB::table('model_has_roles')->delete();
+        DB::table('model_has_permissions')->delete();
         if (DB::getDriverName() === 'mysql') {
-            DB::statement('SET FOREIGN_KEY_CHECKS=1;'); // Re-enable foreign key checks
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         }
 
 

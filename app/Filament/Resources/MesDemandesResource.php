@@ -1,39 +1,58 @@
 <?php
-
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DemandeDevisResource;
-use App\Models\DemandeDevis;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use App\Models\DemandeDevis;
 use Filament\Tables;
-use Filament\Tables\Table;
+use Filament\Forms;
 use Illuminate\Database\Eloquent\Builder;
 
 class MesDemandesResource extends Resource
 {
     protected static ?string $model = DemandeDevis::class;
-    protected static ?string $navigationIcon = 'heroicon-o-document-check';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = 'Mes Demandes';
+    protected static ?string $navigationGroup = 'Agent';
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('created_by', auth()->id());
+        return parent::getEloquentQuery()
+            ->where('created_by', auth()->id());
     }
 
-    public static function canAccess(): bool
+    public static function canViewAny(): bool
     {
-        return auth()->user() && auth()->user()->hasRole(['agent-service','responsable-service']);
+        return auth()->user()->hasRole('agent-service');
     }
 
-    public static function form(Form $form): Form
+    public static function table(Tables\Table $table): Tables\Table
     {
-        return DemandeDevisResource::form($form);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return DemandeDevisResource::table($table);
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('denomination')
+                    ->label('Produit')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('prix_total_ttc')
+                    ->label('Montant TTC')
+                    ->money('EUR'),
+                Tables\Columns\BadgeColumn::make('statut')
+                    ->label('Statut')
+                    ->colors([
+                        'warning' => 'pending',
+                        'info' => 'approved_service',
+                        'primary' => 'approved_budget',
+                        'success' => 'approved_achat',
+                        'danger' => 'rejected',
+                    ]),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Créé le')
+                    ->dateTime(),
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn (DemandeDevis $record) => $record->statut === 'pending'),
+            ]);
     }
 
     public static function getPages(): array

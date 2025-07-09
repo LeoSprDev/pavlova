@@ -6,44 +6,62 @@ use Filament\Pages\Page;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Forms;
 
 class ChangePasswordPage extends Page implements HasForms
 {
     protected static ?string $navigationIcon = 'heroicon-o-key';
+    protected static ?string $slug = 'change-password';
 
     protected static string $view = 'filament.pages.change-password-page';
 
     use InteractsWithForms;
 
-    public ?string $new_password = null;
+    public $current_password = '';
+    public $new_password = '';
+    public $new_password_confirmation = '';
 
     public function mount(): void
     {
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Forms\Form $form): Forms\Form
     {
         return $form->schema([
-            TextInput::make('new_password')
-                ->label('Nouveau mot de passe')
+            Forms\Components\TextInput::make('current_password')
                 ->password()
-                ->required(),
+                ->required()
+                ->label('Mot de passe actuel'),
+            Forms\Components\TextInput::make('new_password')
+                ->password()
+                ->required()
+                ->confirmed()
+                ->minLength(8)
+                ->label('Nouveau mot de passe'),
+            Forms\Components\TextInput::make('new_password_confirmation')
+                ->password()
+                ->required()
+                ->label('Confirmer le nouveau mot de passe'),
         ]);
     }
 
     public function changePassword(): void
     {
-        $user = auth()->user();
-        $user->update([
-            'password' => Hash::make($this->new_password),
-            'first_login' => false,
-            'password_changed_at' => now(),
+        $data = $this->form->getState();
+
+        if (!Hash::check($data['current_password'], auth()->user()->password)) {
+            $this->addError('current_password', 'Mot de passe actuel incorrect.');
+            return;
+        }
+
+        auth()->user()->update([
+            'password' => Hash::make($data['new_password']),
+            'force_password_change' => false,
+            'last_password_change' => now(),
         ]);
 
-        $this->notify('success', 'Mot de passe mis à jour.');
+        $this->notify('success', 'Mot de passe changé avec succès.');
         redirect()->route('filament.admin.pages.dashboard');
     }
 }

@@ -65,18 +65,10 @@ return [
                     'conditions' => ['budget_available', 'line_validated'] // These are symbolic, logic is in canBeApproved or custom condition checkers
                 ],
                 'service-achat' => [
-                    'label' => 'Validation achat', // Added
-                    'description' => 'Analyse fournisseur et optimisation commande', // Added
+                    'label' => 'Validation achat',
+                    'description' => 'Optimisation fournisseur et commande',
                     'approver_role' => 'service-achat',
-                    'conditions' => ['supplier_valid', 'commercial_terms_ok']
                 ],
-                'reception-livraison' => [
-                    'label' => 'Contrôle réception', // Added
-                    'description' => 'Vérification livraison et conformité produit', // Added
-                    'approver_role' => 'service-demandeur', // This implies the original requester or someone in their service
-                                                           // Ensure this role has permissions to approve this step.
-                    'auto_trigger' => 'on_delivery_upload' // Symbolic, actual trigger mechanism needs implementation (e.g. event listener)
-                ]
             ]
         ]
     ],

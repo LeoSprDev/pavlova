@@ -56,18 +56,22 @@ trait Approvable
         if ($currentStepIndex === false) return;
         
         $nextStepIndex = $currentStepIndex + 1;
+        $currentStep = $steps[$currentStepIndex];
         
+        $statusMapCurrent = [
+            'responsable-service' => 'approved_service',
+            'responsable-budget' => 'approved_budget',
+            'service-achat' => 'approved_achat',
+        ];
+
+        $newStatus = $statusMapCurrent[$currentStep] ?? 'approved_budget';
+
         if ($nextStepIndex >= count($steps)) {
-            $this->update(['statut' => 'delivered', 'current_step' => null]);
+            $this->update(['statut' => $newStatus, 'current_step' => null]);
         } else {
             $nextStep = $steps[$nextStepIndex];
-            $statusMap = [
-                'responsable-budget' => 'approved_budget',
-                'service-achat' => 'approved_achat',
-                'reception-livraison' => 'delivered'
-            ];
             $this->update([
-                'statut' => $statusMap[$nextStep] ?? 'approved_budget',
+                'statut' => $newStatus,
                 'current_step' => $nextStep
             ]);
         }
@@ -75,7 +79,7 @@ trait Approvable
 
     public function getCurrentApprovalStepKey(): ?string
     {
-        return $this->current_step ?? 'responsable-budget';
+        return $this->current_step ?? 'responsable-service';
     }
 
     public function getCurrentApprovalStepLabel(): ?string
@@ -96,5 +100,4 @@ trait Approvable
     public function isRejected(): bool
     {
         return $this->statut === 'rejected';
-    }
-}
+    }}

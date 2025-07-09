@@ -36,6 +36,7 @@ return [
         Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Livewire\LivewireServiceProvider::class,
+        App\Providers\FilamentServiceProvider::class,
         Filament\FilamentServiceProvider::class,
         Filament\Forms\FormsServiceProvider::class,
         Filament\Tables\TablesServiceProvider::class,
