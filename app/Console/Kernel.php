@@ -5,6 +5,8 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\VerificationBudgetsQuotidienne;
+use App\Jobs\RelanceLivraisonEnRetard;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,11 +26,15 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->job(new VerificationBudgetsQuotidienne)->dailyAt('02:00'); // Run daily at 2 AM
-
-        // AJOUTER:
         $schedule->job(new \App\Jobs\VerificationBudgetsQuotidienne)->dailyAt('08:00');
 
-        $schedule->job(\App\Jobs\RelanceLivraisonEnRetard::class)->dailyAt('09:00');
+        // 🕘 Relances livraisons en retard - tous les jours à 9h00
+        $schedule->job(RelanceLivraisonEnRetard::class)
+            ->dailyAt('09:00')
+            ->name('relance_livraisons_retard')
+            ->withoutOverlapping()
+            ->onOneServer()
+            ->appendOutputTo(storage_path('logs/scheduler.log'));
 
         // Vérifier commandes en retard et relancer
         $schedule->call(function () {
@@ -42,6 +48,11 @@ class Kernel extends ConsoleKernel
                     }
                 });
         })->dailyAt('10:00');
+
+        // 📊 Log quotidien pour traçabilité
+        $schedule->call(function () {
+            Log::info('⏰ Scheduler actif', ['date' => now()->toDateTimeString()]);
+        })->daily();
     }
 
     /**
