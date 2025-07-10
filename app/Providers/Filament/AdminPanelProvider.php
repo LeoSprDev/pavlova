@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Providers\Filament;
 
 use Filament\Http\Middleware\Authenticate;
@@ -13,9 +12,8 @@ use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Navigation\NavigationBuilder;
 use App\Models\DemandeDevis;
-use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -30,121 +28,149 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('admin')
-            ->colors([
-                'primary' => Color::Amber,
-            ])
+            ->colors(['primary' => Color::Amber])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
             ->navigation(function () {
                 $user = auth()->user();
-                $items = [];
+                $builder = new NavigationBuilder();
 
-                $items[] = NavigationItem::make('Dashboard')
-                    ->url('/admin')
-                    ->icon('heroicon-o-home')
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'));
+                $builder->item(
+                    NavigationItem::make('Dashboard')
+                        ->url(fn (): string => route('filament.admin.pages.dashboard'))
+                        ->icon('heroicon-o-home')
+                        ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
+                );
 
-                if ($user && $user->hasRole('agent-service')) {
-                    $items[] = NavigationGroup::make('Mon Espace Agent')
-                        ->items([
-                            NavigationItem::make('Mes Demandes')
-                                ->url('/admin/mes-demandes')
-                                ->icon('heroicon-o-document-text')
-                                ->badge(fn () => DemandeDevis::where('created_by', auth()->id())
-                                    ->whereIn('statut', ['pending', 'approved_service'])->count() ?: null)
-                                ->badgeColor('info'),
-                            NavigationItem::make('Nouvelle Demande')
-                                ->url('/admin/mes-demandes/create')
-                                ->icon('heroicon-o-plus-circle')
-                                ->badge('Nouveau')
-                                ->badgeColor('success'),
-                            NavigationItem::make('Mes Livraisons')
-                                ->url('/admin/livraisons?tableFilters[mon_service][isActive]=true')
-                                ->icon('heroicon-o-truck')
-                                ->badge(fn () => \App\Models\Livraison::whereHas('commande.demandeDevis',
-                                    fn($q) => $q->where('created_by', auth()->id())
-                                        ->where('statut_reception', 'en_attente'))->count() ?: null)
-                                ->badgeColor('warning'),
-                        ]);
+                if (! $user) {
+                    return $builder;
                 }
 
-                if ($user && $user->hasRole('responsable-service')) {
-                    $items[] = NavigationGroup::make('Gestion Service')
-                        ->items([
+                if ($user->hasRole('agent-service')) {
+                    $builder->group(
+                        NavigationGroup::make('Mon Espace Agent')
+                            ->items([
+                            NavigationItem::make('Mes Demandes')
+                                ->url(fn (): string => route('filament.admin.resources.mes-demandes.index'))
+                                ->icon('heroicon-o-document-text')
+                                ->badge(
+                                    fn () => DemandeDevis::where('created_by', auth()->id())
+                                        ->whereIn('statut', ['pending', 'approved_service'])->count() ?: null,
+                                    'info'
+                                ),
+                            NavigationItem::make('Nouvelle Demande')
+                                ->url(fn (): string => route('filament.admin.resources.mes-demandes.create'))
+                                ->icon('heroicon-o-plus-circle')
+                                ->badge('Nouveau', 'success'),
+                            NavigationItem::make('Mes Livraisons')
+                                ->url(fn (): string => route('filament.admin.resources.livraisons.index', ['tableFilters[mon_service][isActive]' => 'true']))
+                                ->icon('heroicon-o-truck')
+                                ->badge(
+                                    fn () => \App\Models\Livraison::whereHas('commande.demandeDevis',
+                                        fn ($q) => $q->where('created_by', auth()->id())
+                                            ->where('statut_reception', 'en_attente')
+                                    )->count() ?: null,
+                                    'warning'
+                                ),
+                            ])
+                    );
+                }
+
+                if ($user->hasRole('responsable-service')) {
+                    $builder->group(
+                        NavigationGroup::make('Gestion Service')
+                            ->items([
                             NavigationItem::make('Demandes à Valider')
-                                ->url('/admin/demande-devis?tableFilters[statut][value]=pending&tableFilters[mon_service][isActive]=true')
+                                ->url(fn (): string => route('filament.admin.resources.demande-devis.index', [
+                                    'tableFilters[statut][value]' => 'pending',
+                                    'tableFilters[mon_service][isActive]' => 'true',
+                                ]))
                                 ->icon('heroicon-o-check-circle')
-                                ->badge(fn () => DemandeDevis::where('statut', 'pending')
-                                    ->whereHas('serviceDemandeur', fn($q) =>
-                                        $q->where('id', auth()->user()->service_id))->count() ?: null)
-                                ->badgeColor('warning'),
+                                ->badge(
+                                    fn () => DemandeDevis::where('statut', 'pending')
+                                        ->whereHas('serviceDemandeur', fn ($q) => $q->where('id', auth()->user()->service_id))->count() ?: null,
+                                    'warning'
+                                ),
                             NavigationItem::make('Budget Mon Service')
-                                ->url('/admin/budget-lignes?tableFilters[service_id][value]=' . (auth()->user()->service_id ?? ''))
+                                ->url(fn (): string => route('filament.admin.resources.budget-lignes.index', [
+                                    'tableFilters[service_id][value]' => auth()->user()->service_id ?? '',
+                                ]))
                                 ->icon('heroicon-o-currency-euro'),
                             NavigationItem::make('Mes Agents')
-                                ->url('/admin/users?tableFilters[service_id][value]=' . (auth()->user()->service_id ?? ''))
+                                ->url(fn (): string => route('filament.admin.resources.users.index', [
+                                    'tableFilters[service_id][value]' => auth()->user()->service_id ?? '',
+                                ]))
                                 ->icon('heroicon-o-user-group'),
-                        ]);
+                            ])
+                    );
                 }
 
-                if ($user && $user->hasRole('responsable-budget')) {
-                    $items[] = NavigationGroup::make('Gestion Budget')
-                        ->items([
+                if ($user->hasRole('responsable-budget')) {
+                    $builder->group(
+                        NavigationGroup::make('Gestion Budget')
+                            ->items([
                             NavigationItem::make('Demandes Budgétaires')
-                                ->url('/admin/demande-devis?tableFilters[statut][value]=approved_service')
+                                ->url(fn (): string => route('filament.admin.resources.demande-devis.index', [
+                                    'tableFilters[statut][value]' => 'approved_service',
+                                ]))
                                 ->icon('heroicon-o-banknotes')
-                                ->badge(fn () => DemandeDevis::where('statut', 'approved_service')->count() ?: null)
-                                ->badgeColor('info'),
+                                ->badge(
+                                    fn () => DemandeDevis::where('statut', 'approved_service')->count() ?: null,
+                                    'info'
+                                ),
                             NavigationItem::make('Budget Global')
-                                ->url('/admin/budget-lignes')
+                                ->url(fn (): string => route('filament.admin.resources.budget-lignes.index'))
                                 ->icon('heroicon-o-chart-bar'),
                             NavigationItem::make('Analytics Budget')
                                 ->url('/admin/analytics/budget')
                                 ->icon('heroicon-o-presentation-chart-line'),
-                        ]);
+                            ])
+                    );
                 }
 
-                if ($user && $user->hasRole('service-achat')) {
-                    $items[] = NavigationGroup::make('Gestion Achat')
-                        ->items([
+                if ($user->hasRole('service-achat')) {
+                    $builder->group(
+                        NavigationGroup::make('Gestion Achat')
+                            ->items([
                             NavigationItem::make('Demandes Achat')
-                                ->url('/admin/demande-devis?tableFilters[statut][value]=approved_budget')
+                                ->url(fn (): string => route('filament.admin.resources.demande-devis.index', [
+                                    'tableFilters[statut][value]' => 'approved_budget',
+                                ]))
                                 ->icon('heroicon-o-shopping-cart')
-                                ->badge(fn () => DemandeDevis::where('statut', 'approved_budget')->count() ?: null)
-                                ->badgeColor('success'),
+                                ->badge(
+                                    fn () => DemandeDevis::where('statut', 'approved_budget')->count() ?: null,
+                                    'success'
+                                ),
                             NavigationItem::make('Commandes')
-                                ->url('/admin/commandes')
+                                ->url(fn (): string => route('filament.admin.resources.commandes.index'))
                                 ->icon('heroicon-o-document-check'),
-                            NavigationItem::make('Fournisseurs')
-                                ->url('/admin/fournisseurs')
-                                ->icon('heroicon-o-building-office'),
-                        ]);
+                            ])
+                    );
                 }
 
-                if ($user && $user->hasRole('admin')) {
-                    $items[] = NavigationGroup::make('Administration')
-                        ->items([
+                if ($user->hasRole('administrateur')) {
+                    $builder->group(
+                        NavigationGroup::make('Administration')
+                            ->items([
                             NavigationItem::make('Utilisateurs')
-                                ->url('/admin/users')
+                                ->url(fn (): string => route('filament.admin.resources.users.index'))
                                 ->icon('heroicon-o-users'),
-                            NavigationItem::make('Services')
-                                ->url('/admin/services')
-                                ->icon('heroicon-o-building-office-2'),
                             NavigationItem::make('Configuration')
                                 ->url('/admin/settings')
                                 ->icon('heroicon-o-cog-6-tooth'),
-                        ]);
+                            ])
+                    );
                 }
 
-                return $items;
+                return $builder;
             })
             ->middleware([
                 EncryptCookies::class,
@@ -163,3 +189,4 @@ class AdminPanelProvider extends PanelProvider
             ]);
     }
 }
+
