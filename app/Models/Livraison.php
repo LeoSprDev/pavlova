@@ -23,7 +23,7 @@ class Livraison extends Model implements HasMedia
         'anomalies',
         'actions_correctives',
         'verifie_par',
-        'bon_livraison',
+        'bons_livraison',
         'photos_reception',
     ];
 
@@ -70,7 +70,7 @@ class Livraison extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('bon_livraison')
+        $this->addMediaCollection('bons_livraison')
             ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
             ->singleFile()
             ->useFallbackUrl('/images/no-delivery.pdf');

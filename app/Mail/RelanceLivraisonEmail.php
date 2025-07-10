@@ -1,21 +1,40 @@
 <?php
 namespace App\Mail;
 
-use App\Models\Livraison;
+use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
+use App\Models\Livraison;
 
 class RelanceLivraisonEmail extends Mailable
 {
-    public function __construct(public Livraison $livraison) {}
+    use Queueable, SerializesModels;
 
-    public function build()
+    public function __construct(
+        public Livraison $livraison
+    ) {}
+
+    public function envelope(): Envelope
     {
-        return $this->subject('📦 Relance : Confirmation réception livraison requise')
-            ->view('emails.relance-livraison')
-            ->with([
+        return new Envelope(
+            subject: '📦 Relance : Confirmation réception livraison requise',
+        );
+    }
+
+    public function content(): Content
+    {
+        $demande = $this->livraison->commande->demandeDevis;
+        $jours_retard = now()->diffInDays($this->livraison->date_livraison_prevue);
+
+        return new Content(
+            view: 'emails.relance-livraison',
+            with: [
                 'livraison' => $this->livraison,
-                'demande' => $this->livraison->commande->demandeDevis,
-                'jours_retard' => now()->diffInDays($this->livraison->date_livraison_prevue)
-            ]);
+                'demande' => $demande,
+                'jours_retard' => $jours_retard,
+            ]
+        );
     }
 }

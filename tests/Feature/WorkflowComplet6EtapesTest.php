@@ -53,8 +53,9 @@ describe('Workflow Complet 6 Étapes', function () {
             'conforme' => false
         ]);
 
-        $livraison->addMediaFromString('Bon de livraison PDF content')
-            ->usingName('bon_livraison.pdf')
+        $pdfBase64 = base64_encode('%PDF-1.4 test');
+        $livraison->addMediaFromBase64($pdfBase64, 'application/pdf')
+            ->usingFileName('bon_livraison.pdf')
             ->toMediaCollection('bons_livraison');
 
         $livraison->update([

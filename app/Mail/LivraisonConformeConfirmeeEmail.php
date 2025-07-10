@@ -1,23 +1,40 @@
 <?php
 namespace App\Mail;
 
-use App\Models\Livraison;
+use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
+use App\Models\Livraison;
 
 class LivraisonConformeConfirmeeEmail extends Mailable
 {
-    public function __construct(public Livraison $livraison) {}
+    use Queueable, SerializesModels;
 
-    public function build()
+    public function __construct(
+        public Livraison $livraison
+    ) {}
+
+    public function envelope(): Envelope
     {
-        $demandeDevis = $this->livraison->commande->demandeDevis;
+        return new Envelope(
+            subject: '✅ Livraison conforme validée - Budget mis à jour',
+        );
+    }
 
-        return $this->subject('✅ Livraison conforme validée - Budget mis à jour')
-            ->view('emails.livraison-conforme-confirmee')
-            ->with([
+    public function content(): Content
+    {
+        $demande = $this->livraison->commande->demandeDevis;
+        $montant_reel = $demande->prix_fournisseur_final ?? $demande->prix_total_ttc;
+
+        return new Content(
+            view: 'emails.livraison-conforme-confirmee',
+            with: [
                 'livraison' => $this->livraison,
-                'demande' => $demandeDevis,
-                'montant_reel' => $demandeDevis->prix_fournisseur_final ?? $demandeDevis->prix_total_ttc
-            ]);
+                'demande' => $demande,
+                'montant_reel' => $montant_reel,
+            ]
+        );
     }
 }
