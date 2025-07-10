@@ -45,7 +45,7 @@ describe('Livraison Security & Workflow', function () {
             'date_livraison_prevue' => now(),
             'statut_reception' => 'recu_conforme',
         ], [
-            'bon_livraison' => 'required'
+            'bons_livraison' => 'required'
         ]);
 
         expect($validator->fails())->toBeTrue();

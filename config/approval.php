@@ -9,13 +9,15 @@ return [
                     'approver_role' => 'responsable-service',
                     'conditions' => ['agent_same_service'],
                     'auto_approve' => false,
+                    'timeout_days' => 3,
                 ],
                 'responsable-budget' => [
                     'label' => 'Validation budgétaire',
                     'description' => 'Vérification cohérence budget global',
                     'approver_role' => 'responsable-budget',
-                    'conditions' => [],
+                    'conditions' => ['budget_available'],
                     'auto_approve' => false,
+                    'timeout_days' => 5,
                 ],
                 'service-achat' => [
                     'label' => 'Validation achat',
@@ -23,8 +25,21 @@ return [
                     'approver_role' => 'service-achat',
                     'conditions' => [],
                     'auto_approve' => false,
+                    'timeout_days' => 7,
                 ],
             ],
         ],
+    ],
+
+    'notifications' => [
+        'email' => true,
+        'database' => true,
+        'slack' => false,
+    ],
+
+    'escalation' => [
+        'enabled' => true,
+        'timeout_action' => 'notify_admin',
+        'admin_roles' => ['admin', 'responsable-budget'],
     ],
 ];

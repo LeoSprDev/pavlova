@@ -34,7 +34,7 @@ class LivraisonResource extends Resource
 
             Forms\Components\Section::make('📋 Documents OBLIGATOIRES')
                 ->schema([
-                    Forms\Components\FileUpload::make('bon_livraison')
+                    Forms\Components\FileUpload::make('bons_livraison')
                         ->label('Bon de livraison signé (OBLIGATOIRE)')
                         ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
                         ->required()

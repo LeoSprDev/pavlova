@@ -1,0 +1,7 @@
+- Navigation Filament dynamique par rôles corrigée
+- Classes Mail et templates HTML créés
+- Automatisations du modèle Livraison implémentées
+- Migrations workflow finales exécutées
+- Configuration workflow complète dans config/approval.php
+- Vue Blade changement de mot de passe améliorée
+- Tests de navigation et workflow ajoutés

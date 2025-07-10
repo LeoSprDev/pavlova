@@ -30,6 +30,6 @@ class LivraisonPolicy
     {
         return $this->update($user, $livraison) &&
                $livraison->statut_reception !== 'recu_conforme' &&
-               !empty($livraison->bon_livraison);
+               $livraison->getMedia('bons_livraison')->isNotEmpty();
     }
 }
