@@ -101,3 +101,4 @@ trait Approvable
     {
         return $this->statut === 'rejected';
     }}
+
