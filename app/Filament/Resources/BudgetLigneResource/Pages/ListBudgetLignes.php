@@ -4,6 +4,8 @@ namespace App\Filament\Resources\BudgetLigneResource\Pages;
 
 use App\Filament\Resources\BudgetLigneResource;
 use Filament\Actions;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\BudgetCompletExport;
 use Filament\Resources\Pages\ListRecords;
 use App\Filament\Widgets\BudgetGlobalStatsWidget; // Example, if you create such a widget
 use App\Filament\Widgets\ServiceBudgetStatsWidget; // Example for service demandeur
@@ -17,6 +19,10 @@ class ListBudgetLignes extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Actions\Action::make('export_excel')
+                ->label('Export Excel')
+                ->icon('heroicon-o-document-arrow-down')
+                ->action(fn() => Excel::download(new BudgetCompletExport(), 'budget.xlsx')),
         ];
     }
 
