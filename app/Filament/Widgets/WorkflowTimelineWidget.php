@@ -38,4 +38,17 @@ class WorkflowTimelineWidget extends Widget
             ->limit(15)
             ->get();
     }
+
+    public function getWorkflowProgress(string $statut): int
+    {
+        return match ($statut) {
+            'pending_manager' => 20,
+            'pending_direction' => 40,
+            'pending_achat' => 60,
+            'ordered' => 80,
+            'pending_delivery' => 90,
+            'delivered_confirmed' => 100,
+            default => 10,
+        };
+    }
 }
