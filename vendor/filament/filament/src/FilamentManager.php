@@ -458,8 +458,12 @@ class FilamentManager
         return $this->getCurrentPanel()->getTheme();
     }
 
-    public function getUserAvatarUrl(Model | Authenticatable $user): string
+    public function getUserAvatarUrl(Model | Authenticatable | null $user): string
     {
+        if (! $user) {
+            return 'https://ui-avatars.com/api/?name=' . urlencode('User');
+        }
+
         if ($user instanceof HasAvatar) {
             $avatar = $user->getFilamentAvatarUrl();
         } else {
@@ -497,8 +501,12 @@ class FilamentManager
         return $this->getCurrentPanel()->getUserMenuItems();
     }
 
-    public function getUserName(Model | Authenticatable $user): string
+    public function getUserName(Model | Authenticatable | null $user): string
     {
+        if (! $user) {
+            return 'Utilisateur';
+        }
+
         if ($user instanceof HasName) {
             return $user->getFilamentName();
         }

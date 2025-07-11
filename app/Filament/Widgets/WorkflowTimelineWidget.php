@@ -14,6 +14,10 @@ class WorkflowTimelineWidget extends Widget
     {
         $user = Auth::user();
 
+        if (! $user) {
+            return collect();
+        }
+
         if ($user->hasRole('agent-service')) {
             return DemandeDevis::where('service_demandeur_id', $user->service_id)
                 ->whereIn('statut', ['pending_manager', 'pending_direction', 'pending_achat'])

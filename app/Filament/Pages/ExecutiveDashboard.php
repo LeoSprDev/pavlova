@@ -18,7 +18,9 @@ class ExecutiveDashboard extends Page
 
     public static function canAccess(): bool
     {
-        return auth()->user()->hasRole('responsable-direction');
+        $user = auth()->user();
+
+        return $user?->hasRole('responsable-direction') ?? false;
     }
 
     protected function getHeaderWidgets(): array

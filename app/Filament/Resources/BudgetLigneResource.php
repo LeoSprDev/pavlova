@@ -138,7 +138,7 @@ class BudgetLigneResource extends Resource
                         ->rows(3)
                         ->columnSpanFull()
                         ->placeholder('Commentaire responsable budget')
-                        ->visible(fn (): bool => $currentUser->hasRole('responsable-budget')),
+                        ->visible(fn (): bool => optional($currentUser)->hasRole('responsable-budget')),
                     Select::make('valide_budget')
                         ->options([
                             'non' => 'Non validé',
@@ -147,10 +147,10 @@ class BudgetLigneResource extends Resource
                         ])
                         ->default('non')
                         ->native(false)
-                        ->visible(fn (): bool => $currentUser->hasRole('responsable-budget')),
+                        ->visible(fn (): bool => optional($currentUser)->hasRole('responsable-budget')),
                 ])
                 // This section itself is visible to RB or SD
-                ->visible(fn (): bool => $currentUser->hasAnyRole(['responsable-budget', 'service-demandeur']))
+                ->visible(fn (): bool => optional($currentUser)->hasAnyRole(['responsable-budget', 'service-demandeur']) ?? false)
         ]);
     }
 
@@ -230,7 +230,7 @@ class BudgetLigneResource extends Resource
                     ->relationship('service', 'nom')
                     ->searchable()
                     ->preload()
-                    ->visible(fn (): bool => $currentUser->hasAnyRole(['responsable-budget', 'service-achat'])),
+                    ->visible(fn (): bool => optional($currentUser)->hasAnyRole(['responsable-budget', 'service-achat']) ?? false),
                 SelectFilter::make('nature')
                     ->options([
                         'abonnement' => 'Abonnement annuel',

@@ -137,9 +137,9 @@ class LivraisonResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        if (auth()->user()->hasRole('agent-service') || auth()->user()->hasRole('service-demandeur')) {
+        if (optional(auth()->user())->hasRole('agent-service') || optional(auth()->user())->hasRole('service-demandeur')) {
             return $query->whereHas('commande.demandeDevis', function ($q) {
-                $q->where('service_demandeur_id', auth()->user()->service_id);
+                $q->where('service_demandeur_id', optional(auth()->user())->service_id);
             });
         }
 

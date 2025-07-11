@@ -5,11 +5,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
-use Filament\Navigation\NavigationGroup;
-use Filament\Navigation\NavigationBuilder;
-use App\Filament\Resources\DemandeDevisResource;
-use App\Filament\Resources\BudgetLigneResource;
-use App\Filament\Resources\CommandeResource;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Pages;
@@ -44,24 +39,14 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\BudgetStatsWidget::class,
                 \App\Filament\Widgets\WorkflowTimelineWidget::class,
             ])
-            ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
-                return $builder->groups([
-                    NavigationGroup::make('Workflow')
-                        ->items([
-                            NavigationItem::make('Demandes')
-                                ->icon('heroicon-o-document-text')
-                                ->url(fn (): string => DemandeDevisResource::getUrl('index'))
-                                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.demande-devis.*')),
-                            NavigationItem::make('Budgets')
-                                ->icon('heroicon-o-banknotes')
-                                ->url(fn (): string => BudgetLigneResource::getUrl('index'))
-                                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.budget-lignes.*')),
-                            NavigationItem::make('Commandes')
-                                ->icon('heroicon-o-shopping-cart')
-                                ->url(fn (): string => CommandeResource::getUrl('index'))
-                                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.commandes.*')),
-                        ])
-                ]);
-            });
+            ->topbar(false)
+            ->navigationItems([
+                NavigationItem::make('Dashboard')
+                    ->url('/admin')
+                    ->icon('heroicon-o-home'),
+                NavigationItem::make('Demandes')
+                    ->url('/admin/demande-devis')
+                    ->icon('heroicon-o-document'),
+            ]);
     }
 }
