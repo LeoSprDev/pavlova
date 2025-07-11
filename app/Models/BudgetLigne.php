@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
+use App\Models\User;
 
 class BudgetLigne extends Model
 {
@@ -58,6 +60,11 @@ class BudgetLigne extends Model
                    ->where('statut', 'delivered');
     }
 
+    public function engagements(): HasMany
+    {
+        return $this->hasMany(BudgetEngagement::class);
+    }
+
     protected static function booted(): void
     {
         // Global scope for data partitioning based on user role
@@ -84,6 +91,12 @@ class BudgetLigne extends Model
         return $this->montant_ht_prevu > 0 ? ((float)$depense / (float)$this->montant_ht_prevu) * 100 : 0;
     }
 
+    public function getTauxUtilisation(): float
+    {
+        $utilise = $this->montant_depense_reel + $this->montant_engage;
+        return $this->montant_ht_prevu > 0 ? ($utilise / $this->montant_ht_prevu) * 100 : 0;
+    }
+
     public function isDepassementBudget(): bool
     {
         return $this->calculateBudgetRestant() < 0;
@@ -91,7 +104,7 @@ class BudgetLigne extends Model
 
     public function canAcceptNewDemande(float $montant): bool
     {
-        return $this->calculateBudgetRestant() >= $montant;
+        return $this->verifierDisponibilite($montant);
     }
 
     // SCOPES
@@ -116,5 +129,66 @@ class BudgetLigne extends Model
     public function getMontantDepenseReelCalculatedAttribute(): float
     {
         return (float) $this->demandesApprouvees()->sum('prix_total_ttc');
+    }
+
+    public function engagerBudget(float $montant, DemandeDevis $demande): bool
+    {
+        if (! $this->verifierDisponibilite($montant)) {
+            return false;
+        }
+
+        $this->increment('montant_engage', $montant);
+
+        $this->engagements()->create([
+            'demande_devis_id' => $demande->id,
+            'montant' => $montant,
+            'date_engagement' => now(),
+            'statut' => 'engage',
+        ]);
+
+        if ($this->getTauxUtilisation() > 90) {
+            $this->alerteSeuil();
+        }
+
+        return true;
+    }
+
+    public function desengagerBudget(DemandeDevis $demande): bool
+    {
+        $engagement = $this->engagements()
+            ->where('demande_devis_id', $demande->id)
+            ->where('statut', 'engage')
+            ->first();
+
+        if ($engagement) {
+            $this->decrement('montant_engage', $engagement->montant);
+            $engagement->update([
+                'statut' => 'degage',
+                'date_degagement' => now(),
+            ]);
+            return true;
+        }
+
+        return false;
+    }
+
+    public function verifierDisponibilite(float $montant): bool
+    {
+        $disponible = $this->montant_ht_prevu - $this->montant_depense_reel - $this->montant_engage;
+        return $disponible >= $montant;
+    }
+
+    private function alerteSeuil(): void
+    {
+        $responsables = User::role('responsable-budget')->get();
+
+        foreach ($responsables as $user) {
+            Notification::make()
+                ->title('Seuil budget critique')
+                ->body("Budget {$this->intitule} : " . round($this->getTauxUtilisation(), 1) . '% utilisé')
+                ->warning()
+                ->persistent()
+                ->sendToDatabase($user);
+        }
     }
 }
