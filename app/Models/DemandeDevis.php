@@ -337,6 +337,21 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
         // Implementation placeholder for rejection notifications
     }
 
+    public function getCurrentApprovalStepKey(): ?string
+    {
+        return $this->current_step;
+    }
+
+    public function isFullyApproved(): bool
+    {
+        return $this->statut === 'delivered_confirmed';
+    }
+
+    public function isRejected(): bool
+    {
+        return str_contains($this->statut, 'rejected');
+    }
+
 
     // Helper to get current approval step label if needed by Filament/Livewire
     public function getCurrentApprovalStepLabel(): ?string
