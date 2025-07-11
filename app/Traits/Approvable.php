@@ -152,4 +152,28 @@ trait Approvable
             ->success()
             ->sendToDatabase([$this->createdBy]);
     }
+    public function determineWorkflowPath(): array
+    {
+        $steps = [
+            'pending_manager' => 'pending_direction',
+            'pending_direction' => 'pending_achat',
+            'pending_achat' => 'pending_delivery',
+            'pending_delivery' => 'reception-livraison',
+        ];
+
+        if ($this->prix_total_ttc < 1000) {
+            unset($steps['pending_direction']);
+        }
+
+        if ($this->serviceDemandeur && $this->serviceDemandeur->code === 'IT' && $this->urgence === 'critique') {
+            return [
+                'pending_manager' => 'pending_achat',
+                'pending_achat' => 'pending_delivery',
+                'pending_delivery' => 'reception-livraison',
+            ];
+        }
+
+        return $steps;
+    }
+
 }

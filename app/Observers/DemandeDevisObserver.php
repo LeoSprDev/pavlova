@@ -22,6 +22,7 @@ class DemandeDevisObserver
 
             if ($newStatus === 'delivered_confirmed') {
                 $this->finalizeBudgetConsumption($demande);
+                $this->finaliserWorkflowComplet($demande);
             }
         }
     }
@@ -88,6 +89,28 @@ class DemandeDevisObserver
         }
     }
 
+
+    private function finaliserWorkflowComplet(DemandeDevis $demande): void
+    {
+        \DB::transaction(function () use ($demande) {
+            $demande->budgetLigne?->finaliserBudgetReel($demande->prix_total_ttc);
+            $this->archiverWorkflow($demande);
+            $this->envoyerNotificationsFinales($demande);
+        });
+    }
+
+    private function archiverWorkflow(DemandeDevis $demande): void
+    {
+        // Placeholder for archive logic
+    }
+
+    private function envoyerNotificationsFinales(DemandeDevis $demande): void
+    {
+        Notification::make()
+            ->title('Workflow terminé')
+            ->body("Demande #{$demande->id} finalisée")
+            ->sendToDatabase([$demande->createdBy]);
+    }
     private function getNotificationRecipients(DemandeDevis $demande, string $status): array
     {
         return User::role($demande->approvalSteps()[$status]['role'] ?? 'responsable-budget')->get()->all();
