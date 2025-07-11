@@ -51,7 +51,7 @@ class BudgetStatsWidget extends BaseWidget
             Stat::make('Budget Disponible', number_format($budgetDisponible, 2) . ' €')
                 ->description('Budget restant utilisable')
                 ->color($budgetDisponible > 0 ? 'success' : 'danger')
-                ->chart([7,3,4,5,6,3,5,3])
+                ->chart($this->getTendanceConsommation($serviceId))
                 ->icon('heroicon-o-banknotes'),
 
             Stat::make('Budget Engagé', number_format($budgetEngage, 2) . ' €')
@@ -67,9 +67,27 @@ class BudgetStatsWidget extends BaseWidget
             Stat::make('Taux Utilisation', round($tauxUtilisation, 1) . '%')
                 ->description('Budget utilisé + engagé')
                 ->color($tauxUtilisation > 90 ? 'danger' : ($tauxUtilisation > 75 ? 'warning' : 'success'))
-                ->chart([3,5,7,8,9,10,8])
+                ->chart($this->getTendanceConsommation($serviceId))
                 ->icon('heroicon-o-chart-pie'),
         ];
+    }
+
+    /**
+     * Retourne la tendance de consommation sur les 12 derniers mois pour un service.
+     */
+    private function getTendanceConsommation(int $serviceId): array
+    {
+        $data = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $consommation = DemandeDevis::where('service_demandeur_id', $serviceId)
+                ->where('statut', 'delivered_confirmed')
+                ->whereYear('date_finalisation', $date->year)
+                ->whereMonth('date_finalisation', $date->month)
+                ->sum('prix_fournisseur_final');
+            $data[] = $consommation;
+        }
+        return $data;
     }
 
     private function getGlobalStats(): array
