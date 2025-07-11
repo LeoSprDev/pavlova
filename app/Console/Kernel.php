@@ -16,7 +16,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        \App\Console\Commands\WorkflowEscaladeCommand::class,
+        \App\Console\Commands\WorkflowMaintenanceCommand::class,
     ];
 
     /**
@@ -35,6 +36,7 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->onOneServer()
             ->appendOutputTo(storage_path('logs/scheduler.log'));
+        $schedule->command('workflow:escalade')->dailyAt('11:00');
 
         // Vérifier commandes en retard et relancer
         $schedule->call(function () {
