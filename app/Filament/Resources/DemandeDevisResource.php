@@ -194,7 +194,7 @@ class DemandeDevisResource extends Resource
                             ->label('Commentaire de validation/rejet')
                             ->rows(3)
                             ->columnSpanFull()
-                            ->visible(fn(): bool => $currentUser->hasAnyRole(['responsable-budget', 'service-achat'])),
+                            ->visible(fn(): bool => optional($currentUser)->hasAnyRole(['responsable-budget', 'service-achat']) ?? false),
                         // Placeholder for approval actions, actual actions are in the table/view page
                         Placeholder::make('approval_status_info')
                             ->label('Statut Actuel')
@@ -238,7 +238,7 @@ class DemandeDevisResource extends Resource
                 ])
                 ->collapsed()
                 ->visible(fn (Forms\Get $get) =>
-                    auth()->user()->hasRole('service-achat') &&
+                    optional(auth()->user())->hasRole('service-achat') &&
                     $get('statut') === 'approved_achat'
                 )
         ]);
@@ -322,8 +322,8 @@ class DemandeDevisResource extends Resource
                     })
                     ->visible(fn (DemandeDevis $record): bool =>
                         $record->statut === 'pending'
-                        && auth()->user()->hasRole('responsable-service')
-                        && auth()->user()->canValidateForService($record->service_demandeur_id)),
+                        && optional(auth()->user())->hasRole('responsable-service')
+                        && optional(auth()->user())->canValidateForService($record->service_demandeur_id)),
                 // Actions pour autres niveaux...
             ])
             ->bulkActions([

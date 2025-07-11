@@ -8,10 +8,20 @@
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
+    .filament-tables-table {
+        overflow-x: auto;
+    }
     .filament-stats-grid {
         grid-template-columns: 1fr !important;
     }
+    .filament-widgets-widget {
+        margin: 0.5rem 0;
+    }
     .fi-modal-content {
         max-width: 95vw !important;
+    }
+    .filament-modal {
+        margin: 1rem;
+        max-width: calc(100vw - 2rem);
     }
 }

@@ -71,7 +71,7 @@ class ListBudgetLignes extends ListRecords
                         Notification::make()->title('Erreur Export')->body($e->getMessage())->danger()->send();
                     }
                 })
-                ->visible(fn()=> auth()->user()->hasAnyRole(['responsable-budget','responsable-direction','service-achat']))
+                ->visible(fn()=> optional(auth()->user())->hasAnyRole(['responsable-budget','responsable-direction','service-achat']) ?? false)
         ];
     }
 

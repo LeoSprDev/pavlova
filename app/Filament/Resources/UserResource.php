@@ -44,13 +44,13 @@ class UserResource extends Resource
                         'responsable-service' => 'Responsable Service',
                         'agent-service' => 'Agent Service',
                     ])
-                    ->visible(fn () => auth()->user()->hasRole('administrateur')),
+                    ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
                 Forms\Components\Toggle::make('is_service_responsable')
                     ->label('Responsable de service')
-                    ->visible(fn () => auth()->user()->hasRole('administrateur')),
+                    ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
                 Forms\Components\Toggle::make('force_password_change')
                     ->label('Forcer changement mot de passe')
-                    ->visible(fn () => auth()->user()->hasRole('administrateur')),
+                    ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
             ]);
     }
 

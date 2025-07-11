@@ -11,8 +11,13 @@ class NotificationCenterWidget extends Widget
 
     public function getNotifications()
     {
-        return Auth::user()
-            ->notifications()
+        $user = Auth::user();
+
+        if (! $user) {
+            return collect();
+        }
+
+        return $user->notifications()
             ->whereNull('read_at')
             ->latest()
             ->limit(5)
@@ -21,12 +26,20 @@ class NotificationCenterWidget extends Widget
 
     public function getNotificationBadgeCount(): int
     {
-        return Auth::user()->unreadNotifications()->count();
+        $user = Auth::user();
+
+        return $user ? $user->unreadNotifications()->count() : 0;
     }
 
     public function markAsRead(string $notificationId): void
     {
-        Auth::user()->notifications()->where('id', $notificationId)->update(['read_at' => now()]);
+        $user = Auth::user();
+
+        if (! $user) {
+            return;
+        }
+
+        $user->notifications()->where('id', $notificationId)->update(['read_at' => now()]);
         $this->dispatch('notification-marked-read');
     }
 }

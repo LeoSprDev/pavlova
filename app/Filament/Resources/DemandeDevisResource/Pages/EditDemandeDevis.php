@@ -35,7 +35,7 @@ class EditDemandeDevis extends EditRecord
 
         // Prevent editing key fields if the demand is past 'pending' or 'rejected' state, unless by specific roles
         if (!in_array($record->statut, ['pending', 'rejected'])) {
-            if (!$currentUser->hasAnyRole(['responsable-budget', 'administrateur'])) { // Example roles that can edit more fields
+            if (!optional($currentUser)->hasAnyRole(['responsable-budget', 'administrateur'])) { // Example roles that can edit more fields
                 // For service demandeur, restrict changes if not pending/rejected
                 $allowedFields = ['commentaire_validation']; // Allow only comments for example
                 foreach ($data as $key => $value) {

@@ -24,7 +24,7 @@ class MesDemandesResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->hasRole('agent-service');
+        return optional(auth()->user())->hasRole('agent-service');
     }
 
     public static function form(Form $form): Form
@@ -32,7 +32,7 @@ class MesDemandesResource extends Resource
         return $form->schema([
             Forms\Components\Select::make('service_demandeur_id')
                 ->relationship('serviceDemandeur', 'nom')
-                ->default(auth()->user()->service_id)
+                ->default(optional(auth()->user())->service_id)
                 ->disabled()
                 ->required(),
 

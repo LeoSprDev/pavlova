@@ -21,11 +21,11 @@ class BudgetStatsWidget extends BaseWidget
                 return $this->getDefaultStats();
             }
 
-            if ($user->hasRole('manager-service')) {
-                return $this->getServiceStats();
-            }
+            $stats = $user->hasRole('manager-service')
+                ? $this->getServiceStats()
+                : $this->getGlobalStats();
 
-            return $this->getGlobalStats();
+            return count($stats) > 0 ? $stats : $this->getDefaultStats();
         } catch (\Exception $e) {
             \Log::warning('BudgetStatsWidget error: ' . $e->getMessage());
             return $this->getDefaultStats();
