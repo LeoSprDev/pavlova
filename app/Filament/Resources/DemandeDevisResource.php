@@ -32,6 +32,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Support\Facades\Auth;
 use Filament\Notifications\Notification;
 // use RingleSoft\LaravelProcessApproval\Filament\Actions\ApproveAction;
@@ -323,6 +324,38 @@ class DemandeDevisResource extends Resource
                         && auth()->user()->hasRole('responsable-service')
                         && auth()->user()->canValidateForService($record->service_demandeur_id)),
                 // Actions pour autres niveaux...
+            ])
+            ->bulkActions([
+                BulkAction::make('approveSelected')
+                    ->label('Approuver Sélection')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->action(function (\Illuminate\Support\Collection $records) {
+                        foreach ($records as $demande) {
+                            $demande->approve(auth()->user(), 'Approbation groupée');
+                        }
+
+                        Notification::make()
+                            ->title($records->count() . ' demandes approuvées')
+                            ->success()
+                            ->send();
+                    }),
+
+                BulkAction::make('rejectSelected')
+                    ->label('Rejeter Sélection')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->form([
+                        Textarea::make('comment')
+                            ->label('Motif du rejet')
+                            ->required(),
+                    ])
+                    ->action(function (\Illuminate\Support\Collection $records, array $data) {
+                        foreach ($records as $demande) {
+                            $demande->reject(auth()->user(), $data['comment']);
+                        }
+                    })
             ]);
     }
 
