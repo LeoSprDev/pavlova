@@ -4,7 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\{Log, Mail};
+use Illuminate\Support\Facades\{DB, Log, Mail};
 use App\Models\User;
 use Filament\Notifications\Notification;
 use Spatie\MediaLibrary\HasMedia;
@@ -87,13 +87,29 @@ class Livraison extends Model implements HasMedia
             ->sharpen(10);
     }
 
+    public function markAsConforme(User $user): void
+    {
+        DB::transaction(function () use ($user) {
+            $this->update([
+                'statut_reception' => 'conforme',
+                'conforme' => true,
+                'verifie_par' => $user->id,
+                'date_verification' => now(),
+            ]);
+
+            $this->updateBudgetAvecPrixFinal();
+            $this->finaliserDemandeDevis();
+            $this->envoyerNotificationsFinales();
+        });
+    }
+
     public function finaliserLivraisonComplete(): void
     {
         Log::info("🏁 Finalisation livraison complète", ['livraison_id' => $this->id]);
 
         try {
             // 1. Mise à jour budget automatique avec prix fournisseur final
-            $this->updateBudgetAvecPrixFournisseur();
+            $this->updateBudgetAvecPrixFinal();
 
             // 2. Finaliser statut demande de devis
             $this->finaliserDemandeDevis();
@@ -110,7 +126,7 @@ class Livraison extends Model implements HasMedia
         }
     }
 
-    public function updateBudgetAvecPrixFournisseur(): void
+    private function updateBudgetAvecPrixFinal(): void
     {
         $demandeDevis = $this->commande->demandeDevis;
         $budgetLigne = $demandeDevis->budgetLigne;
@@ -118,13 +134,11 @@ class Livraison extends Model implements HasMedia
         // 💰 Utiliser prix fournisseur final ou prix initial
         $montantReel = $demandeDevis->prix_fournisseur_final ?? $demandeDevis->prix_total_ttc;
 
-        // ✅ Mise à jour atomique budget
-        $ancienMontant = $budgetLigne->montant_depense_reel;
+        $budgetLigne->decrement('montant_engage', $demandeDevis->prix_total_ttc);
         $budgetLigne->increment('montant_depense_reel', $montantReel);
 
         Log::info("💰 Budget mis à jour automatiquement", [
             'budget_ligne_id' => $budgetLigne->id,
-            'ancien_montant' => $ancienMontant,
             'montant_ajoute' => $montantReel,
             'nouveau_total' => $budgetLigne->fresh()->montant_depense_reel,
             'livraison_id' => $this->id
