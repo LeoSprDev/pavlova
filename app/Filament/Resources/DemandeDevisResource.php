@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
@@ -376,6 +377,11 @@ class DemandeDevisResource extends Resource
             'edit' => Pages\EditDemandeDevis::route('/{record}/edit'),
             'view' => Pages\ViewDemandeDevis::route('/{record}'),
         ];
+    }
+
+    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    {
+        return route(static::getRouteBaseName(panel: $panel).'.'.$name, $parameters, $isAbsolute);
     }
 
     public static function getEloquentQuery(): Builder

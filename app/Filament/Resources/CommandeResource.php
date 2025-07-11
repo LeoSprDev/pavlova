@@ -8,6 +8,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class CommandeResource extends Resource
 {
@@ -130,5 +131,10 @@ class CommandeResource extends Resource
             'view' => Pages\ViewCommande::route('/{record}'),
             'edit' => Pages\EditCommande::route('/{record}/edit'),
         ];
+    }
+
+    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    {
+        return route(static::getRouteBaseName(panel: $panel).'.'.$name, $parameters, $isAbsolute);
     }
 }
