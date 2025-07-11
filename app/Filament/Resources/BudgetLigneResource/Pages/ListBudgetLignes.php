@@ -6,6 +6,9 @@ use App\Filament\Resources\BudgetLigneResource;
 use Filament\Actions;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\BudgetCompletExport;
+use App\Services\ExecutivePDFExport;
+use Filament\Forms\Components\{DatePicker, Select, Toggle, Section, Grid};
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use App\Filament\Widgets\BudgetGlobalStatsWidget; // Example, if you create such a widget
 use App\Filament\Widgets\ServiceBudgetStatsWidget; // Example for service demandeur
@@ -19,10 +22,56 @@ class ListBudgetLignes extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-            Actions\Action::make('export_excel')
-                ->label('Export Excel')
+            Actions\Action::make('export_budget_revolutionnaire')
+                ->label('📊 Export Révolutionnaire')
                 ->icon('heroicon-o-document-arrow-down')
-                ->action(fn() => Excel::download(new BudgetCompletExport(), 'budget.xlsx')),
+                ->color('success')
+                ->form([
+                    Section::make('Configuration Export')->schema([
+                        Grid::make(2)->schema([
+                            Select::make('format')->label('Format')
+                                ->options(['excel' => 'Excel', 'pdf' => 'PDF'])
+                                ->default('excel'),
+                            Select::make('periode')->label('Période')
+                                ->options([
+                                    'mois_courant' => 'Mois Courant',
+                                    'trimestre_courant' => 'Trimestre Courant',
+                                    'annee_courante' => 'Année Courante',
+                                    'personnalise' => 'Personnalisée',
+                                ])->default('annee_courante')->reactive(),
+                        ]),
+                        Grid::make(2)->schema([
+                            DatePicker::make('date_debut')->visible(fn($get)=>$get('periode')==='personnalise'),
+                            DatePicker::make('date_fin')->visible(fn($get)=>$get('periode')==='personnalise'),
+                        ]),
+                        Grid::make(2)->schema([
+                            Toggle::make('inclure_workflow')->label('Workflow')->default(true),
+                            Toggle::make('inclure_fournisseurs')->label('Fournisseurs')->default(true),
+                        ]),
+                    ])
+                ])
+                ->action(function(array $data){
+                    $user = auth()->user();
+                    $options = [
+                        'inclure_workflow' => $data['inclure_workflow'] ?? true,
+                        'inclure_fournisseurs' => $data['inclure_fournisseurs'] ?? true,
+                        'periode' => $data['periode'] ?? 'annee_courante',
+                        'date_debut' => $data['date_debut'] ?? null,
+                        'date_fin' => $data['date_fin'] ?? null,
+                    ];
+                    $filename = 'budget_export_' . now()->format('Y-m-d_H-i');
+                    try {
+                        if ($data['format'] === 'pdf') {
+                            return response()->streamDownload(function() use ($user,$options){
+                                echo app(ExecutivePDFExport::class)->generate($user,$options);
+                            }, $filename.'.pdf');
+                        }
+                        return Excel::download(new BudgetCompletExport($user,$options), $filename.'.xlsx');
+                    } catch (\Exception $e) {
+                        Notification::make()->title('Erreur Export')->body($e->getMessage())->danger()->send();
+                    }
+                })
+                ->visible(fn()=> auth()->user()->hasAnyRole(['responsable-budget','responsable-direction','service-achat']))
         ];
     }
 
