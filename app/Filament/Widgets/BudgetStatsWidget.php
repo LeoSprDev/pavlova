@@ -11,19 +11,38 @@ use Illuminate\Support\Facades\Auth;
 class BudgetStatsWidget extends BaseWidget
 {
     protected static ?int $sort = 1;
+
     protected function getStats(): array
     {
-        $user = Auth::user();
+        try {
+            $user = Auth::user();
 
-        if ($user->hasRole('agent-service') || $user->hasRole('manager-service')) {
-            return $this->getServiceStats($user->service_id);
+            if (Service::count() === 0) {
+                return $this->getDefaultStats();
+            }
+
+            if ($user->hasRole('agent-service') || $user->hasRole('manager-service')) {
+                return $this->getServiceStats($user->service_id);
+            }
+
+            if ($user->hasRole('responsable-direction') || $user->hasRole('service-budget')) {
+                return $this->getGlobalStats();
+            }
+
+            return $this->getAchatStats();
+        } catch (\Exception $e) {
+            \Log::error('BudgetStatsWidget Error: ' . $e->getMessage());
+            return $this->getDefaultStats();
         }
+    }
 
-        if ($user->hasRole('responsable-direction') || $user->hasRole('service-budget')) {
-            return $this->getGlobalStats();
-        }
-
-        return $this->getAchatStats();
+    private function getDefaultStats(): array
+    {
+        return [
+            Stat::make('Données indisponibles', 'N/A')
+                ->color('gray')
+                ->icon('heroicon-o-exclamation-triangle'),
+        ];
     }
 
     private function getServiceStats($serviceId): array
