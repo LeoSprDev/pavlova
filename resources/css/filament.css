@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom responsive fixes */
+@media (max-width: 768px) {
+    .fi-ta-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .filament-stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .fi-modal-content {
+        max-width: 95vw !important;
+    }
+}
