@@ -6,6 +6,10 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationBuilder;
+use App\Filament\Resources\DemandeDevisResource;
+use App\Filament\Resources\BudgetLigneResource;
+use App\Filament\Resources\CommandeResource;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Pages;
@@ -40,56 +44,24 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\BudgetStatsWidget::class,
                 \App\Filament\Widgets\WorkflowTimelineWidget::class,
             ])
-            ->navigation(function () {
-                $user = Auth::user();
-                if (!$user) return [];
-
-                $items = [];
-
-                // Dashboard pour tous (URL sûre)
-                $items[] = NavigationItem::make('Dashboard')
-                    ->url('/admin')
-                    ->icon('heroicon-o-home')
-                    ->sort(1);
-
-                // Navigation basique par rôle avec URLs sûres
-                if ($user->hasAnyRole(['agent-service', 'service-demandeur'])) {
-                    $items[] = NavigationGroup::make('Mon Espace')
+            ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+                return $builder->groups([
+                    NavigationGroup::make('Workflow')
                         ->items([
-                            NavigationItem::make('Mes Demandes')
-                                ->url('/admin/demande-devis')
-                                ->icon('heroicon-o-document-text'),
-                            NavigationItem::make('Nouvelle Demande')
-                                ->url('/admin/demande-devis/create')
-                                ->icon('heroicon-o-plus-circle'),
-                        ])
-                        ->sort(2);
-                }
-
-                if ($user->hasAnyRole(['responsable-budget', 'admin'])) {
-                    $items[] = NavigationGroup::make('Budget')
-                        ->items([
-                            NavigationItem::make('Budget Lignes')
-                                ->url('/admin/budget-lignes')
-                                ->icon('heroicon-o-banknotes'),
-                            NavigationItem::make('Demandes à Valider')
-                                ->url('/admin/demande-devis')
-                                ->icon('heroicon-o-check-circle'),
-                        ])
-                        ->sort(3);
-                }
-
-                if ($user->hasAnyRole(['service-achat', 'admin'])) {
-                    $items[] = NavigationGroup::make('Achats')
-                        ->items([
+                            NavigationItem::make('Demandes')
+                                ->icon('heroicon-o-document-text')
+                                ->url(fn (): string => DemandeDevisResource::getUrl('index'))
+                                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.demande-devis.*')),
+                            NavigationItem::make('Budgets')
+                                ->icon('heroicon-o-banknotes')
+                                ->url(fn (): string => BudgetLigneResource::getUrl('index'))
+                                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.budget-lignes.*')),
                             NavigationItem::make('Commandes')
-                                ->url('/admin/commandes')
-                                ->icon('heroicon-o-shopping-cart'),
+                                ->icon('heroicon-o-shopping-cart')
+                                ->url(fn (): string => CommandeResource::getUrl('index'))
+                                ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.commandes.*')),
                         ])
-                        ->sort(4);
-                }
-
-                return $items;
+                ]);
             });
     }
 }

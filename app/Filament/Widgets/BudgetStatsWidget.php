@@ -17,21 +17,17 @@ class BudgetStatsWidget extends BaseWidget
         try {
             $user = Auth::user();
 
-            if (Service::count() === 0) {
+            if (! $user) {
                 return $this->getDefaultStats();
             }
 
-            if ($user->hasRole('agent-service') || $user->hasRole('manager-service')) {
-                return $this->getServiceStats($user->service_id);
+            if ($user->hasRole('manager-service')) {
+                return $this->getServiceStats();
             }
 
-            if ($user->hasRole('responsable-direction') || $user->hasRole('service-budget')) {
-                return $this->getGlobalStats();
-            }
-
-            return $this->getAchatStats();
+            return $this->getGlobalStats();
         } catch (\Exception $e) {
-            \Log::error('BudgetStatsWidget Error: ' . $e->getMessage());
+            \Log::warning('BudgetStatsWidget error: ' . $e->getMessage());
             return $this->getDefaultStats();
         }
     }
@@ -39,25 +35,40 @@ class BudgetStatsWidget extends BaseWidget
     private function getDefaultStats(): array
     {
         return [
-            Stat::make('Données indisponibles', 'N/A')
-                ->color('gray')
-                ->icon('heroicon-o-exclamation-triangle'),
+            Stat::make('Budget Disponible', '0 €')
+                ->description('Données en cours de chargement')
+                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                ->color('secondary'),
+            Stat::make('Demandes en Cours', '0')
+                ->description('Aucune demande active')
+                ->color('warning'),
+            Stat::make('Taux Utilisation', '0%')
+                ->description('Budget non utilisé')
+                ->color('success'),
+            Stat::make('Délai Moyen', '- jours')
+                ->description('Pas de données historiques')
+                ->color('secondary'),
         ];
     }
 
-    private function getServiceStats($serviceId): array
+    private function getServiceStats(?int $serviceId = null): array
     {
-        $budgetTotal = BudgetLigne::where('service_id', $serviceId)
-            ->where('valide_budget', 'oui')
-            ->sum('montant_ht_prevu');
+        $serviceId = $serviceId ?? optional(Auth::user())->service_id;
+        if (! $serviceId) {
+            return $this->getDefaultStats();
+        }
+
+        $budgets = BudgetLigne::where('service_id', $serviceId)
+            ->where('valide_budget', 'oui');
+        $budgetTotal = $budgets->sum('montant_ht_prevu') ?: 0;
 
         $budgetConsomme = DemandeDevis::where('service_demandeur_id', $serviceId)
             ->where('statut', 'delivered_confirmed')
-            ->sum('prix_total_ttc');
+            ->sum('prix_total_ttc') ?: 0;
 
         $budgetEngage = DemandeDevis::where('service_demandeur_id', $serviceId)
             ->whereIn('statut', ['ordered', 'pending_delivery'])
-            ->sum('prix_total_ttc');
+            ->sum('prix_total_ttc') ?: 0;
 
         $demandesEnCours = DemandeDevis::where('service_demandeur_id', $serviceId)
             ->whereIn('statut', ['pending_manager', 'pending_direction', 'pending_achat'])
@@ -126,7 +137,7 @@ class BudgetStatsWidget extends BaseWidget
 
     private function getGlobalStats(): array
     {
-        $budgetTotalOrg = BudgetLigne::where('valide_budget', 'oui')->sum('montant_ht_prevu');
+        $budgetTotalOrg = BudgetLigne::where('valide_budget', 'oui')->sum('montant_ht_prevu') ?: 0;
         $demandesAValider = DemandeDevis::whereIn('statut', ['pending_manager', 'pending_direction'])->count();
         $depassements = BudgetLigne::whereRaw('montant_depense_reel > montant_ht_prevu')->count();
         $servicesActifs = Service::where('actif', true)->count();
