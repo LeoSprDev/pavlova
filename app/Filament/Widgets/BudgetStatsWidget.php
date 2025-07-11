@@ -69,6 +69,16 @@ class BudgetStatsWidget extends BaseWidget
                 ->color($tauxUtilisation > 90 ? 'danger' : ($tauxUtilisation > 75 ? 'warning' : 'success'))
                 ->chart($this->getTendanceConsommation($serviceId))
                 ->icon('heroicon-o-chart-pie'),
+
+            Stat::make('Délai Moyen', $this->getDelaiMoyenValidation($serviceId) . ' jours')
+                ->description('Temps moyen validation')
+                ->color('info')
+                ->icon('heroicon-o-clock'),
+
+            Stat::make('Taux Approbation', $this->getTauxApprobation($serviceId) . '%')
+                ->description('% demandes approuvées')
+                ->color('success')
+                ->icon('heroicon-o-check-circle'),
         ];
     }
 
@@ -143,5 +153,23 @@ class BudgetStatsWidget extends BaseWidget
                 ->color($retards > 0 ? 'danger' : 'success')
                 ->icon('heroicon-o-clock'),
         ];
+    }
+
+    private function getDelaiMoyenValidation($serviceId): int
+    {
+        return DemandeDevis::where('service_demandeur_id', $serviceId)
+            ->where('statut', 'delivered_confirmed')
+            ->selectRaw('AVG(DATEDIFF(updated_at, created_at)) as avg_days')
+            ->value('avg_days') ?? 0;
+    }
+
+    private function getTauxApprobation($serviceId): int
+    {
+        $total = DemandeDevis::where('service_demandeur_id', $serviceId)->count();
+        $approuves = DemandeDevis::where('service_demandeur_id', $serviceId)
+            ->whereIn('statut', ['delivered_confirmed', 'ordered'])
+            ->count();
+
+        return $total > 0 ? round(($approuves / $total) * 100) : 0;
     }
 }

@@ -18,11 +18,13 @@ class ProcessApproval extends Model
         'step',
         'status',
         'comment',
+        'approved_at',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'approved_at' => 'datetime',
     ];
 
     public function approvable(): MorphTo
