@@ -79,6 +79,14 @@ class Livraison extends Model implements HasMedia
             ->acceptsMimeTypes(['image/jpeg', 'image/png']);
     }
 
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumbnail')
+            ->width(150)
+            ->height(150)
+            ->sharpen(10);
+    }
+
     public function finaliserLivraisonComplete(): void
     {
         Log::info("🏁 Finalisation livraison complète", ['livraison_id' => $this->id]);
