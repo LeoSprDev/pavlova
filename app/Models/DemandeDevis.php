@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\User;
+use App\Models\Commande;
 use App\Models\ProcessApproval as Approval; // Alias for clarity
 use App\Traits\Approvable;
 use App\Contracts\Approvable as ApprovableContract; // Corrected Contract name
@@ -169,32 +171,38 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
     // Media Library Configuration
     public function registerMediaCollections(): void
     {
+        $this->addMediaCollection('devis_initial')
+            ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
+            ->singleFile()
+            ->useFallbackUrl('/images/no-document.pdf');
+
         $this->addMediaCollection('devis_fournisseur')
+            ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
+            ->singleFile()
+            ->useFallbackUrl('/images/no-supplier-doc.pdf');
+
+        $this->addMediaCollection('bons_commande')
             ->acceptsMimeTypes(['application/pdf'])
             ->singleFile()
-            ->useFallbackUrl('/images/no-quote.pdf')
-            ->useFallbackPath(public_path('/images/no-quote.pdf'));
-
-        $this->addMediaCollection('devis_fournisseur_recu')
-            ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
-            ->singleFile()
-            ->useFallbackUrl('/images/no-quote.pdf');
-
-        $this->addMediaCollection('documents_complementaires')
-            ->acceptsMimeTypes(['application/pdf', 'image/jpeg', 'image/png'])
-            ->useFallbackUrl('/images/no-document.png')
-            ->useFallbackPath(public_path('/images/no-document.png'));
+            ->useFallbackUrl('/images/no-order.pdf');
     }
 
     // Optional: Media Conversions (if not already handled globally or if specific conversions are needed)
     public function registerMediaConversions(Media $media = null): void
     {
-        if ($media && str_starts_with($media->mime_type, 'image/')) {
-            $this->addMediaConversion('thumbnail')
-              ->width(150)
-              ->height(150)
-              ->sharpen(10);
-        }
+        $this->addMediaConversion('thumbnail')
+            ->width(300)
+            ->height(200)
+            ->optimize()
+            ->quality(90)
+            ->nonQueued();
+
+        $this->addMediaConversion('preview')
+            ->width(800)
+            ->height(600)
+            ->optimize()
+            ->quality(95)
+            ->nonQueued();
     }
 
 
@@ -218,6 +226,115 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
         // 'approved_budget' status implies it's waiting for 'service-achat'
         return $query->where('statut', 'approved_budget')
                      ->where('current_step', 'service-achat'); // If current_step is tracked
+    }
+
+    public function approve(User $user, string $comment = ''): bool
+    {
+        $currentStep = $this->getCurrentApprovalStepKey();
+
+        if ($user->hasRole('manager-service') && $currentStep === 'pending_manager') {
+            $this->update([
+                'statut' => 'approved_manager',
+                'current_step' => 'pending_direction',
+                'commentaire_manager' => $comment,
+                'approved_manager_at' => now(),
+                'approved_manager_by' => $user->id,
+            ]);
+            $this->notifyNextLevel('direction');
+            return true;
+        }
+
+        if ($user->hasRole('responsable-direction') && $currentStep === 'pending_direction') {
+            if (! $this->checkBudgetDisponible()) {
+                throw new \Exception('Budget insuffisant pour cette demande');
+            }
+
+            $this->update([
+                'statut' => 'approved_direction',
+                'current_step' => 'pending_achat',
+                'commentaire_direction' => $comment,
+                'approved_direction_at' => now(),
+                'approved_direction_by' => $user->id,
+            ]);
+            $this->budgetLigne->increment('montant_engage', $this->prix_total_ttc);
+            $this->notifyNextLevel('achat');
+            return true;
+        }
+
+        if ($user->hasRole('service-achat') && $currentStep === 'pending_achat') {
+            $this->createCommande($user, $comment);
+
+            $this->update([
+                'statut' => 'ordered',
+                'current_step' => 'pending_delivery',
+                'commentaire_achat' => $comment,
+                'ordered_at' => now(),
+                'ordered_by' => $user->id,
+            ]);
+            $this->notifyNextLevel('delivery');
+            return true;
+        }
+
+        return false;
+    }
+
+    public function reject(User $user, string $reason): bool
+    {
+        $currentStep = $this->getCurrentApprovalStepKey();
+
+        $this->update([
+            'statut' => 'rejected_by_' . $user->getRoleNames()->first(),
+            'current_step' => $this->getPreviousStep($currentStep),
+            'commentaire_rejet' => $reason,
+            'rejected_at' => now(),
+            'rejected_by' => $user->id,
+        ]);
+
+        $this->notifyRejection($user, $reason);
+        return true;
+    }
+
+    private function checkBudgetDisponible(): bool
+    {
+        $budgetDisponible = $this->budgetLigne->calculateBudgetRestant();
+        return $budgetDisponible >= $this->prix_total_ttc;
+    }
+
+    private function createCommande(User $user, string $comment): Commande
+    {
+        return Commande::create([
+            'demande_devis_id' => $this->id,
+            'numero_commande' => 'CMD-' . now()->format('Y') . '-' . str_pad($this->id, 6, '0', STR_PAD_LEFT),
+            'date_commande' => now(),
+            'commanditaire' => $user->name,
+            'fournisseur_nom' => $this->fournisseur_propose,
+            'montant_ht' => $this->prix_fournisseur_final ?? $this->prix_total_ttc / 1.2,
+            'montant_ttc' => $this->prix_fournisseur_final ?? $this->prix_total_ttc,
+            'date_livraison_prevue' => now()->addDays(15),
+            'statut' => 'confirmee',
+            'commentaire_commande' => $comment,
+        ]);
+    }
+
+    private function getPreviousStep(?string $currentStep): ?string
+    {
+        $steps = array_keys($this->approvalSteps());
+        $index = array_search($currentStep, $steps);
+        if ($index === false || $index === 0) {
+            return null;
+        }
+
+        return $steps[$index - 1];
+    }
+
+    private function notifyNextLevel(string $role): void
+    {
+        // Implementation placeholder for notifications
+    }
+
+    private function notifyRejection(User $user, string $reason): void
+    {
+        // Implementation placeholder for rejection notifications
     }
 
 
