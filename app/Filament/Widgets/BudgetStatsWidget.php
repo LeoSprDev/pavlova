@@ -71,7 +71,12 @@ class BudgetStatsWidget extends BaseWidget
                 ->description('Budget restant utilisable')
                 ->color($budgetDisponible > 0 ? 'success' : 'danger')
                 ->chart($this->getTendanceConsommation($serviceId))
-                ->icon('heroicon-o-banknotes'),
+                ->icon('heroicon-o-banknotes')
+                ->extraAttributes([
+                    'aria-label' => "Budget disponible: {$budgetDisponible} euros",
+                    'role' => 'status',
+                    'aria-live' => 'polite',
+                ]),
 
             Stat::make('Budget Engagé', number_format($budgetEngage, 2) . ' €')
                 ->description('Commandes en cours')
