@@ -47,7 +47,7 @@ class WorkflowKanbanWidget extends Widget
             ->with(['serviceDemandeur', 'budgetLigne']);
 
         $user = Auth::user();
-        if ($user->hasRole('agent-service') && $user->service_id) {
+        if ($user && $user->hasRole('agent-service') && $user->service_id) {
             $query->where('service_demandeur_id', $user->service_id);
         }
 

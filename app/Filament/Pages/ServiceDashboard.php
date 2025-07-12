@@ -14,7 +14,7 @@ class ServiceDashboard extends Page
 
     public static function canAccess(): bool
     {
-        return optional(auth()->user())->hasAnyRole(['agent-service', 'manager-service']) ?? false;
+        return optional(auth()->user())->hasAnyRole(['agent-service', 'responsable-service', 'administrateur']) ?? false;
     }
 
     protected function getHeaderWidgets(): array

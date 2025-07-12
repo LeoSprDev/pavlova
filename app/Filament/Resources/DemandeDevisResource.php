@@ -76,7 +76,7 @@ class DemandeDevisResource extends Resource
                                 titleAttribute: 'intitule',
                                 modifyQueryUsing: fn (Builder $query, Forms\Get $get) =>
                                     $query->where('service_id', $get('service_demandeur_id'))
-                                          ->where('valide_budget', 'oui')
+                                          ->where('valide_budget', 'validé')
                                           // Ideally, also filter by budgetLignes that can accept the demand amount
                             )
                             ->getOptionLabelFromRecordUsing(fn (BudgetLigne $record) => "{$record->intitule} (Restant: ".number_format($record->calculateBudgetRestant(),2,',',' ')." €)")
@@ -170,7 +170,9 @@ class DemandeDevisResource extends Resource
                             ->required(),
                         DatePicker::make('date_besoin')
                             ->label('Date de besoin souhaitée')
-                            ->required(),
+                            ->format('d/m/Y')
+                            ->displayFormat('d/m/Y')
+                            ->default(now()),
                         FileUpload::make('devis_fournisseur_upload')
                             ->label('Devis Fournisseur (PDF)')
                             ->acceptedFileTypes(['application/pdf'])
@@ -324,9 +326,107 @@ class DemandeDevisResource extends Resource
                     })
                     ->visible(fn (DemandeDevis $record): bool =>
                         $record->statut === 'pending'
-                        && optional(auth()->user())->hasRole('responsable-service')
-                        && optional(auth()->user())->canValidateForService($record->service_demandeur_id)),
-                // Actions pour autres niveaux...
+                        && optional(auth()->user())->hasAnyRole(['responsable-service', 'administrateur'])
+                        && (optional(auth()->user())->hasRole('administrateur') || optional(auth()->user())->canValidateForService($record->service_demandeur_id))),
+                
+                Action::make('approve_budget')
+                    ->label('Valider Budget')
+                    ->icon('heroicon-o-banknotes')
+                    ->color('warning')
+                    ->action(function (DemandeDevis $record) {
+                        $record->update(['statut' => 'approved_budget']);
+                        Notification::make()
+                            ->title('Demande validée au niveau budget')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (DemandeDevis $record): bool =>
+                        $record->statut === 'approved_service'
+                        && optional(auth()->user())->hasAnyRole(['responsable-budget', 'administrateur'])),
+
+                Action::make('approve_achat')
+                    ->label('Valider Achat')
+                    ->icon('heroicon-o-shopping-cart')
+                    ->color('info')
+                    ->action(function (DemandeDevis $record) {
+                        $record->update(['statut' => 'approved_achat']);
+                        Notification::make()
+                            ->title('Demande validée par le service achat')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (DemandeDevis $record): bool =>
+                        $record->statut === 'approved_budget'
+                        && optional(auth()->user())->hasAnyRole(['service-achat', 'administrateur'])),
+
+                Action::make('create_order')
+                    ->label('Créer Commande')
+                    ->icon('heroicon-o-shopping-bag')
+                    ->color('primary')
+                    ->action(function (DemandeDevis $record) {
+                        // Créer la commande
+                        $commande = \App\Models\Commande::create([
+                            'demande_devis_id' => $record->id,
+                            'numero_commande' => 'CMD-' . now()->format('Y') . '-' . str_pad($record->id, 4, '0', STR_PAD_LEFT),
+                            'date_commande' => now(),
+                            'commanditaire' => auth()->user()->name,
+                            'statut' => 'en_cours',
+                            'montant_reel' => $record->prix_total_ttc,
+                            'fournisseur_contact' => $record->fournisseur_propose,
+                            'date_livraison_prevue' => $record->date_besoin,
+                        ]);
+                        
+                        // Mettre à jour le statut de la demande
+                        $record->update(['statut' => 'ordered']);
+                        
+                        Notification::make()
+                            ->title('Commande ' . $commande->numero_commande . ' créée')
+                            ->body('Vous pouvez la consulter dans le menu Commandes')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (DemandeDevis $record): bool =>
+                        $record->statut === 'ready_for_order'
+                        && optional(auth()->user())->hasAnyRole(['service-achat', 'administrateur'])),
+
+                Action::make('mark_delivered')
+                    ->label('Marquer Livré')
+                    ->icon('heroicon-o-truck')
+                    ->color('success')
+                    ->action(function (DemandeDevis $record) {
+                        $record->update(['statut' => 'delivered']);
+                        Notification::make()
+                            ->title('Demande marquée comme livrée')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (DemandeDevis $record): bool =>
+                        in_array($record->statut, ['ordered', 'approved_achat'])
+                        && optional(auth()->user())->hasAnyRole(['service-demandeur', 'administrateur'])),
+
+                Action::make('reject')
+                    ->label('Rejeter')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->form([
+                        Textarea::make('commentaire_rejet')
+                            ->label('Motif du rejet')
+                            ->required()
+                            ->rows(3),
+                    ])
+                    ->action(function (DemandeDevis $record, array $data) {
+                        $record->update([
+                            'statut' => 'rejected',
+                            'commentaire_validation' => $data['commentaire_rejet']
+                        ]);
+                        Notification::make()
+                            ->title('Demande rejetée')
+                            ->danger()
+                            ->send();
+                    })
+                    ->visible(fn (DemandeDevis $record): bool =>
+                        in_array($record->statut, ['pending', 'approved_service', 'approved_budget'])
+                        && optional(auth()->user())->hasAnyRole(['responsable-service', 'responsable-budget', 'service-achat', 'administrateur'])),
             ])
             ->bulkActions([
                 BulkAction::make('approveSelected')

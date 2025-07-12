@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('budget_lignes', function (Blueprint $table) {
-            $table->decimal('montant_engage', 15, 2)->default(0)->after('montant_depense_reel');
+        Schema::table('demande_devis', function (Blueprint $table) {
+            $table->date('date_besoin')->nullable()->change();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('budget_lignes', function (Blueprint $table) {
-            $table->dropColumn('montant_engage');
+        Schema::table('demande_devis', function (Blueprint $table) {
+            $table->date('date_besoin')->nullable(false)->change();
         });
     }
 };

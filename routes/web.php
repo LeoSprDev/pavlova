@@ -13,11 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return response()->json([
-        'status' => 'OK',
-        'message' => 'Laravel is working',
-        'timestamp' => now(),
-        'session_id' => session()->getId(),
-    ]);
-});
+use App\Http\Controllers\AuthController;
+
+Route::get('/', [AuthController::class, 'showLogin'])->name('home');
+Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login');
+Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');

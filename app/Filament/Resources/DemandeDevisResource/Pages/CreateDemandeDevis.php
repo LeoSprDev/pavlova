@@ -43,7 +43,7 @@ class CreateDemandeDevis extends CreateRecord
             if (!$budgetLigne) {
                 throw ValidationException::withMessages(['budget_ligne_id' => 'Ligne budgétaire invalide.']);
             }
-            if ($budgetLigne->valide_budget !== 'oui') {
+            if ($budgetLigne->valide_budget !== 'validé') {
                 throw ValidationException::withMessages(['budget_ligne_id' => 'La ligne budgétaire sélectionnée n\'est pas validée.']);
             }
             if (!$budgetLigne->canAcceptNewDemande((float)$data['prix_total_ttc'])) {

@@ -22,7 +22,7 @@ class ExecutiveDashboard extends Page
     {
         $user = auth()->user();
 
-        return $user?->hasRole('responsable-direction') ?? false;
+        return $user?->hasAnyRole(['responsable-direction', 'responsable-service', 'administrateur']) ?? false;
     }
 
     protected function getHeaderWidgets(): array

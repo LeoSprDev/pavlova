@@ -12,11 +12,11 @@ class DelaiCoherenceRule implements Rule
             return true;
         }
 
-        return $value->date_besoin && $value->date_besoin->isAfter(now());
+        return $value->date_besoin && $value->date_besoin->isAfter(now()->subDay());
     }
 
     public function message(): string
     {
-        return 'La date de besoin doit être ultérieure à aujourd\'hui';
+        return 'La date de besoin ne peut pas être antérieure à hier';
     }
 }
