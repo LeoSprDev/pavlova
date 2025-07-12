@@ -20,12 +20,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->viteTheme([
-                'resources/css/filament.css',
-                'resources/css/filament-fixes.css',
-                'resources/css/animations-polish.css',
-            ])
             ->assets([
+                Css::make('filament-fixes', asset('css/filament-fixes.css')),
                 Js::make('ux-intelligence', resource_path('js/ux-intelligence.js')),
             ])
             ->colors(['primary' => Color::Amber])
@@ -42,11 +38,28 @@ class AdminPanelProvider extends PanelProvider
             ->topbar(false)
             ->navigationItems([
                 NavigationItem::make('Dashboard')
+                    ->label('Dashboard')
                     ->url('/admin')
-                    ->icon('heroicon-o-home'),
-                NavigationItem::make('Demandes')
+                    ->icon('heroicon-o-home')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard')),
+
+                NavigationItem::make('Budget Lignes')
+                    ->label('Budget Lignes')
+                    ->url('/admin/budget-lignes')
+                    ->icon('heroicon-o-banknotes')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.budget-lignes.*')),
+
+                NavigationItem::make('Demandes Devis')
+                    ->label('Demandes Devis')
                     ->url('/admin/demande-devis')
-                    ->icon('heroicon-o-document'),
+                    ->icon('heroicon-o-document-text')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.demande-devis.*')),
+
+                NavigationItem::make('Commandes')
+                    ->label('Commandes')
+                    ->url('/admin/commandes')
+                    ->icon('heroicon-o-shopping-cart')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.commandes.*')),
             ]);
     }
 }

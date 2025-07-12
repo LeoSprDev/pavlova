@@ -24,7 +24,7 @@ class MesDemandesResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return optional(auth()->user())->hasRole('agent-service');
+        return optional(auth()->user())->hasRole('agent-service') ?? false;
     }
 
     public static function form(Form $form): Form
