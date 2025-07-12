@@ -7,6 +7,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\VerificationBudgetsQuotidienne;
 use App\Jobs\RelanceLivraisonEnRetard;
 use App\Jobs\SendWorkflowReminders;
+use App\Jobs\SendDigestNotifications;
 use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
@@ -41,6 +42,10 @@ class Kernel extends ConsoleKernel
 
         $schedule->job(SendWorkflowReminders::class)
             ->dailyAt('08:30')
+            ->withoutOverlapping();
+
+        $schedule->job(SendDigestNotifications::class)
+            ->dailyAt('17:00')
             ->withoutOverlapping();
 
         // Vérifier commandes en retard et relancer
