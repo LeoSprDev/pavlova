@@ -4,6 +4,9 @@ namespace App\Filament\Resources\DemandeDevisResource\Pages;
 
 use App\Filament\Resources\DemandeDevisResource;
 use Filament\Actions;
+use Filament\Forms\Components\FileUpload;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\DemandesDevisImport;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -17,6 +20,20 @@ class ListDemandeDevis extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->visible(fn(): bool => Auth::user()->can('create', \App\Models\DemandeDevis::class)),
+            Actions\Action::make('import_csv')
+                ->label('Import CSV')
+                ->icon('heroicon-o-arrow-up-tray')
+                ->form([
+                    \Filament\Forms\Components\FileUpload::make('file')
+                        ->acceptedFileTypes(['text/csv','text/plain','application/vnd.ms-excel'])
+                        ->required(),
+                ])
+                ->action(function (array $data) {
+                    \Maatwebsite\Excel\Facades\Excel::import(
+                        new \App\Imports\DemandesDevisImport,
+                        $data['file']
+                    );
+                }),
         ];
     }
 

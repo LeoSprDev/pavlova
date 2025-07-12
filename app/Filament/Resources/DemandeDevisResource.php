@@ -36,6 +36,8 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Support\Facades\Auth;
 use Filament\Notifications\Notification;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\DemandesDevisExport;
 // use RingleSoft\LaravelProcessApproval\Filament\Actions\ApproveAction;
 // use RingleSoft\LaravelProcessApproval\Filament\Actions\RejectAction;
 // use RingleSoft\LaravelProcessApproval\Filament\Actions\SubmitAction;
@@ -356,7 +358,17 @@ class DemandeDevisResource extends Resource
                         foreach ($records as $demande) {
                             $demande->reject(auth()->user(), $data['comment']);
                         }
-                    })
+                    }),
+
+                BulkAction::make('export_excel')
+                    ->label('Exporter Excel')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->action(function (\Illuminate\Support\Collection $records) {
+                        return \Maatwebsite\Excel\Facades\Excel::download(
+                            new \App\Exports\DemandesDevisExport($records),
+                            'demandes_' . now()->format('Y-m-d') . '.xlsx'
+                        );
+                    }),
             ]);
     }
 

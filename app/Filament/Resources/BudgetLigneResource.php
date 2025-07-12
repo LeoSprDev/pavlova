@@ -30,6 +30,8 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\Summarizers\Sum; // Corrected import
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SelectedBudgetLignesExport;
 
 class BudgetLigneResource extends Resource
 {
@@ -299,6 +301,16 @@ class BudgetLigneResource extends Resource
                     })
                     ->deselectRecordsAfterCompletion()
                     ->visible(fn (): bool => $currentUser->hasRole('responsable-budget')),
+
+                BulkAction::make('export_selection')
+                    ->label('Exporter Excel')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->action(function (Collection $records) {
+                        return \Maatwebsite\Excel\Facades\Excel::download(
+                            new \App\Exports\SelectedBudgetLignesExport($records),
+                            'budgets_' . now()->format('Y-m-d') . '.xlsx'
+                        );
+                    }),
             ])
             ->defaultSort('date_prevue', 'desc')
             ->striped();
