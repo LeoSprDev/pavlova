@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use App\Models\{DemandeDevis, BudgetLigne, User};
+use App\Models\{DemandeDevis, BudgetLigne, BudgetWarning, User};
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WorkflowNotificationMail;
@@ -36,6 +36,18 @@ class WorkflowNotificationService
             Notification::make()
                 ->title("Budget {$ligne->intitule} {$taux}% utilisé")
                 ->warning()
+                ->sendToDatabase($user);
+        }
+    }
+
+    public function notifyBudgetWarning(BudgetWarning $warning): void
+    {
+        $users = User::role('responsable-budget')->get();
+        foreach ($users as $user) {
+            Notification::make()
+                ->title('Dépassement budget autorisé')
+                ->body($warning->message)
+                ->danger()
                 ->sendToDatabase($user);
         }
     }

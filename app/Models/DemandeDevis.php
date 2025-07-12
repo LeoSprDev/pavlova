@@ -139,6 +139,12 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
                 'role' => 'service-achat',
                 'conditions' => ['supplier_valid', 'commercial_terms_ok']
             ],
+            'ready_for_order' => [
+                'label' => 'Préparation commande',
+                'description' => 'Validation achat terminée, en attente de commande',
+                'role' => 'service-achat',
+                'conditions' => []
+            ],
         ];
     }
     // Compatibility with prompt's naming if needed
@@ -262,16 +268,14 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
         }
 
         if ($user->hasRole('service-achat') && $currentStep === 'pending_achat') {
-            $this->createCommande($user, $comment);
-
             $this->update([
-                'statut' => 'ordered',
-                'current_step' => 'pending_delivery',
+                'statut' => 'approved_achat',
+                'current_step' => 'ready_for_order',
                 'commentaire_achat' => $comment,
-                'ordered_at' => now(),
-                'ordered_by' => $user->id,
+                'approved_achat_at' => now(),
+                'approved_achat_by' => $user->id,
             ]);
-            $this->notifyNextLevel('delivery');
+            $this->notifyNextLevel('achat');
             return true;
         }
 
@@ -313,6 +317,19 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
             'date_livraison_prevue' => now()->addDays(15),
             'statut' => 'confirmee',
             'commentaire_commande' => $comment,
+        ]);
+    }
+
+    public function prepareCommande(): Commande
+    {
+        return new Commande([
+            'demande_devis_id' => $this->id,
+            'numero_commande' => 'CMD-' . now()->format('Y') . '-' . str_pad($this->id, 6, '0', STR_PAD_LEFT),
+            'fournisseur_nom' => $this->fournisseur_propose,
+            'montant_ht' => $this->prix_unitaire_ht * $this->quantite,
+            'montant_ttc' => $this->prix_total_ttc,
+            'service_demandeur_id' => $this->service_demandeur_id,
+            'date_commande' => now(),
         ]);
     }
 
