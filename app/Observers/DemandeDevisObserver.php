@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
-use App\Models\{DemandeDevis, BudgetLigne, Commande, User};
+use App\Models\{DemandeDevis, BudgetLigne, User};
+use App\Jobs\CreateCommandeAutomatique;
+use App\Services\WorkflowNotificationService;
 use Filament\Notifications\Notification;
 
 class DemandeDevisObserver
@@ -17,7 +19,7 @@ class DemandeDevisObserver
             $this->sendWorkflowNotifications($demande, $newStatus);
 
             if ($newStatus === 'approved_achat') {
-                $this->createCommandeAutomatique($demande);
+                CreateCommandeAutomatique::dispatch($demande);
             }
 
             if ($newStatus === 'delivered_confirmed') {
@@ -48,6 +50,7 @@ class DemandeDevisObserver
     private function sendWorkflowNotifications(DemandeDevis $demande, string $newStatus): void
     {
         $recipients = $this->getNotificationRecipients($demande, $newStatus);
+        $service = new WorkflowNotificationService();
 
         foreach ($recipients as $user) {
             Notification::make()
@@ -62,23 +65,10 @@ class DemandeDevisObserver
                 ])
                 ->sendToDatabase($user);
         }
+
+        $service->notifyNextApprovers($demande);
     }
 
-    private function createCommandeAutomatique(DemandeDevis $demande): void
-    {
-        if (!$demande->commande) {
-            Commande::create([
-                'demande_devis_id' => $demande->id,
-                'numero_commande' => 'CMD-' . now()->format('Y') . '-' . str_pad($demande->id, 6, '0', STR_PAD_LEFT),
-                'fournisseur_nom' => $demande->fournisseur_propose,
-                'montant_ht' => $demande->prix_unitaire_ht * $demande->quantite,
-                'montant_ttc' => $demande->prix_total_ttc,
-                'statut' => 'en_cours',
-                'date_commande' => now(),
-                'service_demandeur_id' => $demande->service_demandeur_id,
-            ]);
-        }
-    }
 
     private function finalizeBudgetConsumption(DemandeDevis $demande): void
     {

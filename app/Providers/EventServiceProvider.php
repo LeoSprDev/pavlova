@@ -8,8 +8,8 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use App\Events\BudgetSeuilDepasse;
 use App\Listeners\BudgetSeuilDepasseListener;
-use App\Models\DemandeDevis;
-use App\Observers\DemandeDevisObserver;
+use App\Models\{DemandeDevis, BudgetLigne, Commande};
+use App\Observers\{DemandeDevisObserver, BudgetLigneObserver, CommandeObserver};
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -33,6 +33,8 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         DemandeDevis::observe(DemandeDevisObserver::class);
+        BudgetLigne::observe(BudgetLigneObserver::class);
+        Commande::observe(CommandeObserver::class);
     }
 
     /**
