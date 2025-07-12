@@ -1,44 +1,61 @@
-# Project Setup and Validation
+# 🏢 Budget Workflow Pavlova
+### Application de Gestion Budgétaire d'Entreprise
 
-This project includes a setup and validation script located at `doc/run_to_validate.sh`.
+## 📋 Description
+- Workflow d'approbation 5 niveaux
+- Interface Filament avec dashboards
+- Gestion budgets par service
+- Exports Excel/PDF avancés
+- Notifications temps réel
 
-## `doc/run_to_validate.sh`
-
-This script is designed to prepare the context and virtual machine environment for the project. It performs various setup tasks, installs dependencies, and configures the necessary services.
-
-### Usage
-
-To execute the script, navigate to the `doc/` directory and run it using bash:
-
+## 🔧 Installation Rapide
+### Option 1: Installation Automatique
 ```bash
-cd doc
-bash run_to_validate.sh
+./scripts/check_prerequisites.sh
+./scripts/install_pavlova.sh
+./scripts/setup_project.sh
 ```
+### Option 2: Installation Manuelle
+Suivez les étapes détaillées ci-dessous pour installer chaque composant manuellement.
+### Option 3: Docker (si disponible)
+Une configuration Docker pourra être ajoutée ultérieurement.
 
-Or run it from the project root:
+## 💻 Prérequis Système
+- OS: Ubuntu 20.04+, Debian 11+, CentOS/RHEL 8+
+- RAM: minimum 2GB (4GB recommandé)
+- Disque: 10GB libre
+- Accès sudo et internet
+- Ports 80 et 443 ouverts
 
-```bash
-bash doc/run_to_validate.sh
-```
+## 🚀 Démarrage Rapide
+1. Vérifiez les prérequis avec `check_prerequisites.sh`
+2. Installez le système avec `install_pavlova.sh`
+3. Configurez le projet avec `setup_project.sh`
+4. Accédez à l'application depuis votre navigateur
 
-## `doc/run_to_validate_errors.log`
+## 👥 Comptes Utilisateur
+- Admin: admin@test.local / password
+- Budget: budget@test.local / password
+- Achat: achat@test.local / password
+- ...
 
-All output from the `run_to_validate.sh` script, including any errors encountered during its execution, is automatically logged to the `doc/run_to_validate_errors.log` file.
+## 🔧 Configuration
+- Base de données PostgreSQL 16 par défaut
+- Cache Redis avec fallback fichier
+- Emails configurables via `.env`
+- Permissions renforcées sur `/var/www/pavlova`
 
-### Checking for Errors
+## 📊 Fonctionnalités
+- Gestion Budget complète
+- Workflow d'approbation avancé
+- Exports et Rapports détaillés
+- Tableaux de Bord personnalisés
 
-After running the `run_to_validate.sh` script, you can check the `doc/run_to_validate_errors.log` file to review the execution details and identify any potential issues.
+## 🆘 Dépannage
+Consultez les logs dans `/tmp/pavlova_*.log` en cas d'erreur.
 
-For example, you can view the entire log:
+## 🏗️ Architecture
+Stack Laravel 10, PostgreSQL, Nginx, Redis.
 
-```bash
-cat doc/run_to_validate_errors.log
-```
-
-Or search for specific error messages:
-
-```bash
-grep -i "error" doc/run_to_validate_errors.log
-```
-
-This log file is crucial for troubleshooting and ensuring that the environment has been set up correctly.
+## 👨‍💻 Développement
+Clonez le dépôt, installez les dépendances avec Composer et npm, puis lancez `php artisan serve` pour un environnement local.
