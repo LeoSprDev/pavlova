@@ -4,6 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Filament\Widgets\BudgetHeatmapWidget;
 use App\Filament\Widgets\WorkflowMetricsWidget;
+use App\Filament\Widgets\ExecutiveStatsWidget;
+use App\Filament\Widgets\BudgetConsumptionWidget;
 use Filament\Pages\Page;
 
 class ExecutiveDashboard extends Page
@@ -26,6 +28,7 @@ class ExecutiveDashboard extends Page
     protected function getHeaderWidgets(): array
     {
         return [
+            ExecutiveStatsWidget::class,
             BudgetHeatmapWidget::class,
         ];
     }
@@ -33,6 +36,7 @@ class ExecutiveDashboard extends Page
     protected function getFooterWidgets(): array
     {
         return [
+            BudgetConsumptionWidget::class,
             WorkflowMetricsWidget::class,
         ];
     }
