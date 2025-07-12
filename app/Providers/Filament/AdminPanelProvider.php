@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Providers\Filament;
 
 use Filament\Panel;
@@ -20,6 +21,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->middleware([
+                'web',
+                'auth:web',
+            ])
+            ->authGuard('web')
             ->assets([
                 Css::make('filament-fixes', asset('css/filament-fixes.css')),
                 Js::make('ux-intelligence', resource_path('js/ux-intelligence.js')),

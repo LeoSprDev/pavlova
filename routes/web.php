@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome'); // Assuming a welcome view will be created later or is standard
+    return response()->json([
+        'status' => 'OK',
+        'message' => 'Laravel is working',
+        'timestamp' => now(),
+        'session_id' => session()->getId(),
+    ]);
 });
-
-// Basic route for Filament - actual Filament routes are handled by the package
-// Route::get('/admin', function() {
-//     // This will be handled by Filament. Ensure Filament panel is set up.
-// })->middleware(['auth', 'verified']); // Example middleware for admin access

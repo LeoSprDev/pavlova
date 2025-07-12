@@ -212,7 +212,7 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
     }
 
     // Optional: Media Conversions (if not already handled globally or if specific conversions are needed)
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumbnail')
             ->width(300)
