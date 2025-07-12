@@ -9,6 +9,7 @@ use App\Models\User;
 use Filament\Notifications\Notification;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Livraison extends Model implements HasMedia
 {

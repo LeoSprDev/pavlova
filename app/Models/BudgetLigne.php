@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Filament\Notifications\Notification;
 use App\Models\User;
+use App\Models\BudgetWarning;
+use App\Services\WorkflowNotificationService;
 
 class BudgetLigne extends Model
 {
@@ -63,6 +65,11 @@ class BudgetLigne extends Model
     public function engagements(): HasMany
     {
         return $this->hasMany(BudgetEngagement::class);
+    }
+
+    public function warnings(): HasMany
+    {
+        return $this->hasMany(BudgetWarning::class);
     }
 
     protected static function booted(): void
@@ -133,24 +140,34 @@ class BudgetLigne extends Model
 
     public function engagerBudget(float $montant, DemandeDevis $demande): bool
     {
-        if (! $this->verifierDisponibilite($montant)) {
-            return false;
+        $disponible = $this->montant_ht_prevu - $this->montant_depense_reel - $this->montant_engage;
+        $depassement = 0;
+        if ($disponible < $montant) {
+            $depassement = $montant - $disponible;
         }
 
         $this->increment('montant_engage', $montant);
 
-        $this->engagements()->create([
+        $engagement = $this->engagements()->create([
             'demande_devis_id' => $demande->id,
             'montant' => $montant,
             'date_engagement' => now(),
             'statut' => 'engage',
         ]);
 
-        if ($this->getTauxUtilisation() > 90) {
+        if ($depassement > 0) {
+            $warning = $this->warnings()->create([
+                'demande_devis_id' => $demande->id,
+                'montant_engage' => $montant,
+                'montant_depassement' => $depassement,
+                'message' => 'Dépassement budget de ' . $depassement . ' €',
+            ]);
+            app(\App\Services\WorkflowNotificationService::class)->notifyBudgetWarning($warning);
+        } elseif ($this->getTauxUtilisation() > 90) {
             $this->alerteSeuil();
         }
 
-        return true;
+        return (bool)$engagement;
     }
 
     public function desengagerBudget(DemandeDevis $demande): bool
@@ -170,6 +187,11 @@ class BudgetLigne extends Model
         }
 
         return false;
+    }
+
+    public function checkBudgetWarnings(): bool
+    {
+        return $this->warnings()->exists();
     }
 
     public function verifierDisponibilite(float $montant): bool

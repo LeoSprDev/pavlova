@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Models\{DemandeDevis, BudgetLigne, User};
-use App\Jobs\CreateCommandeAutomatique;
 use App\Services\WorkflowNotificationService;
 use Filament\Notifications\Notification;
 
@@ -15,12 +14,13 @@ class DemandeDevisObserver
             $oldStatus = $demande->getOriginal('statut');
             $newStatus = $demande->statut;
 
+            if ($newStatus === 'approved_achat') {
+                $demande->statut = 'ready_for_order';
+                $newStatus = 'ready_for_order';
+            }
+
             $this->handleBudgetEngagement($demande, $oldStatus, $newStatus);
             $this->sendWorkflowNotifications($demande, $newStatus);
-
-            if ($newStatus === 'approved_achat') {
-                CreateCommandeAutomatique::dispatch($demande);
-            }
 
             if ($newStatus === 'delivered_confirmed') {
                 $this->finalizeBudgetConsumption($demande);
@@ -37,12 +37,10 @@ class DemandeDevisObserver
         }
 
         if ($newStatus === 'approved_direction' && $oldStatus !== 'approved_direction') {
-            if (! $budgetLigne->engagerBudget($demande->prix_total_ttc, $demande)) {
-                throw new \Exception("Budget insuffisant pour engager {$demande->prix_total_ttc}€");
-            }
+            $budgetLigne->engagerBudget($demande->prix_total_ttc, $demande);
         }
 
-        if (in_array($newStatus, ['rejected', 'cancelled']) && in_array($oldStatus, ['approved_direction', 'approved_achat', 'ordered'])) {
+        if (in_array($newStatus, ['rejected', 'cancelled']) && in_array($oldStatus, ['approved_direction', 'approved_achat', 'ready_for_order', 'ordered'])) {
             $budgetLigne->desengagerBudget($demande);
         }
     }
@@ -111,6 +109,7 @@ class DemandeDevisObserver
         return match ($status) {
             'approved_direction' => 'Validation Direction',
             'approved_achat' => 'Validation Achat',
+            'ready_for_order' => 'Préparation commande',
             'delivered_confirmed' => 'Livraison confirmée',
             'rejected' => 'Demande rejetée',
             default => 'Mise à jour de demande',
@@ -127,6 +126,7 @@ class DemandeDevisObserver
         return match ($status) {
             'approved_direction' => 'heroicon-o-check-circle',
             'approved_achat' => 'heroicon-o-shopping-cart',
+            'ready_for_order' => 'heroicon-o-clipboard-document-check',
             'delivered_confirmed' => 'heroicon-o-truck',
             'rejected' => 'heroicon-o-x-circle',
             default => 'heroicon-o-information-circle',
