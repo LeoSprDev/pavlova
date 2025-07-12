@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\VerificationBudgetsQuotidienne;
 use App\Jobs\RelanceLivraisonEnRetard;
+use App\Jobs\SendWorkflowReminders;
 use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
@@ -37,6 +38,10 @@ class Kernel extends ConsoleKernel
             ->onOneServer()
             ->appendOutputTo(storage_path('logs/scheduler.log'));
         $schedule->command('workflow:escalade')->dailyAt('11:00');
+
+        $schedule->job(SendWorkflowReminders::class)
+            ->dailyAt('08:30')
+            ->withoutOverlapping();
 
         // Vérifier commandes en retard et relancer
         $schedule->call(function () {
