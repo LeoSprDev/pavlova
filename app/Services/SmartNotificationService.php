@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\BudgetLigne;
-use App\Models\Commande;
-use App\Models\User;
+use App\Models\{BudgetLigne, Commande, DemandeDevis, User};
+use App\Mail\DigestNotificationMail;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Mail;
 
 class SmartNotificationService
 {
@@ -45,5 +45,48 @@ class SmartNotificationService
         }
 
         return '';
+    }
+
+    public function sendWorkflowNotification(DemandeDevis $demande, string $event): void
+    {
+        $users = User::role('responsable-achat')->get();
+        foreach ($users as $user) {
+            Notification::make()
+                ->title('Workflow ' . $event)
+                ->body("Demande #{$demande->id} : {$event}")
+                ->sendToDatabase($user);
+        }
+    }
+
+    public function sendBudgetAlert(BudgetLigne $ligne, string $type): void
+    {
+        $users = User::role('responsable-budget')->get();
+        foreach ($users as $user) {
+            Notification::make()
+                ->title("Alerte budget {$type}")
+                ->body("Ligne {$ligne->intitule} nécessite attention")
+                ->sendToDatabase($user);
+        }
+    }
+
+    public function sendEscalationNotification(DemandeDevis $demande): void
+    {
+        $direction = User::role('responsable-direction')->get();
+        Notification::make()
+            ->title('⏰ Escalade workflow')
+            ->body("Demande #{$demande->id} en attente depuis trop longtemps")
+            ->sendToDatabase($direction->all());
+    }
+
+    public function sendDigestNotifications(): void
+    {
+        $users = User::all();
+        foreach ($users as $user) {
+            $notifications = $user->unreadNotifications()->limit(20)->get();
+            if ($notifications->isEmpty() || !$user->email) {
+                continue;
+            }
+            Mail::to($user->email)->queue(new DigestNotificationMail($user, $notifications));
+        }
     }
 }

@@ -13,6 +13,7 @@ use App\Exports\Sheets\ServiceDetailSheet;
 use App\Exports\Sheets\WorkflowHistorySheet;
 use App\Exports\Sheets\FournisseurAnalysisSheet;
 use App\Exports\Sheets\TendancesSheet;
+use App\Exports\Sheets\BudgetForecastSheet;
 
 class BudgetCompletExport implements WithMultipleSheets, WithTitle, WithEvents
 {
@@ -65,6 +66,7 @@ class BudgetCompletExport implements WithMultipleSheets, WithTitle, WithEvents
 
         if ($this->options['inclure_tendances']) {
             $sheets[] = new TendancesSheet($this->dateDebut, $this->dateFin, $this->serviceIds, $this->options);
+            $sheets[] = new BudgetForecastSheet($this->dateDebut, $this->dateFin, $this->serviceIds);
         }
 
         return $sheets;
