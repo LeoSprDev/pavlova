@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Event;
 use App\Events\BudgetSeuilDepasse;
 use App\Listeners\BudgetSeuilDepasseListener;
 use App\Models\{DemandeDevis, BudgetLigne, Commande};
-use App\Observers\{DemandeDevisObserver, BudgetLigneObserver, CommandeObserver};
+use App\Observers\{DemandeDevisObserver, BudgetLigneObserver, CommandeObserver, AuditTrailObserver};
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -35,6 +35,7 @@ class EventServiceProvider extends ServiceProvider
         DemandeDevis::observe(DemandeDevisObserver::class);
         BudgetLigne::observe(BudgetLigneObserver::class);
         Commande::observe(CommandeObserver::class);
+        DemandeDevis::observe(AuditTrailObserver::class);
     }
 
     /**

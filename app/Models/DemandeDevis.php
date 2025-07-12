@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\User;
 use App\Models\Commande;
+use App\Models\Fournisseur;
 use App\Models\ProcessApproval as Approval; // Alias for clarity
 use App\Traits\Approvable;
 use App\Contracts\Approvable as ApprovableContract; // Corrected Contract name
@@ -20,6 +21,18 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class DemandeDevis extends Model implements ApprovableContract, HasMedia
 {
     use HasFactory, Approvable, InteractsWithMedia; // Removed HasApprovals as Approvable includes it
+
+    protected static function booted(): void
+    {
+        parent::booted();
+
+        static::creating(function (DemandeDevis $demande) {
+            if ($demande->fournisseur_propose) {
+                app(\App\Services\FournisseurTrackingService::class)
+                    ->createOrUpdateFournisseur($demande->fournisseur_propose);
+            }
+        });
+    }
 
     protected $fillable = [
         'service_demandeur_id',
@@ -70,6 +83,11 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
     public function budgetLigne(): BelongsTo
     {
         return $this->belongsTo(BudgetLigne::class);
+    }
+
+    public function fournisseur(): BelongsTo
+    {
+        return $this->belongsTo(Fournisseur::class, 'fournisseur_propose', 'nom');
     }
 
     public function commande(): HasOne
