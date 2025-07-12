@@ -15,19 +15,12 @@ class BudgetStatsWidget extends BaseWidget
     protected function getStats(): array
     {
         try {
-            $user = Auth::user();
-
-            if (! $user) {
-                return $this->getDefaultStats();
-            }
-
-            $stats = $user->hasRole('manager-service')
-                ? $this->getServiceStats()
-                : $this->getGlobalStats();
+            $stats = $this->calculateStats();
 
             return count($stats) > 0 ? $stats : $this->getDefaultStats();
         } catch (\Exception $e) {
-            \Log::warning('BudgetStatsWidget error: ' . $e->getMessage());
+            \Log::warning('BudgetStatsWidget Error: ' . $e->getMessage());
+
             return $this->getDefaultStats();
         }
     }
@@ -35,20 +28,36 @@ class BudgetStatsWidget extends BaseWidget
     private function getDefaultStats(): array
     {
         return [
+            Stat::make('Total Budgets', '0')
+                ->description('Aucune donnée disponible')
+                ->color('gray')
+                ->icon('heroicon-o-banknotes'),
+            Stat::make('Demandes', '0')
+                ->description('Aucune demande créée')
+                ->color('gray')
+                ->icon('heroicon-o-document-text'),
             Stat::make('Budget Disponible', '0 €')
-                ->description('Données en cours de chargement')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->color('secondary'),
-            Stat::make('Demandes en Cours', '0')
-                ->description('Aucune demande active')
-                ->color('warning'),
-            Stat::make('Taux Utilisation', '0%')
-                ->description('Budget non utilisé')
-                ->color('success'),
-            Stat::make('Délai Moyen', '- jours')
-                ->description('Pas de données historiques')
-                ->color('secondary'),
+                ->description('Créer des lignes budgétaires')
+                ->color('gray')
+                ->icon('heroicon-o-calculator'),
+            Stat::make('Taux Consommation', '0%')
+                ->description('Pas encore de consommation')
+                ->color('gray')
+                ->icon('heroicon-o-chart-pie'),
         ];
+    }
+
+    private function calculateStats(): array
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return [];
+        }
+
+        return $user->hasRole('manager-service')
+            ? $this->getServiceStats()
+            : $this->getGlobalStats();
     }
 
     private function getServiceStats(?int $serviceId = null): array
