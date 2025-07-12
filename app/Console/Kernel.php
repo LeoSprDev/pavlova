@@ -20,6 +20,9 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\WorkflowEscaladeCommand::class,
         \App\Console\Commands\WorkflowMaintenanceCommand::class,
+        \App\Console\Commands\SendDeadlineReminders::class,
+        \App\Console\Commands\SendWeeklyReports::class,
+        \App\Console\Commands\CleanOldNotifications::class,
     ];
 
     /**
@@ -47,6 +50,10 @@ class Kernel extends ConsoleKernel
         $schedule->job(SendDigestNotifications::class)
             ->dailyAt('17:00')
             ->withoutOverlapping();
+
+        $schedule->command('send:deadline-reminders')->dailyAt('09:15');
+        $schedule->command('send:weekly-reports')->mondays()->at('08:00');
+        $schedule->command('notifications:cleanup')->dailyAt('01:00');
 
         // Vérifier commandes en retard et relancer
         $schedule->call(function () {
