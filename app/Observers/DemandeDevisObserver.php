@@ -22,6 +22,10 @@ class DemandeDevisObserver
             $this->handleBudgetEngagement($demande, $oldStatus, $newStatus);
             $this->sendWorkflowNotifications($demande, $newStatus);
 
+            if ($newStatus === 'delivered') {
+                $this->updateRelatedCommandStatus($demande);
+            }
+
             if ($newStatus === 'delivered_confirmed') {
                 $this->finalizeBudgetConsumption($demande);
                 $this->finaliserWorkflowComplet($demande);
@@ -42,6 +46,16 @@ class DemandeDevisObserver
 
         if (in_array($newStatus, ['rejected', 'cancelled']) && in_array($oldStatus, ['approved_direction', 'approved_achat', 'ready_for_order', 'ordered'])) {
             $budgetLigne->desengagerBudget($demande);
+        }
+    }
+
+    private function updateRelatedCommandStatus(DemandeDevis $demande): void
+    {
+        if ($demande->id) {
+            $commande = \App\Models\Commande::where('demande_devis_id', $demande->id)->first();
+            if ($commande && $commande->statut === 'en_cours') {
+                $commande->update(['statut' => 'livree']);
+            }
         }
     }
 

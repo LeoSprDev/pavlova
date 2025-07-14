@@ -13,7 +13,7 @@ class SmartNotificationService
     {
         $users = match ($event) {
             'budget_critique' => User::role('responsable-direction')->get(),
-            'livraison_retard' => User::role('responsable-achat')->get(),
+            'livraison_retard' => User::role('service-achat')->get(),
             default => User::role('admin')->get(),
         };
 
@@ -49,7 +49,7 @@ class SmartNotificationService
 
     public function sendWorkflowNotification(DemandeDevis $demande, string $event): void
     {
-        $users = User::role('responsable-achat')->get();
+        $users = User::role('service-achat')->get();
         foreach ($users as $user) {
             Notification::make()
                 ->title('Workflow ' . $event)

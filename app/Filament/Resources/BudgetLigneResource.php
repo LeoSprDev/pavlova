@@ -59,6 +59,7 @@ class BudgetLigneResource extends Resource
                 DatePicker::make('date_prevue')
                     ->required()
                     ->label('Date d\'achat prévue')
+                    ->format('Y-m-d')
                     ->displayFormat('d/m/Y'),
                 TextInput::make('intitule')
                     ->required()

@@ -21,7 +21,7 @@ class CommandeObserver
 
     private function notifyRetard(Commande $commande): void
     {
-        $recipients = User::role('responsable-achat')->get();
+        $recipients = User::role('service-achat')->get();
         foreach ($recipients as $user) {
             Notification::make()
                 ->title('📦 Livraison en retard')

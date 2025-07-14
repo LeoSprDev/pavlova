@@ -76,7 +76,7 @@ class DemandeDevisResource extends Resource
                                 titleAttribute: 'intitule',
                                 modifyQueryUsing: fn (Builder $query, Forms\Get $get) =>
                                     $query->where('service_id', $get('service_demandeur_id'))
-                                          ->where('valide_budget', 'validé')
+                                          ->where('valide_budget', 'oui')
                                           // Ideally, also filter by budgetLignes that can accept the demand amount
                             )
                             ->getOptionLabelFromRecordUsing(fn (BudgetLigne $record) => "{$record->intitule} (Restant: ".number_format($record->calculateBudgetRestant(),2,',',' ')." €)")
@@ -170,7 +170,7 @@ class DemandeDevisResource extends Resource
                             ->required(),
                         DatePicker::make('date_besoin')
                             ->label('Date de besoin souhaitée')
-                            ->format('d/m/Y')
+                            ->format('Y-m-d')
                             ->displayFormat('d/m/Y')
                             ->default(now()),
                         FileUpload::make('devis_fournisseur_upload')
@@ -213,7 +213,9 @@ class DemandeDevisResource extends Resource
             Forms\Components\Section::make('Processus Fournisseur')
                 ->schema([
                     Forms\Components\DatePicker::make('date_envoi_demande_fournisseur')
-                        ->label('Date envoi demande au fournisseur'),
+                        ->label('Date envoi demande au fournisseur')
+                        ->format('Y-m-d')
+                        ->displayFormat('d/m/Y'),
                     Forms\Components\FileUpload::make('devis_fournisseur_recu')
                         ->label('Devis reçu du fournisseur (OBLIGATOIRE)')
                         ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
@@ -225,6 +227,8 @@ class DemandeDevisResource extends Resource
                         ->helperText('Upload du devis final reçu du fournisseur'),
                     Forms\Components\DatePicker::make('date_reception_devis')
                         ->label('Date réception devis')
+                        ->format('Y-m-d')
+                        ->displayFormat('d/m/Y')
                         ->required(),
                     Forms\Components\TextInput::make('prix_fournisseur_final')
                         ->label('Prix final confirmé fournisseur')
@@ -502,16 +506,15 @@ class DemandeDevisResource extends Resource
         /** @var User $currentUser */
         $currentUser = Auth::user();
 
-        if ($currentUser->hasRole('service-demandeur') && $currentUser->service_id) {
+        if ($currentUser->hasRole('administrateur')) {
+            // Admin sees everything - no filter
+        } elseif ($currentUser->hasRole('service-demandeur') && $currentUser->service_id) {
             $query->where('service_demandeur_id', $currentUser->service_id);
         } elseif ($currentUser->hasRole('service-achat')) {
             // Service Achat should see demands that are at 'service-achat' step or beyond, or assigned to them.
-            // The table filters will handle most of this.
-            // $query->whereIn('statut', ['approved_budget', 'approved_achat', 'delivered', 'rejected', 'cancelled']);
-            // Or based on current_step if that's reliably updated by the approval package
             $query->where(function (Builder $q) {
                 $q->where('current_step', 'service-achat')
-                  ->orWhereIn('statut', ['approved_achat', 'delivered']); // Also show those they've processed
+                  ->orWhereIn('statut', ['approved_achat', 'delivered', 'ordered', 'ready_for_order']); // Include more statuses
             });
         }
         // Responsable Budget sees all, filtered by table filters.
