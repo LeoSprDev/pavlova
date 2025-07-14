@@ -11,6 +11,7 @@ class ServiceDashboard extends Page
 
     protected static string $view = 'filament.pages.service-dashboard';
     protected static ?string $title = 'Dashboard Service';
+    protected static ?int $navigationSort = 1;
 
     public static function canAccess(): bool
     {

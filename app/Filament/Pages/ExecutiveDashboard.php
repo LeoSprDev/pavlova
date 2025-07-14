@@ -16,13 +16,13 @@ class ExecutiveDashboard extends Page
 
     protected static ?string $title = 'Dashboard Exécutif';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function canAccess(): bool
     {
         $user = auth()->user();
 
-        return $user?->hasAnyRole(['responsable-direction', 'responsable-service', 'administrateur']) ?? false;
+        return $user?->hasAnyRole(['administrateur', 'responsable-budget', 'service-achat']) ?? false;
     }
 
     protected function getHeaderWidgets(): array

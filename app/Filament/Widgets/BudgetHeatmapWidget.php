@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Service;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Auth;
 
 class BudgetHeatmapWidget extends ChartWidget
 {
@@ -13,9 +14,23 @@ class BudgetHeatmapWidget extends ChartWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    public static function canView(): bool
+    {
+        $user = Auth::user();
+        return $user?->hasAnyRole(['administrateur', 'responsable-budget', 'service-achat']) ?? false;
+    }
+
     protected function getData(): array
     {
-        $services = Service::all();
+        $user = Auth::user();
+        
+        // Si c'est un responsable de service ou agent, ne montrer que son service
+        if ($user && $user->hasAnyRole(['responsable-service', 'agent-service']) && $user->service_id) {
+            $services = Service::where('id', $user->service_id)->get();
+        } else {
+            // Admin, responsable budget, service achat voient tous les services
+            $services = Service::all();
+        }
         $months = collect(range(1, 12))->map(fn ($m) => now()->month($m)->format('M'));
 
         $datasets = [];

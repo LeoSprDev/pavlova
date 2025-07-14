@@ -13,9 +13,9 @@ class ExecutiveStatsWidget extends BaseWidget
     protected function getStats(): array
     {
         $budgetTotal = BudgetLigne::where('valide_budget', 'oui')->sum('montant_ht_prevu');
-        $budgetConsomme = DemandeDevis::where('statut', 'delivered_confirmed')->sum('prix_total_ttc');
+        $budgetConsomme = DemandeDevis::where('statut', 'delivered')->sum('prix_total_ttc');
         $demandesEnCours = DemandeDevis::whereIn('statut', [
-            'pending_manager', 'pending_direction', 'pending_achat', 'pending_delivery'
+            'pending', 'approved_service', 'approved_budget', 'approved_achat', 'ordered'
         ])->count();
 
         $tauxConsommation = $budgetTotal > 0 ? ($budgetConsomme / $budgetTotal) * 100 : 0;

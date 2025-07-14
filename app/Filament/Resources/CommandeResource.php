@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class CommandeResource extends Resource
 {
@@ -136,5 +137,25 @@ class CommandeResource extends Resource
     public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
     {
         return route(static::getRouteBaseName(panel: $panel).'.'.$name, $parameters, $isAbsolute);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $currentUser = auth()->user();
+
+        if ($currentUser && !$currentUser->hasRole('administrateur')) {
+            if (($currentUser->hasRole('service-demandeur') || $currentUser->hasRole('responsable-service')) && $currentUser->service_id) {
+                // Filter to show only commands from user's service
+                $query->whereHas('demandeDevis', function ($q) use ($currentUser) {
+                    $q->where('service_demandeur_id', $currentUser->service_id);
+                });
+            } elseif ($currentUser->hasRole('service-achat') || $currentUser->hasRole('responsable-budget')) {
+                // Service achat and budget managers can see all commands
+                // No filter needed
+            }
+        }
+
+        return $query->with(['demandeDevis', 'demandeDevis.serviceDemandeur', 'livraison']);
     }
 }

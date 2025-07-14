@@ -20,23 +20,23 @@ class WorkflowTimelineWidget extends Widget
 
         if ($user->hasRole('agent-service')) {
             return DemandeDevis::where('service_demandeur_id', $user->service_id)
-                ->whereIn('statut', ['pending_manager', 'pending_direction', 'pending_achat'])
+                ->whereIn('statut', ['pending', 'approved_service', 'approved_budget'])
                 ->with(['serviceDemandeur', 'budgetLigne'])
                 ->orderBy('created_at', 'desc')
                 ->limit(10)
                 ->get();
         }
 
-        if ($user->hasRole('manager-service')) {
+        if ($user->hasRole('responsable-service')) {
             return DemandeDevis::where('service_demandeur_id', $user->service_id)
-                ->where('statut', 'pending_manager')
+                ->where('statut', 'pending')
                 ->with(['serviceDemandeur', 'budgetLigne', 'createdBy'])
                 ->orderBy('created_at', 'desc')
                 ->limit(10)
                 ->get();
         }
 
-        return DemandeDevis::whereIn('statut', ['pending_direction', 'pending_achat'])
+        return DemandeDevis::whereIn('statut', ['approved_service', 'approved_budget'])
             ->with(['serviceDemandeur', 'budgetLigne'])
             ->orderBy('created_at', 'desc')
             ->limit(15)
@@ -46,12 +46,12 @@ class WorkflowTimelineWidget extends Widget
     public function getWorkflowProgress(string $statut): int
     {
         return match ($statut) {
-            'pending_manager' => 20,
-            'pending_direction' => 40,
-            'pending_achat' => 60,
-            'ordered' => 80,
-            'pending_delivery' => 90,
-            'delivered_confirmed' => 100,
+            'pending' => 20,
+            'approved_service' => 40,
+            'approved_budget' => 60,
+            'approved_achat' => 80,
+            'ordered' => 90,
+            'delivered' => 100,
             default => 10,
         };
     }

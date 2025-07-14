@@ -6,9 +6,11 @@ use App\Filament\Resources\DemandeDevisResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\BudgetLigne;
 use Illuminate\Validation\ValidationException;
+use Filament\Notifications\Notification;
 
 class CreateDemandeDevis extends CreateRecord
 {
@@ -18,8 +20,16 @@ class CreateDemandeDevis extends CreateRecord
     {
         /** @var User $currentUser */
         $currentUser = Auth::user();
+        
+        // Log pour debugging
+        \Log::info('Création demande devis par: ' . $currentUser->email, [
+            'user_id' => $currentUser->id,
+            'user_roles' => $currentUser->roles->pluck('name')->toArray(),
+            'service_id' => $currentUser->service_id,
+            'form_data' => $data
+        ]);
 
-        if ($currentUser->hasRole('service-demandeur') && $currentUser->service_id) {
+        if ($currentUser->hasAnyRole(['service-demandeur', 'agent-service', 'responsable-service']) && $currentUser->service_id) {
             $data['service_demandeur_id'] = $currentUser->service_id;
         } elseif (!isset($data['service_demandeur_id'])) {
             // This should be caught by validation, but as a fallback
@@ -54,6 +64,7 @@ class CreateDemandeDevis extends CreateRecord
         }
 
         $data['statut'] = 'pending'; // Initial status
+        $data['created_by'] = $currentUser->id; // Ensure created_by is set
 
         // Handle file uploads from temporary state to the model's media collections
         // This is usually handled automatically by Filament if collection name matches form field name.
@@ -85,5 +96,44 @@ class CreateDemandeDevis extends CreateRecord
     protected function getCreatedNotificationTitle(): ?string
     {
         return 'Demande de devis créée';
+    }
+
+    protected function onValidationError(ValidationException $exception): void
+    {
+        Log::error('Erreur de validation lors de la création d\'une demande devis', [
+            'user_id' => Auth::id(),
+            'errors' => $exception->errors(),
+            'form_data' => $this->data ?? []
+        ]);
+        
+        Notification::make()
+            ->title('Erreur lors de la création')
+            ->body('Des erreurs de validation ont été détectées. Vérifiez les champs requis.')
+            ->danger()
+            ->send();
+            
+        parent::onValidationError($exception);
+    }
+
+    public function create(bool $another = false): void
+    {
+        try {
+            parent::create($another);
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la création d\'une demande devis', [
+                'user_id' => Auth::id(),
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'form_data' => $this->data ?? []
+            ]);
+            
+            Notification::make()
+                ->title('Erreur technique')
+                ->body('Une erreur technique s\'est produite: ' . $e->getMessage())
+                ->danger()
+                ->send();
+                
+            throw $e;
+        }
     }
 }

@@ -55,36 +55,41 @@ class BudgetStatsWidget extends BaseWidget
             return [];
         }
 
-        return $user->hasRole('manager-service')
+        return $user->hasAnyRole(['responsable-service', 'agent-service'])
             ? $this->getServiceStats()
             : $this->getGlobalStats();
     }
 
     private function getServiceStats(?int $serviceId = null): array
     {
-        $serviceId = $serviceId ?? optional(Auth::user())->service_id;
-        if (! $serviceId) {
+        try {
+            $serviceId = $serviceId ?? optional(Auth::user())->service_id;
+            if (! $serviceId) {
+                return $this->getDefaultStats();
+            }
+
+            $budgets = BudgetLigne::where('service_id', $serviceId)
+                ->where('valide_budget', 'oui');
+            $budgetTotal = $budgets->sum('montant_ht_prevu') ?: 0;
+
+            $budgetConsomme = DemandeDevis::where('service_demandeur_id', $serviceId)
+                ->where('statut', 'delivered')
+                ->sum('prix_total_ttc') ?: 0;
+
+            $budgetEngage = DemandeDevis::where('service_demandeur_id', $serviceId)
+                ->whereIn('statut', ['ordered', 'approved_achat'])
+                ->sum('prix_total_ttc') ?: 0;
+
+            $demandesEnCours = DemandeDevis::where('service_demandeur_id', $serviceId)
+                ->whereIn('statut', ['pending', 'approved_service', 'approved_budget'])
+                ->count();
+
+            $budgetDisponible = $budgetTotal - $budgetConsomme - $budgetEngage;
+            $tauxUtilisation = $budgetTotal > 0 ? (($budgetConsomme + $budgetEngage) / $budgetTotal) * 100 : 0;
+        } catch (\Exception $e) {
+            \Log::warning('Error calculating service stats: ' . $e->getMessage());
             return $this->getDefaultStats();
         }
-
-        $budgets = BudgetLigne::where('service_id', $serviceId)
-            ->where('valide_budget', 'oui');
-        $budgetTotal = $budgets->sum('montant_ht_prevu') ?: 0;
-
-        $budgetConsomme = DemandeDevis::where('service_demandeur_id', $serviceId)
-            ->where('statut', 'delivered_confirmed')
-            ->sum('prix_total_ttc') ?: 0;
-
-        $budgetEngage = DemandeDevis::where('service_demandeur_id', $serviceId)
-            ->whereIn('statut', ['ordered', 'pending_delivery'])
-            ->sum('prix_total_ttc') ?: 0;
-
-        $demandesEnCours = DemandeDevis::where('service_demandeur_id', $serviceId)
-            ->whereIn('statut', ['pending_manager', 'pending_direction', 'pending_achat'])
-            ->count();
-
-        $budgetDisponible = $budgetTotal - $budgetConsomme - $budgetEngage;
-        $tauxUtilisation = $budgetTotal > 0 ? (($budgetConsomme + $budgetEngage) / $budgetTotal) * 100 : 0;
 
         return [
             Stat::make('Budget Disponible', number_format($budgetDisponible, 2) . ' €')
@@ -131,25 +136,36 @@ class BudgetStatsWidget extends BaseWidget
      */
     private function getTendanceConsommation(int $serviceId): array
     {
-        $data = [];
-        for ($i = 11; $i >= 0; $i--) {
-            $date = now()->subMonths($i);
-            $consommation = DemandeDevis::where('service_demandeur_id', $serviceId)
-                ->where('statut', 'delivered_confirmed')
-                ->whereYear('date_finalisation', $date->year)
-                ->whereMonth('date_finalisation', $date->month)
-                ->sum('prix_fournisseur_final');
-            $data[] = $consommation;
+        try {
+            $data = [];
+            for ($i = 11; $i >= 0; $i--) {
+                $date = now()->subMonths($i);
+                $consommation = DemandeDevis::where('service_demandeur_id', $serviceId)
+                    ->where('statut', 'delivered')
+                    ->whereYear('date_finalisation', $date->year)
+                    ->whereMonth('date_finalisation', $date->month)
+                    ->sum('prix_fournisseur_final') ?: 0;
+                $data[] = $consommation;
+            }
+            return $data;
+        } catch (\Exception $e) {
+            \Log::warning('Error calculating tendance consommation: ' . $e->getMessage());
+            return array_fill(0, 12, 0);
         }
-        return $data;
     }
 
     private function getGlobalStats(): array
     {
-        $budgetTotalOrg = BudgetLigne::where('valide_budget', 'oui')->sum('montant_ht_prevu') ?: 0;
-        $demandesAValider = DemandeDevis::whereIn('statut', ['pending_manager', 'pending_direction'])->count();
-        $depassements = BudgetLigne::whereRaw('montant_depense_reel > montant_ht_prevu')->count();
-        $servicesActifs = Service::where('actif', true)->count();
+        try {
+            $budgetTotalOrg = BudgetLigne::where('valide_budget', 'oui')->sum('montant_ht_prevu') ?: 0;
+            $demandesAValider = DemandeDevis::whereIn('statut', ['pending', 'approved_service'])->count();
+            $demandesRealisees = DemandeDevis::where('statut', 'delivered')->count();
+            $depassements = BudgetLigne::whereRaw('montant_depense_reel > montant_ht_prevu')->count();
+            $servicesActifs = Service::count();
+        } catch (\Exception $e) {
+            \Log::warning('Error calculating global stats: ' . $e->getMessage());
+            return $this->getDefaultStats();
+        }
 
         return [
             Stat::make('Budget Organisation', number_format($budgetTotalOrg, 2) . ' €')
@@ -160,6 +176,11 @@ class BudgetStatsWidget extends BaseWidget
                 ->description('Nécessitent votre attention')
                 ->color($demandesAValider > 10 ? 'danger' : 'success')
                 ->icon('heroicon-o-exclamation-triangle'),
+
+            Stat::make('Demandes Réalisées', $demandesRealisees)
+                ->description('Livrées et terminées')
+                ->color('success')
+                ->icon('heroicon-o-check-circle'),
 
             Stat::make('Services Actifs', $servicesActifs)
                 ->description('Services avec budget')
@@ -201,19 +222,29 @@ class BudgetStatsWidget extends BaseWidget
 
     private function getDelaiMoyenValidation($serviceId): int
     {
-        return DemandeDevis::where('service_demandeur_id', $serviceId)
-            ->where('statut', 'delivered_confirmed')
-            ->selectRaw('AVG(DATEDIFF(updated_at, created_at)) as avg_days')
-            ->value('avg_days') ?? 0;
+        try {
+            return DemandeDevis::where('service_demandeur_id', $serviceId)
+                ->where('statut', 'delivered')
+                ->selectRaw('AVG(DATEDIFF(updated_at, created_at)) as avg_days')
+                ->value('avg_days') ?? 0;
+        } catch (\Exception $e) {
+            \Log::warning('Error calculating delai moyen: ' . $e->getMessage());
+            return 0;
+        }
     }
 
     private function getTauxApprobation($serviceId): int
     {
-        $total = DemandeDevis::where('service_demandeur_id', $serviceId)->count();
-        $approuves = DemandeDevis::where('service_demandeur_id', $serviceId)
-            ->whereIn('statut', ['delivered_confirmed', 'ordered'])
-            ->count();
+        try {
+            $total = DemandeDevis::where('service_demandeur_id', $serviceId)->count();
+            $approuves = DemandeDevis::where('service_demandeur_id', $serviceId)
+                ->whereIn('statut', ['delivered', 'ordered'])
+                ->count();
 
-        return $total > 0 ? round(($approuves / $total) * 100) : 0;
+            return $total > 0 ? round(($approuves / $total) * 100) : 0;
+        } catch (\Exception $e) {
+            \Log::warning('Error calculating taux approbation: ' . $e->getMessage());
+            return 0;
+        }
     }
 }

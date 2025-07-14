@@ -62,13 +62,24 @@ class DemandeDevisResource extends Resource
                 Wizard\Step::make('Information Générale')
                     ->schema([
                         Select::make('service_demandeur_id')
-                            ->relationship('serviceDemandeur', 'nom')
+                            ->relationship(
+                                name: 'serviceDemandeur',
+                                titleAttribute: 'nom',
+                                modifyQueryUsing: function (Builder $query) use ($currentUser) {
+                                    // Si c'est un agent ou responsable de service, ne montrer que son service
+                                    if ($currentUser->hasAnyRole(['agent-service', 'service-demandeur', 'responsable-service']) && $currentUser->service_id) {
+                                        $query->where('id', $currentUser->service_id);
+                                    }
+                                    // Les administrateurs et autres rôles voient tous les services
+                                    return $query;
+                                }
+                            )
                             ->label('Service Demandeur')
                             ->required()
                             ->searchable()
                             ->preload()
-                            ->disabled(fn(): bool => $currentUser->hasRole('service-demandeur') || ($record && $record->stattr !== 'pending') )
-                            ->default(fn(): ?int => $currentUser->hasRole('service-demandeur') ? $currentUser->service_id : request()->get('service_id')),
+                            ->disabled(fn(): bool => $currentUser->hasAnyRole(['service-demandeur', 'agent-service', 'responsable-service']) || ($record && $record->stattr !== 'pending') )
+                            ->default(fn(): ?int => $currentUser->hasAnyRole(['service-demandeur', 'agent-service', 'responsable-service']) ? $currentUser->service_id : request()->get('service_id')),
                         Select::make('budget_ligne_id')
                             ->label('Ligne Budgétaire d\'Imputation')
                             ->relationship(
@@ -447,7 +458,10 @@ class DemandeDevisResource extends Resource
                             ->title($records->count() . ' demandes approuvées')
                             ->success()
                             ->send();
-                    }),
+                    })
+                    ->visible(fn (): bool =>
+                        optional(auth()->user())->hasAnyRole(['responsable-service', 'administrateur'])
+                    ),
 
                 BulkAction::make('rejectSelected')
                     ->label('Rejeter Sélection')
@@ -462,7 +476,10 @@ class DemandeDevisResource extends Resource
                         foreach ($records as $demande) {
                             $demande->reject(auth()->user(), $data['comment']);
                         }
-                    }),
+                    })
+                    ->visible(fn (): bool =>
+                        optional(auth()->user())->hasAnyRole(['responsable-service', 'administrateur'])
+                    ),
 
                 BulkAction::make('export_excel')
                     ->label('Exporter Excel')
@@ -506,16 +523,10 @@ class DemandeDevisResource extends Resource
         /** @var User $currentUser */
         $currentUser = Auth::user();
 
-        if ($currentUser->hasRole('administrateur')) {
-            // Admin sees everything - no filter
-        } elseif ($currentUser->hasRole('service-demandeur') && $currentUser->service_id) {
+        if ($currentUser->hasRole('administrateur') || $currentUser->hasRole('responsable-budget') || $currentUser->hasRole('service-achat')) {
+            // Admin, responsable budget et service achat voient tout - pas de filtre
+        } elseif (($currentUser->hasRole('service-demandeur') || $currentUser->hasRole('responsable-service') || $currentUser->hasRole('agent-service')) && $currentUser->service_id) {
             $query->where('service_demandeur_id', $currentUser->service_id);
-        } elseif ($currentUser->hasRole('service-achat')) {
-            // Service Achat should see demands that are at 'service-achat' step or beyond, or assigned to them.
-            $query->where(function (Builder $q) {
-                $q->where('current_step', 'service-achat')
-                  ->orWhereIn('statut', ['approved_achat', 'delivered', 'ordered', 'ready_for_order']); // Include more statuses
-            });
         }
         // Responsable Budget sees all, filtered by table filters.
         // Admin sees all.

@@ -15,7 +15,7 @@ class DemandeDevisPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['responsable-budget', 'service-demandeur', 'service-achat']);
+        return $user->hasAnyRole(['responsable-budget', 'service-demandeur', 'service-achat', 'responsable-service', 'agent-service']);
     }
 
     /**
@@ -26,7 +26,7 @@ class DemandeDevisPolicy
         if ($user->hasAnyRole(['responsable-budget', 'service-achat'])) {
             return true;
         }
-        if ($user->hasRole('service-demandeur')) {
+        if ($user->hasAnyRole(['service-demandeur', 'responsable-service', 'agent-service'])) {
             return $user->service_id === $demandeDevis->service_demandeur_id;
         }
         return false;
@@ -37,7 +37,7 @@ class DemandeDevisPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('service-demandeur');
+        return $user->hasAnyRole(['service-demandeur', 'agent-service']);
     }
 
     /**
@@ -46,7 +46,7 @@ class DemandeDevisPolicy
     public function update(User $user, DemandeDevis $demandeDevis): bool
     {
         // Only the requester service can update, and only if it's still pending or rejected at their level
-        if ($user->hasRole('service-demandeur') && $user->service_id === $demandeDevis->service_demandeur_id) {
+        if ($user->hasAnyRole(['service-demandeur', 'agent-service']) && $user->service_id === $demandeDevis->service_demandeur_id) {
             // Cannot update if it's already passed budget approval or fully delivered/approved
             return in_array($demandeDevis->statut, ['pending', 'rejected']) ||
                    ($demandeDevis->current_step === 'reception-livraison' && $demandeDevis->statut !== 'delivered');
@@ -64,7 +64,7 @@ class DemandeDevisPolicy
         if ($user->hasRole('responsable-budget')) { // RB might be able to delete certain erroneous requests
             return in_array($demandeDevis->statut, ['pending', 'rejected']);
         }
-        if ($user->hasRole('service-demandeur') && $user->service_id === $demandeDevis->service_demandeur_id) {
+        if ($user->hasAnyRole(['service-demandeur', 'agent-service']) && $user->service_id === $demandeDevis->service_demandeur_id) {
             return in_array($demandeDevis->statut, ['pending', 'rejected']); // Can delete if not yet processed far
         }
         return false;
