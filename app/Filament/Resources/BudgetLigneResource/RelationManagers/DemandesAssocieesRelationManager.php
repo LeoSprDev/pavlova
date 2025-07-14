@@ -9,92 +9,113 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\DemandeDevisResource; // For linking actions
 
 class DemandesAssocieesRelationManager extends RelationManager
 {
     protected static string $relationship = 'demandesAssociees';
 
-    protected static ?string $recordTitleAttribute = 'denomination'; // or another suitable attribute from DemandeDevis
-
     public function form(Form $form): Form
     {
-        // This form is typically for creating/editing related records directly from the manager.
-        // For DemandeDevis, it's complex, so we might redirect to the full DemandeDevisResource form.
-        // Or provide a simplified form if inline creation is desired.
-        // For now, let's assume we view only or link to full resource.
         return $form
             ->schema([
-                // Forms\Components\TextInput::make('denomination')
-                //     ->required()
-                //     ->maxLength(255),
-                // ... other fields if inline editing is enabled
+                Forms\Components\TextInput::make('denomination')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('denomination')
             ->columns([
                 Tables\Columns\TextColumn::make('denomination')
-                    ->label('Dénomination')
+                    ->label('Produit/Service')
                     ->searchable()
+                    ->sortable()
+                    ->limit(40),
+                    
+                Tables\Columns\TextColumn::make('serviceDemandeur.nom')
+                    ->label('Service Demandeur')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('statut')
-                    ->label('Statut')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state): string => ucfirst(str_replace('_', ' ', $state)))
-                    ->color(fn (string $state): string => match ($state) {
-                        'pending' => 'warning',
-                        'approved_budget' => 'info',
-                        'approved_achat' => 'primary',
-                        'delivered' => 'success',
-                        'rejected' => 'danger',
-                        'cancelled' => 'gray',
-                        default => 'secondary',
-                    }),
+                    
                 Tables\Columns\TextColumn::make('prix_total_ttc')
                     ->label('Montant TTC')
                     ->money('EUR')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('date_besoin')
-                    ->label('Date de Besoin')
-                    ->date('d/m/Y')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('urgence')
-                    ->label('Urgence')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
-                    ->color(fn (string $state): string => match($state) {
-                        'normale' => 'success',
-                        'urgente' => 'warning',
-                        'critique' => 'danger',
-                        default => 'gray',
+                    
+                Tables\Columns\BadgeColumn::make('statut')
+                    ->label('Statut')
+                    ->colors([
+                        'secondary' => 'pending',
+                        'warning' => 'approved_service',
+                        'info' => 'approved_budget', 
+                        'success' => ['approved_achat', 'delivered'],
+                        'danger' => 'rejected',
+                    ])
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'En attente',
+                        'approved_service' => 'Validé service',
+                        'approved_budget' => 'Validé budget',
+                        'approved_achat' => 'Validé achat',
+                        'delivered' => 'Livré',
+                        'rejected' => 'Rejeté',
+                        default => $state,
                     }),
+                    
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Créé le')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
+                    
+                Tables\Columns\TextColumn::make('fournisseur_propose')
+                    ->label('Fournisseur')
+                    ->limit(20),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('statut')
+                    ->options([
+                        'pending' => 'En attente',
+                        'approved_service' => 'Validé service',
+                        'approved_budget' => 'Validé budget',
+                        'approved_achat' => 'Validé achat',
+                        'delivered' => 'Livré',
+                        'rejected' => 'Rejeté',
+                    ]),
             ])
             ->headerActions([
-                // Action to create a new DemandeDevis linked to this BudgetLigne
-                Tables\Actions\Action::make('create_demande_devis')
-                    ->label('Nouvelle Demande Associée')
+                Tables\Actions\Action::make('create_demande')
+                    ->label('Nouvelle Demande')
                     ->icon('heroicon-o-plus')
-                    ->url(fn (): string => DemandeDevisResource::getUrl('create', [
-                        'budget_ligne_id' => $this->getOwnerRecord()->id,
-                        'service_id' => $this->getOwnerRecord()->service_id, // Pre-fill service from budget line
-                        ]))
-                    ->visible(fn(): bool => $this->getOwnerRecord()->valide_budget === 'oui' && $this->getOwnerRecord()->calculateBudgetRestant() > 0 && auth()->user()->can('create', \App\Models\DemandeDevis::class)),
+                    ->url(fn (): string => route('filament.admin.resources.demande-devis.create', [
+                        'budget_ligne_id' => $this->ownerRecord->id
+                    ]))
+                    ->openUrlInNewTab(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->url(fn ($record): string => DemandeDevisResource::getUrl('view', ['record' => $record])),
-                Tables\Actions\EditAction::make()
-                    ->url(fn ($record): string => DemandeDevisResource::getUrl('edit', ['record' => $record]))
-                    ->visible(fn ($record): bool => auth()->user()->can('update', $record)),
+                Tables\Actions\Action::make('view')
+                    ->label('Voir')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn ($record): string => route('filament.admin.resources.demande-devis.view', $record))
+                    ->openUrlInNewTab(),
+                    
+                Tables\Actions\Action::make('edit')
+                    ->label('Modifier')
+                    ->icon('heroicon-o-pencil')
+                    ->url(fn ($record): string => route('filament.admin.resources.demande-devis.edit', $record))
+                    ->openUrlInNewTab()
+                    ->visible(fn ($record): bool => $record->statut === 'pending'),
             ])
             ->bulkActions([
-                // Tables\Actions\DeleteBulkAction::make(),
-            ]);
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\Action::make('export')
+                        ->label('Exporter sélection')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->action(function ($records) {
+                            // Export logic here
+                        }),
+                ]),
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 }

@@ -17,3 +17,10 @@ test_*.html
 /node_modules
 package-lock.json
 
+
+# Cache et sessions Laravel - NE JAMAIS COMMITER
+/storage/framework/views/*.php
+/storage/framework/sessions/*
+/storage/framework/cache/*
+/storage/app/*
+

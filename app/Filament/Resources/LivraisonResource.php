@@ -87,10 +87,13 @@ class LivraisonResource extends Resource
                         ->rows(3)
                         ->placeholder('Actions à mener (retour, échange, avoir...)'),
 
-                    Forms\Components\TextInput::make('verifie_par')
+                    Forms\Components\Select::make('verifie_par')
                         ->label('Vérifié par')
-                        ->default(auth()->user()->name)
-                        ->required(),
+                        ->relationship('verificateur', 'name')
+                        ->default(auth()->id())
+                        ->required()
+                        ->searchable()
+                        ->preload(),
                 ]),
 
             Forms\Components\Section::make('🏁 Finalisation')
@@ -124,6 +127,9 @@ class LivraisonResource extends Resource
                     ->date('d/m/Y')
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('statut_reception'),
+                Tables\Columns\TextColumn::make('verificateur.name')
+                    ->label('Vérifié par')
+                    ->placeholder('Non vérifié'),
                 Tables\Columns\IconColumn::make('conforme')->boolean(),
             ])
             ->actions([
@@ -137,7 +143,7 @@ class LivraisonResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        if (optional(auth()->user())->hasRole('agent-service') || optional(auth()->user())->hasRole('service-demandeur')) {
+        if (optional(auth()->user())->hasAnyRole(['agent-service', 'service-demandeur', 'responsable-service'])) {
             return $query->whereHas('commande.demandeDevis', function ($q) {
                 $q->where('service_demandeur_id', optional(auth()->user())->service_id);
             });
