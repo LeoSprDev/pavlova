@@ -1,0 +1,328 @@
+/* Filament Mobile & Tablet Responsiveness Fixes */
+
+/* Mobile Devices (up to 768px) */
+@media (max-width: 768px) {
+    /* Sidebar Navigation */
+    .fi-sidebar {
+        width: 100% !important;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .fi-sidebar.open {
+        transform: translateX(0);
+    }
+    
+    /* Main Content Area */
+    .fi-main {
+        margin-left: 0 !important;
+        padding: 1rem !important;
+    }
+    
+    /* Tables */
+    .fi-ta {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .fi-ta-table {
+        min-width: 600px;
+        font-size: 0.875rem;
+    }
+    
+    .fi-ta-header-cell,
+    .fi-ta-cell {
+        padding: 0.5rem 0.25rem !important;
+        white-space: nowrap;
+    }
+    
+    /* Forms */
+    .fi-fo-field-wrp {
+        margin-bottom: 1rem;
+    }
+    
+    .fi-input {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+    }
+    
+    /* Stats Widgets */
+    .fi-wi-stats-overview-stats {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem;
+    }
+    
+    .fi-wi-stats-overview-stat {
+        padding: 1rem !important;
+    }
+    
+    /* Chart Widgets */
+    .fi-wi-chart {
+        height: 250px !important;
+    }
+    
+    /* Action Buttons */
+    .fi-ac-btn-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .fi-ac-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Modal */
+    .fi-modal {
+        margin: 1rem !important;
+        max-height: calc(100vh - 2rem) !important;
+    }
+    
+    .fi-modal-content {
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
+    }
+    
+    /* Wizard Steps */
+    .fi-fo-wizard-header {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .fi-fo-wizard-header-step {
+        min-width: 120px;
+        flex-shrink: 0;
+    }
+    
+    /* Page Header */
+    .fi-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+    
+    .fi-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    /* Navigation */
+    .fi-topbar {
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .fi-logo {
+        height: 2rem !important;
+    }
+}
+
+/* Tablet Devices (769px to 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* Sidebar */
+    .fi-sidebar {
+        width: 16rem !important;
+    }
+    
+    /* Main Content */
+    .fi-main {
+        margin-left: 16rem !important;
+        padding: 1.5rem !important;
+    }
+    
+    /* Stats Widgets */
+    .fi-wi-stats-overview-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem;
+    }
+    
+    /* Tables */
+    .fi-ta-header-cell,
+    .fi-ta-cell {
+        padding: 0.75rem 0.5rem !important;
+    }
+    
+    /* Chart Widgets */
+    .fi-wi-chart {
+        height: 300px !important;
+    }
+    
+    /* Form Layout */
+    .fi-fo-component-ctn {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+    }
+}
+
+/* Touch Optimizations */
+@media (pointer: coarse) {
+    /* Increase touch targets */
+    .fi-btn,
+    .fi-link,
+    .fi-ac-btn {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+    
+    /* Better spacing for touch */
+    .fi-ta-actions {
+        gap: 0.5rem !important;
+    }
+    
+    .fi-ac-btn-group .fi-ac-btn {
+        margin: 0.25rem !important;
+    }
+}
+
+/* Dark Mode Adjustments for Mobile */
+@media (prefers-color-scheme: dark) {
+    .fi-sidebar {
+        border-right: 1px solid rgb(55 65 81) !important;
+    }
+    
+    .fi-ta {
+        border: 1px solid rgb(55 65 81) !important;
+    }
+}
+
+/* Landscape Orientation */
+@media (orientation: landscape) and (max-height: 600px) {
+    .fi-modal {
+        margin: 0.5rem !important;
+        max-height: calc(100vh - 1rem) !important;
+    }
+    
+    .fi-header {
+        padding: 0.5rem 1rem !important;
+    }
+    
+    .fi-wi-chart {
+        height: 200px !important;
+    }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .fi-logo,
+    .fi-avatar {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .fi-sidebar,
+    .fi-topbar,
+    .fi-header-actions {
+        display: none !important;
+    }
+    
+    .fi-main {
+        margin-left: 0 !important;
+    }
+    
+    .fi-ta {
+        break-inside: avoid;
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    .fi-sidebar {
+        transition: none !important;
+    }
+    
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Custom Dashboard Improvements */
+.fi-dashboard-widgets {
+    display: grid;
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .fi-dashboard-widgets {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+    
+    /* Budget Stats Widget Mobile */
+    .fi-wi-stats-overview-stat-label {
+        font-size: 0.875rem !important;
+    }
+    
+    .fi-wi-stats-overview-stat-value {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Table Widget Mobile */
+    .fi-wi-table {
+        font-size: 0.75rem !important;
+    }
+    
+    .fi-wi-table-header {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .fi-dashboard-widgets {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .fi-wi-table {
+        grid-column: span 2;
+    }
+}
+
+@media (min-width: 1025px) {
+    .fi-dashboard-widgets {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .fi-wi-table {
+        grid-column: span 3;
+    }
+}
+
+/* Loading States */
+.fi-ta-loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Mobile Menu Toggle */
+.fi-topbar-mobile-toggle {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .fi-topbar-mobile-toggle {
+        display: flex !important;
+    }
+}
+
+/* Widget Responsiveness */
+.fi-widget {
+    min-height: auto !important;
+}
+
+@media (max-width: 768px) {
+    .fi-widget {
+        margin-bottom: 1rem !important;
+    }
+    
+    .fi-widget-header {
+        padding: 1rem !important;
+    }
+    
+    .fi-widget-content {
+        padding: 1rem !important;
+    }
+}
