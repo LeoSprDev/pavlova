@@ -4,10 +4,20 @@ namespace App\Observers;
 
 use App\Models\Commande;
 use App\Models\User;
+use App\Models\Livraison;
 use Filament\Notifications\Notification;
 
 class CommandeObserver
 {
+    public function created(Commande $commande): void
+    {
+        Livraison::create([
+            'commande_id' => $commande->id,
+            'statut_reception' => 'en_attente',
+            'date_livraison_prevue' => now()->addDays(7),
+        ]);
+    }
+
     public function updated(Commande $commande): void
     {
         if ($commande->isDirty('statut') && $commande->statut === 'livree') {

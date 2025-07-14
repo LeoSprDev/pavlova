@@ -208,6 +208,26 @@ class BudgetLigneResource extends Resource
                     ->getStateUsing(fn (BudgetLigne $record): float => $record->calculateBudgetRestant())
                     ->color(fn ($state): string => $state < 0 ? 'danger' : ($state < 100 ? 'warning' : 'success')),
 
+                TextColumn::make('demandes_count')
+                    ->label('Devis Liés')
+                    ->counts('demandesAssociees')
+                    ->badge()
+                    ->color('info')
+                    ->tooltip('Nombre total de demandes de devis associées'),
+                    
+                TextColumn::make('demandes_actives')
+                    ->label('Devis Actifs')
+                    ->getStateUsing(function (BudgetLigne $record): string {
+                        $pending = $record->demandesAssociees()->whereIn('statut', ['pending', 'approved_service', 'approved_budget', 'approved_achat'])->count();
+                        $delivered = $record->demandesAssociees()->where('statut', 'delivered')->count();
+                        return "{$pending} en cours / {$delivered} livrés";
+                    })
+                    ->badge()
+                    ->color(function (BudgetLigne $record): string {
+                        $pending = $record->demandesAssociees()->whereIn('statut', ['pending', 'approved_service', 'approved_budget', 'approved_achat'])->count();
+                        return $pending > 0 ? 'warning' : 'success';
+                    }),
+
                 BadgeColumn::make('valide_budget')
                     ->label('Statut Validation')
                     ->colors([
@@ -332,7 +352,7 @@ class BudgetLigneResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // RelationManagers\DemandesAssocieesRelationManager::class,
+            RelationManagers\DemandesAssocieesRelationManager::class,
         ];
     }
 
@@ -357,8 +377,8 @@ class BudgetLigneResource extends Resource
         /** @var User $currentUser */
         $currentUser = Auth::user();
 
-        if ($currentUser->hasRole('service-demandeur') && $currentUser->service_id) {
-            // This global scope is already on the model, but reinforcing here for clarity or if global scope is removed.
+        if (($currentUser->hasRole('service-demandeur') || $currentUser->hasRole('responsable-service')) && $currentUser->service_id) {
+            // Filter to show only budget lines from the user's service
             $query->where('service_id', $currentUser->service_id);
         }
         // For service-achat, they might need to see all budget lines for context when approving demands.

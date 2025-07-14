@@ -7,12 +7,12 @@ class LivraisonPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['responsable-budget', 'service-achat', 'agent-service', 'service-demandeur']);
+        return $user->hasAnyRole(['responsable-budget', 'service-achat', 'agent-service', 'service-demandeur', 'responsable-service']);
     }
 
     public function view(User $user, Livraison $livraison): bool
     {
-        if ($user->hasAnyRole(['agent-service', 'service-demandeur'])) {
+        if ($user->hasAnyRole(['agent-service', 'service-demandeur', 'responsable-service'])) {
             return $livraison->commande?->demandeDevis?->service_demandeur_id === $user->service_id;
         }
         return $user->hasAnyRole(['responsable-budget', 'service-achat']);
@@ -20,7 +20,7 @@ class LivraisonPolicy
 
     public function update(User $user, Livraison $livraison): bool
     {
-        if ($user->hasAnyRole(['agent-service', 'service-demandeur'])) {
+        if ($user->hasAnyRole(['agent-service', 'service-demandeur', 'responsable-service'])) {
             return $livraison->commande?->demandeDevis?->service_demandeur_id === $user->service_id;
         }
         return false;

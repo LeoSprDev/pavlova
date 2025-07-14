@@ -27,6 +27,11 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
         parent::booted();
 
         static::creating(function (DemandeDevis $demande) {
+            // S'assurer que created_by est défini
+            if (empty($demande->created_by)) {
+                $demande->created_by = auth()->id() ?? 1; // Utilisateur par défaut si pas authentifié
+            }
+
             if ($demande->fournisseur_propose) {
                 app(\App\Services\FournisseurTrackingService::class)
                     ->createOrUpdateFournisseur($demande->fournisseur_propose);

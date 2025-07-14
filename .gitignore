@@ -1,1 +1,19 @@
 /prompt*.*
+# Logs et cache
+/storage/logs/*
+/bootstrap/cache/*.php
+database/database.sqlite
+
+# Vendor (ne doit JAMAIS être commité)
+/vendor/*
+
+# Fichiers temporaires
+*.backup.*
+pavlova.log
+temp_*.html
+test_*.html
+
+# Node modules si vous utilisez npm
+/node_modules
+package-lock.json
+

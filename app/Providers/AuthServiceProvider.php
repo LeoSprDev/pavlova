@@ -31,8 +31,8 @@ class AuthServiceProvider extends ServiceProvider
         DemandeDevis::class => DemandeDevisPolicy::class,
         Commande::class => CommandePolicy::class,
         Livraison::class => LivraisonPolicy::class,
-        // Service::class => ServicePolicy::class, // Uncomment if ServicePolicy is created
-        // User::class => UserPolicy::class,       // Uncomment if UserPolicy is created
+        Service::class => ServicePolicy::class,
+        User::class => UserPolicy::class,
     ];
 
     /**

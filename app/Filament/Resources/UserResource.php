@@ -23,34 +23,78 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required(),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required(),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required(),
-                Forms\Components\Select::make('service_id')
-                    ->relationship('service', 'id'),
-                Forms\Components\Select::make('roles')
-                    ->multiple()
-                    ->relationship('roles', 'name')
-                    ->options([
-                        'administrateur' => 'Administrateur',
-                        'responsable-budget' => 'Responsable Budget',
-                        'service-achat' => 'Service Achat',
-                        'responsable-service' => 'Responsable Service',
-                        'agent-service' => 'Agent Service',
-                    ])
-                    ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
-                Forms\Components\Toggle::make('is_service_responsable')
-                    ->label('Responsable de service')
-                    ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
-                Forms\Components\Toggle::make('force_password_change')
-                    ->label('Forcer changement mot de passe')
-                    ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
+                Forms\Components\Section::make('Informations personnelles')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nom complet')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->label('Adresse email')
+                            ->email()
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+                        Forms\Components\DateTimePicker::make('email_verified_at')
+                            ->label('Email vérifié le')
+                            ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Mot de passe')
+                    ->schema([
+                        Forms\Components\TextInput::make('password')
+                            ->label('Mot de passe')
+                            ->password()
+                            ->required(fn (string $operation): bool => $operation === 'create')
+                            ->dehydrated(fn ($state): bool => filled($state))
+                            ->helperText(fn (string $operation): string => 
+                                $operation === 'edit' 
+                                    ? 'Laissez vide pour conserver le mot de passe actuel' 
+                                    : 'Saisissez un mot de passe pour le nouvel utilisateur'
+                            ),
+                        Forms\Components\Toggle::make('force_password_change')
+                            ->label('Forcer le changement de mot de passe à la prochaine connexion')
+                            ->helperText('L\'utilisateur devra changer son mot de passe lors de sa prochaine connexion')
+                            ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
+                    ])->columns(1),
+
+                Forms\Components\Section::make('Service et rôles')
+                    ->schema([
+                        Forms\Components\Select::make('service_id')
+                            ->relationship('service', 'nom')
+                            ->label('Service')
+                            ->searchable()
+                            ->preload(),
+                        Forms\Components\Toggle::make('is_service_responsable')
+                            ->label('Responsable de service')
+                            ->helperText('Cochez si cet utilisateur est responsable de son service')
+                            ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
+                        Forms\Components\CheckboxList::make('user_roles')
+                            ->label('Rôles')
+                            ->options(function () {
+                                return \Spatie\Permission\Models\Role::all()->mapWithKeys(function ($role) {
+                                    $descriptions = [
+                                        'administrateur' => 'Administrateur - Accès complet au système',
+                                        'responsable-budget' => 'Responsable Budget - Gestion des budgets et validation',
+                                        'service-achat' => 'Service Achat - Gestion des achats et commandes',
+                                        'responsable-service' => 'Responsable Service - Responsable d\'un service',
+                                        'agent-service' => 'Agent Service - Agent d\'un service',
+                                        'service-demandeur' => 'Service Demandeur - Peut créer des demandes',
+                                    ];
+                                    $description = $descriptions[$role->name] ?? '';
+                                    return [$role->name => $description ? "{$role->name} - {$description}" : $role->name];
+                                });
+                            })
+                            ->afterStateHydrated(function (Forms\Components\CheckboxList $component, $record) {
+                                if ($record) {
+                                    $component->state($record->roles->pluck('name')->toArray());
+                                }
+                            })
+                            ->dehydrated(true)  // Changed to true so it's included in form data
+                            ->helperText('Sélectionnez un ou plusieurs rôles pour cet utilisateur')
+                            ->columns(1)
+                            ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
+                    ])->columns(2),
             ]);
     }
 
@@ -59,23 +103,38 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->label('Nom')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('service.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('is_service_responsable')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Email')
+                    ->searchable()
+                    ->copyable(),
+                Tables\Columns\TextColumn::make('service.nom')
+                    ->label('Service')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->badge()
+                    ->color('info'),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Rôles')
+                    ->badge()
+                    ->separator(',')
+                    ->colors([
+                        'danger' => 'administrateur',
+                        'warning' => 'responsable-budget',
+                        'success' => 'responsable-service',
+                        'info' => 'service-achat',
+                        'gray' => 'agent-service',
+                        'primary' => 'service-demandeur',
+                    ]),
+                Tables\Columns\IconColumn::make('is_service_responsable')
+                    ->label('Resp. Service')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-badge')
+                    ->falseIcon('heroicon-o-x-mark'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Créé le')
+                    ->dateTime('d/m/Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -106,5 +165,18 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $currentUser = auth()->user();
+
+        if ($currentUser && $currentUser->hasRole('responsable-service') && $currentUser->service_id) {
+            // Responsable de service ne voit que les utilisateurs de son service
+            $query->where('service_id', $currentUser->service_id);
+        }
+
+        return $query->with(['service', 'roles']);
     }
 }

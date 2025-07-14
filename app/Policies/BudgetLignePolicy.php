@@ -15,7 +15,7 @@ class BudgetLignePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['responsable-budget', 'service-demandeur', 'service-achat']);
+        return $user->hasAnyRole(['responsable-budget', 'service-demandeur', 'service-achat', 'responsable-service']);
     }
 
     /**
@@ -29,7 +29,7 @@ class BudgetLignePolicy
         if ($user->hasRole('service-achat')) { // Service achat might need to view lines for context
             return true;
         }
-        if ($user->hasRole('service-demandeur')) {
+        if ($user->hasRole('service-demandeur') || $user->hasRole('responsable-service')) {
             return $user->service_id === $budgetLigne->service_id;
         }
         return false;

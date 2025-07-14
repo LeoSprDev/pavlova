@@ -40,6 +40,9 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\FilamentInfoWidget::class,
                 \App\Filament\Widgets\BudgetStatsWidget::class,
                 \App\Filament\Widgets\WorkflowTimelineWidget::class,
+                \App\Filament\Widgets\TopFournisseursWidget::class,
+                \App\Filament\Widgets\CommandesLivraisonsWidget::class,
+                \App\Filament\Widgets\BudgetLignesTableWidget::class,
             ])
             ->topbar(false)
             ->navigationItems([
@@ -53,19 +56,50 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Budget Lignes')
                     ->url('/admin/budget-lignes')
                     ->icon('heroicon-o-banknotes')
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.budget-lignes.*')),
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.budget-lignes.*'))
+                    ->visible(fn (): bool => Auth::check() && Auth::user()->hasAnyRole(['administrateur', 'responsable-budget', 'responsable-direction', 'responsable-service'])),
 
                 NavigationItem::make('Demandes Devis')
                     ->label('Demandes Devis')
                     ->url('/admin/demande-devis')
                     ->icon('heroicon-o-document-text')
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.demande-devis.*')),
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.demande-devis.*'))
+                    ->visible(fn (): bool => Auth::check() && Auth::user()->hasAnyRole(['administrateur', 'agent-service', 'responsable-service', 'responsable-budget', 'service-achat'])),
 
                 NavigationItem::make('Commandes')
                     ->label('Commandes')
                     ->url('/admin/commandes')
                     ->icon('heroicon-o-shopping-cart')
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.commandes.*')),
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.commandes.*'))
+                    ->visible(fn (): bool => Auth::check() && Auth::user()->hasAnyRole(['administrateur', 'service-achat', 'responsable-service'])),
+
+                NavigationItem::make('Livraisons')
+                    ->label('Livraisons')
+                    ->url('/admin/livraisons')
+                    ->icon('heroicon-o-truck')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.livraisons.*'))
+                    ->visible(fn (): bool => Auth::check() && Auth::user()->hasAnyRole(['administrateur', 'service-achat', 'agent-service', 'responsable-service'])),
+
+                NavigationItem::make('Services')
+                    ->label('Services')
+                    ->url('/admin/services')
+                    ->icon('heroicon-o-building-office')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.services.*'))
+                    ->visible(fn (): bool => Auth::check() && Auth::user()->hasAnyRole(['administrateur', 'responsable-budget', 'responsable-direction'])),
+
+                NavigationItem::make('Utilisateurs')
+                    ->label('Utilisateurs')
+                    ->url('/admin/users')
+                    ->icon('heroicon-o-users')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.users.*'))
+                    ->visible(fn (): bool => Auth::check() && Auth::user()->hasAnyRole(['administrateur', 'responsable-service'])),
+
+                NavigationItem::make('Rôles & Permissions')
+                    ->label('Rôles & Permissions')
+                    ->url('/admin/roles')
+                    ->icon('heroicon-o-shield-check')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.roles.*'))
+                    ->visible(fn (): bool => Auth::check() && Auth::user()->hasRole('administrateur')),
             ]);
     }
 }

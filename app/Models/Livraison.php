@@ -32,11 +32,17 @@ class Livraison extends Model implements HasMedia
         'date_livraison_prevue' => 'date',
         'date_livraison_reelle' => 'date',
         'conforme' => 'boolean',
+        'photos_reception' => 'array',
     ];
 
     public function commande(): BelongsTo
     {
         return $this->belongsTo(Commande::class);
+    }
+
+    public function verificateur(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verifie_par');
     }
 
     protected static function booted(): void
@@ -129,63 +135,127 @@ class Livraison extends Model implements HasMedia
 
     private function updateBudgetAvecPrixFinal(): void
     {
-        $demandeDevis = $this->commande->demandeDevis;
-        $budgetLigne = $demandeDevis->budgetLigne;
+        try {
+            $demandeDevis = $this->commande->demandeDevis;
+            
+            if (!$demandeDevis) {
+                Log::warning("Demande de devis introuvable pour la livraison", ['livraison_id' => $this->id]);
+                return;
+            }
+            
+            $budgetLigne = $demandeDevis->budgetLigne;
+            
+            if (!$budgetLigne) {
+                Log::warning("Ligne budget introuvable pour la demande", ['demande_id' => $demandeDevis->id]);
+                return;
+            }
 
-        // 💰 Utiliser prix fournisseur final ou prix initial
-        $montantReel = $demandeDevis->prix_fournisseur_final ?? $demandeDevis->prix_total_ttc;
+            // 💰 Utiliser prix fournisseur final ou prix initial
+            $montantReel = $demandeDevis->prix_fournisseur_final ?? $demandeDevis->prix_total_ttc ?? 0;
 
-        $budgetLigne->decrement('montant_engage', $demandeDevis->prix_total_ttc);
-        $budgetLigne->increment('montant_depense_reel', $montantReel);
+            if ($montantReel > 0) {
+                $budgetLigne->decrement('montant_engage', $demandeDevis->prix_total_ttc ?? 0);
+                $budgetLigne->increment('montant_depense_reel', $montantReel);
 
-        Log::info("💰 Budget mis à jour automatiquement", [
-            'budget_ligne_id' => $budgetLigne->id,
-            'montant_ajoute' => $montantReel,
-            'nouveau_total' => $budgetLigne->fresh()->montant_depense_reel,
-            'livraison_id' => $this->id
-        ]);
+                Log::info("💰 Budget mis à jour automatiquement", [
+                    'budget_ligne_id' => $budgetLigne->id,
+                    'montant_ajoute' => $montantReel,
+                    'nouveau_total' => $budgetLigne->fresh()->montant_depense_reel,
+                    'livraison_id' => $this->id
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error("Erreur mise à jour budget", [
+                'livraison_id' => $this->id,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     public function finaliserDemandeDevis(): void
     {
-        $this->commande->demandeDevis->update([
-            'statut' => 'delivered',
-            'date_finalisation' => now(),
-            'finalise_par' => auth()->id(),
-            'commentaire_finalisation' => "Livraison conforme validée automatiquement"
-        ]);
+        try {
+            $demandeDevis = $this->commande->demandeDevis;
+            
+            if (!$demandeDevis) {
+                Log::warning("Impossible de finaliser: demande de devis introuvable", ['livraison_id' => $this->id]);
+                return;
+            }
 
-        Log::info("✅ Demande devis finalisée", [
-            'demande_id' => $this->commande->demandeDevis->id,
-            'livraison_id' => $this->id
-        ]);
+            $demandeDevis->update([
+                'statut' => 'delivered',
+                'date_finalisation' => now(),
+                'finalise_par' => auth()->id() ?? 1,
+                'commentaire_finalisation' => "Livraison conforme validée automatiquement"
+            ]);
+
+            Log::info("✅ Demande devis finalisée", [
+                'demande_id' => $demandeDevis->id,
+                'livraison_id' => $this->id
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Erreur finalisation demande devis", [
+                'livraison_id' => $this->id,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     public function envoyerNotificationsFinales(): void
     {
-        $demandeDevis = $this->commande->demandeDevis;
+        try {
+            $demandeDevis = $this->commande->demandeDevis;
 
-        // 📧 Email service demandeur original
-        Mail::to($demandeDevis->createdBy->email)
-            ->queue(new \App\Mail\LivraisonConformeConfirmeeEmail($this));
+            // 📧 Email service demandeur original (avec vérification)
+            if ($demandeDevis && $demandeDevis->createdBy && $demandeDevis->createdBy->email) {
+                try {
+                    Mail::to($demandeDevis->createdBy->email)
+                        ->queue(new \App\Mail\LivraisonConformeConfirmeeEmail($this));
+                } catch (\Exception $e) {
+                    Log::warning("Impossible d'envoyer l'email au créateur de la demande", [
+                        'livraison_id' => $this->id,
+                        'demande_id' => $demandeDevis->id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            } else {
+                Log::warning("Créateur de demande introuvable pour l'email", [
+                    'livraison_id' => $this->id,
+                    'demande_id' => $demandeDevis->id ?? 'unknown'
+                ]);
+            }
 
-        // 🔔 Notification responsable budget
-        $responsablesBudget = User::role('responsable-budget')->get();
-        foreach ($responsablesBudget as $responsable) {
-            Notification::make()
-                ->title('✅ Livraison conforme - Budget mis à jour')
-                ->body("Livraison {$this->id} validée - Montant: {$demandeDevis->prix_fournisseur_final}€")
-                ->success()
-                ->actions([
-                    \Filament\Notifications\Actions\Action::make('voir_budget')
-                        ->label('Voir budget')
-                        ->url("/admin/budget-lignes/{$demandeDevis->budget_ligne_id}")
-                        ->button()
-                ])
-                ->sendToDatabase([$responsable]);
+            // 🔔 Notification responsable budget
+            $responsablesBudget = User::role('responsable-budget')->get();
+            foreach ($responsablesBudget as $responsable) {
+                try {
+                    Notification::make()
+                        ->title('✅ Livraison conforme - Budget mis à jour')
+                        ->body("Livraison {$this->id} validée - Montant: " . ($demandeDevis->prix_fournisseur_final ?? $demandeDevis->prix_total_ttc ?? 'N/A') . "€")
+                        ->success()
+                        ->actions([
+                            \Filament\Notifications\Actions\Action::make('voir_budget')
+                                ->label('Voir budget')
+                                ->url("/admin/budget-lignes/{$demandeDevis->budget_ligne_id}")
+                                ->button()
+                        ])
+                        ->sendToDatabase([$responsable]);
+                } catch (\Exception $e) {
+                    Log::warning("Impossible d'envoyer la notification au responsable budget", [
+                        'livraison_id' => $this->id,
+                        'user_id' => $responsable->id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+
+            Log::info("📧 Notifications finales envoyées", ['livraison_id' => $this->id]);
+        } catch (\Exception $e) {
+            Log::error("Erreur lors de l'envoi des notifications finales", [
+                'livraison_id' => $this->id,
+                'error' => $e->getMessage()
+            ]);
         }
-
-        Log::info("📧 Notifications finales envoyées", ['livraison_id' => $this->id]);
     }
 
     public function envoyerAlerteAnomalies(): void

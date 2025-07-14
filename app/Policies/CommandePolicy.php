@@ -15,7 +15,7 @@ class CommandePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['responsable-budget', 'service-demandeur', 'service-achat']);
+        return $user->hasAnyRole(['responsable-budget', 'service-demandeur', 'service-achat', 'responsable-service']);
     }
 
     /**
@@ -26,7 +26,7 @@ class CommandePolicy
         if ($user->hasAnyRole(['responsable-budget', 'service-achat'])) {
             return true;
         }
-        if ($user->hasRole('service-demandeur')) {
+        if ($user->hasRole('service-demandeur') || $user->hasRole('responsable-service')) {
             // User can view if the command is linked to their service via DemandeDevis
             return $commande->demandeDevis && $user->service_id === $commande->demandeDevis->service_demandeur_id;
         }
