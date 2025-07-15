@@ -67,15 +67,10 @@ log "📂 Clonage et préparation projet..."
 PROJECT_DIR="$HOME/pavlova"
 [ -d "$PROJECT_DIR" ] && { log "⚠️ Répertoire $PROJECT_DIR existe, suppression..."; rm -rf "$PROJECT_DIR"; }
 
-# Clonage du projet (adapter l'URL selon votre dépôt)
-git clone https://github.com/LeoSprDev/pavlova.git "$PROJECT_DIR" || {
-    log "⚠️ Clonage Git échoué, création structure manuelle..."
-    mkdir -p "$PROJECT_DIR"
-    cd "$PROJECT_DIR"
-    
-    # Si pas de Git, créer structure Laravel de base
-    composer create-project laravel/laravel . --prefer-dist --no-dev || error "Création projet Laravel échouée"
-}
+# Clonage du projet Pavlova (OBLIGATOIRE)
+if ! git clone https://github.com/LeoSprDev/pavlova.git "$PROJECT_DIR"; then
+    error "Clonage Git Pavlova OBLIGATOIRE échoué - Vérifiez votre connexion internet"
+fi
 
 cd "$PROJECT_DIR" || error "Impossible d'accéder au répertoire projet"
 log "✅ Projet dans: $(pwd)"
@@ -467,4 +462,3 @@ else
     log "Consultez le log: $LOG_FILE"
     exit 1
 fi
-
