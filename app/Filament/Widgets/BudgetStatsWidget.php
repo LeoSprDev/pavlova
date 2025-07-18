@@ -69,7 +69,7 @@ class BudgetStatsWidget extends BaseWidget
             }
 
             $budgets = BudgetLigne::where('service_id', $serviceId)
-                ->where('valide_budget', 'oui');
+                ->whereIn('valide_budget', ['validé', 'oui']);
             $budgetTotal = $budgets->sum('montant_ht_prevu') ?: 0;
 
             $budgetConsomme = DemandeDevis::where('service_demandeur_id', $serviceId)
@@ -225,7 +225,7 @@ class BudgetStatsWidget extends BaseWidget
         try {
             return DemandeDevis::where('service_demandeur_id', $serviceId)
                 ->where('statut', 'delivered')
-                ->selectRaw('AVG(DATEDIFF(updated_at, created_at)) as avg_days')
+                ->selectRaw('AVG(CAST(julianday(updated_at) - julianday(created_at) AS INTEGER)) as avg_days')
                 ->value('avg_days') ?? 0;
         } catch (\Exception $e) {
             \Log::warning('Error calculating delai moyen: ' . $e->getMessage());

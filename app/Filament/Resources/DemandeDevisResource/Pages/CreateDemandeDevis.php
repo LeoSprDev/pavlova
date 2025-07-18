@@ -56,9 +56,10 @@ class CreateDemandeDevis extends CreateRecord
             if ($budgetLigne->valide_budget !== 'oui') {
                 throw ValidationException::withMessages(['budget_ligne_id' => 'La ligne budgétaire sélectionnée n\'est pas validée.']);
             }
-            if (!$budgetLigne->canAcceptNewDemande((float)$data['prix_total_ttc'])) {
-                throw ValidationException::withMessages(['budget_ligne_id' => 'Budget insuffisant sur la ligne sélectionnée. Restant: ' . $budgetLigne->calculateBudgetRestant() . '€']);
-            }
+            // Plus de blocage pour dépassement budget - on avertit seulement les valideurs
+            // if (!$budgetLigne->canAcceptNewDemande((float)$data['prix_total_ttc'])) {
+            //     throw ValidationException::withMessages(['budget_ligne_id' => 'Budget insuffisant sur la ligne sélectionnée. Restant: ' . $budgetLigne->calculateBudgetRestant() . '€']);
+            // }
         } else {
             throw ValidationException::withMessages(['budget_ligne_id' => 'Ligne budgétaire et montant total sont requis pour la validation du budget.']);
         }

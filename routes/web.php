@@ -13,9 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-use App\Http\Controllers\AuthController;
+// Redirection automatique vers Filament
+Route::get('/', function () {
+    return redirect('/admin');
+});
 
-Route::get('/', [AuthController::class, 'showLogin'])->name('home');
-Route::get('/auth/login', [AuthController::class, 'showLogin'])->name('auth.login.form');
-Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login');
-Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
+// Routes d'authentification désactivées - Filament gère l'authentification
+// Route::get('/auth/login', [AuthController::class, 'showLogin'])->name('auth.login.form');
+// Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login');
+// Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');

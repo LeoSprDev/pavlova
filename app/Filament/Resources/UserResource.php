@@ -64,7 +64,8 @@ class UserResource extends Resource
                             ->relationship('service', 'nom')
                             ->label('Service')
                             ->searchable()
-                            ->preload(),
+                            ->preload()
+                            ->disabled(fn () => !optional(auth()->user())->hasRole('administrateur')),
                         Forms\Components\Toggle::make('is_service_responsable')
                             ->label('Responsable de service')
                             ->helperText('Cochez si cet utilisateur est responsable de son service')
@@ -142,11 +143,17 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn ($record) => 
+                        optional(auth()->user())->hasRole('administrateur') ||
+                        (optional(auth()->user())->hasRole('responsable-service') && 
+                         optional(auth()->user())->service_id === $record->service_id)
+                    ),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => optional(auth()->user())->hasRole('administrateur')),
                 ]),
             ]);
     }
@@ -172,10 +179,23 @@ class UserResource extends Resource
         $query = parent::getEloquentQuery();
         $currentUser = auth()->user();
 
-        if ($currentUser && $currentUser->hasRole('responsable-service') && $currentUser->service_id) {
-            // Responsable de service ne voit que les utilisateurs de son service
-            $query->where('service_id', $currentUser->service_id);
+        if ($currentUser && !$currentUser->hasRole('administrateur')) {
+            if ($currentUser->hasRole('responsable-service') && $currentUser->service_id) {
+                // Responsable de service ne voit que les utilisateurs de son service
+                $query->where('service_id', $currentUser->service_id);
+            } elseif ($currentUser->hasAnyRole(['agent-service', 'service-demandeur']) && $currentUser->service_id) {
+                // Agent de service ne voit que les utilisateurs de son service
+                $query->where('service_id', $currentUser->service_id);
+            } elseif ($currentUser->hasRole('responsable-budget')) {
+                // Responsable budget voit tous les utilisateurs (pas de filtre)
+            } elseif ($currentUser->hasRole('service-achat')) {
+                // Service achat voit tous les utilisateurs (pas de filtre)
+            } else {
+                // Autres rôles : ne voient que leur propre profil
+                $query->where('id', $currentUser->id);
+            }
         }
+        // Administrateur voit tous les utilisateurs (pas de filtre)
 
         return $query->with(['service', 'roles']);
     }

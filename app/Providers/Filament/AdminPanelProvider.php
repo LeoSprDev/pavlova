@@ -11,6 +11,8 @@ use Filament\Support\Assets\Js;
 use Filament\Pages;
 use Filament\Widgets;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DemandeDevis;
+use Illuminate\Support\HtmlString;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -23,7 +25,6 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->middleware([
                 'web',
-                'auth:web',
             ])
             ->authGuard('web')
             ->assets([
@@ -33,7 +34,9 @@ class AdminPanelProvider extends PanelProvider
             ->colors(['primary' => Color::Amber])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([Pages\Dashboard::class])
+            ->pages([
+                Pages\Dashboard::class,
+            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
@@ -43,6 +46,10 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\TopFournisseursWidget::class,
                 \App\Filament\Widgets\CommandesLivraisonsWidget::class,
                 \App\Filament\Widgets\BudgetLignesTableWidget::class,
+                \App\Filament\Widgets\WorkflowKanbanWidget::class,
+                \App\Filament\Widgets\BudgetAlertsWidget::class,
+                \App\Filament\Widgets\NotificationCenterWidget::class,
+                \App\Filament\Widgets\FournisseurPerformanceWidget::class,
             ])
             ->topbar(false)
             ->navigationItems([
@@ -61,6 +68,28 @@ class AdminPanelProvider extends PanelProvider
 
                 NavigationItem::make('Demandes Devis')
                     ->label('Demandes Devis')
+                    ->badge(function (): ?string {
+                        $user = Auth::user();
+                        
+                        if (!$user) {
+                            return null;
+                        }
+                        
+                        $count = 0;
+                        if ($user->hasRole('responsable-service')) {
+                            $count = DemandeDevis::where('statut', 'pending')
+                                ->whereHas('serviceDemandeur', function($query) use ($user) {
+                                    $query->where('id', $user->service_id);
+                                })
+                                ->count();
+                        } elseif ($user->hasRole('responsable-budget')) {
+                            $count = DemandeDevis::where('statut', 'approved_service')->count();
+                        } elseif ($user->hasRole('service-achat')) {
+                            $count = DemandeDevis::where('statut', 'approved_budget')->count();
+                        }
+                        
+                        return $count > 0 ? (string) $count : null;
+                    })
                     ->url('/admin/demande-devis')
                     ->icon('heroicon-o-document-text')
                     ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.demande-devis.*'))
@@ -100,6 +129,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-shield-check')
                     ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.roles.*'))
                     ->visible(fn (): bool => Auth::check() && Auth::user()->hasRole('administrateur')),
+
             ]);
     }
 }

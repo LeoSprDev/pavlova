@@ -76,14 +76,15 @@ class EditDemandeDevis extends EditRecord
             // When editing, we need to consider the *change* in amount if the demand was already linked.
             // This is complex. For simplicity, check against current total.
             // A more robust check would be: initial_budget_restant - new_demand_amount >= 0
-            if (!$budgetLigne->canAcceptNewDemande((float)$prixTotalTTC)) {
-                 // If it's the *same* demand being edited, the check should be:
-                 // (budget_restant_avant_cette_demande) - new_amount_cette_demande >= 0
-                 // $budgetRestantAvantCetteDemande = $budgetLigne->calculateBudgetRestant() + $record->prix_total_ttc; // if it was already "consuming"
-                 // This simplified check might prevent saving even if only other fields are changed but budget is tight.
-                 // For now, using the direct check:
-                throw ValidationException::withMessages(['budget_ligne_id' => 'Budget insuffisant sur la ligne sélectionnée pour ce montant. Restant (hors cette demande si déjà comptée): ' . $budgetLigne->calculateBudgetRestant() . '€']);
-            }
+            // Plus de blocage pour dépassement budget - on avertit seulement les valideurs
+            // if (!$budgetLigne->canAcceptNewDemande((float)$prixTotalTTC)) {
+            //      // If it's the *same* demand being edited, the check should be:
+            //      // (budget_restant_avant_cette_demande) - new_amount_cette_demande >= 0
+            //      // $budgetRestantAvantCetteDemande = $budgetLigne->calculateBudgetRestant() + $record->prix_total_ttc; // if it was already "consuming"
+            //      // This simplified check might prevent saving even if only other fields are changed but budget is tight.
+            //      // For now, using the direct check:
+            //     throw ValidationException::withMessages(['budget_ligne_id' => 'Budget insuffisant sur la ligne sélectionnée pour ce montant. Restant (hors cette demande si déjà comptée): ' . $budgetLigne->calculateBudgetRestant() . '€']);
+            // }
         }
 
         // Ensure service_demandeur_id is not changed by SD after creation

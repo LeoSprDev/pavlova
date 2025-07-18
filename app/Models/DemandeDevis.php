@@ -51,6 +51,7 @@ class DemandeDevis extends Model implements ApprovableContract, HasMedia
         'prix_total_ttc',
         'fournisseur_propose',
         'justification_besoin',
+        'lien_web',
         'urgence',
         'date_besoin',
         'statut',

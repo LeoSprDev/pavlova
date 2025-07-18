@@ -3018,3 +3018,1097 @@ connection to server at \"127.0.0.1\", port 5432 failed: FATAL:  password authen
 #38 /var/www/pavlova/public/index.php(19): Illuminate\\Foundation\\Http\\Kernel->handle()
 #39 {main}
 "} 
+[2025-07-14 23:18:03] local.ERROR: Required. {"exception":"[object] (Laravel\\Prompts\\Exceptions\\NonInteractiveValidationException(code: 0): Required. at /home/admin_ia/api/pavlova/vendor/laravel/prompts/src/Concerns/Interactivity.php:32)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/vendor/laravel/prompts/src/Prompt.php(113): Laravel\\Prompts\\Prompt->default()
+#1 /home/admin_ia/api/pavlova/vendor/laravel/prompts/src/helpers.php(47): Laravel\\Prompts\\Prompt->prompt()
+#2 /home/admin_ia/api/pavlova/vendor/filament/widgets/src/Commands/MakeWidgetCommand.php(49): Laravel\\Prompts\\select()
+#3 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Filament\\Widgets\\Commands\\MakeWidgetCommand->handle()
+#4 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#5 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#7 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate\\Container\\BoundMethod::call()
+#8 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate\\Container\\Container->call()
+#9 /home/admin_ia/api/pavlova/vendor/symfony/console/Command/Command.php(326): Illuminate\\Console\\Command->execute()
+#10 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony\\Component\\Console\\Command\\Command->run()
+#11 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(1096): Illuminate\\Console\\Command->run()
+#12 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand()
+#13 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#15 /home/admin_ia/api/pavlova/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#16 {main}
+"} 
+[2025-07-14 23:29:40] local.ERROR: Unclosed '{' on line 10 {"exception":"[object] (ParseError(code: 0): Unclosed '{' on line 10 at /home/admin_ia/api/pavlova/app/Filament/Widgets/WorkflowKanbanWidget.php:106)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/vendor/composer/ClassLoader.php(427): {closure:Composer\\Autoload\\ClassLoader::initializeIncludeClosure():575}()
+#1 [internal function]: Composer\\Autoload\\ClassLoader->loadClass()
+#2 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Panel/Concerns/HasComponents.php(438): class_exists()
+#3 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Panel/Concerns/HasComponents.php(334): Filament\\Panel->discoverComponents()
+#4 /home/admin_ia/api/pavlova/app/Providers/Filament/AdminPanelProvider.php(37): Filament\\Panel->discoverWidgets()
+#5 /home/admin_ia/api/pavlova/vendor/filament/filament/src/PanelProvider.php(15): App\\Providers\\Filament\\AdminPanelProvider->panel()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Collections/helpers.php(224): Filament\\PanelProvider->{closure:Filament\\PanelProvider::register():15}()
+#7 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Facades/Filament.php(140): value()
+#8 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1302): Filament\\Facades\\Filament::{closure:Filament\\Facades\\Filament::registerPanel():140}()
+#9 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1248): Illuminate\\Container\\Container->fireCallbackArray()
+#10 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(813): Illuminate\\Container\\Container->fireResolvingCallbacks()
+#11 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\\Container\\Container->resolve()
+#12 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\\Foundation\\Application->resolve()
+#13 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\\Container\\Container->make()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(120): Illuminate\\Foundation\\Application->make()
+#15 /home/admin_ia/api/pavlova/vendor/filament/filament/src/FilamentManager.php(51): app()
+#16 /home/admin_ia/api/pavlova/vendor/filament/filament/src/FilamentServiceProvider.php(48): Filament\\FilamentManager->__construct()
+#17 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(908): Filament\\FilamentServiceProvider->{closure:Filament\\FilamentServiceProvider::packageRegistered():47}()
+#18 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(795): Illuminate\\Container\\Container->build()
+#19 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\\Container\\Container->resolve()
+#20 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\\Foundation\\Application->resolve()
+#21 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\\Container\\Container->make()
+#22 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1454): Illuminate\\Foundation\\Application->make()
+#23 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(237): Illuminate\\Container\\Container->offsetGet()
+#24 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(208): Illuminate\\Support\\Facades\\Facade::resolveFacadeInstance()
+#25 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(349): Illuminate\\Support\\Facades\\Facade::getFacadeRoot()
+#26 /home/admin_ia/api/pavlova/vendor/filament/filament/routes/web.php(13): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#27 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(509): Illuminate\\Support\\ServiceProvider->{closure:/home/admin_ia/api/pavlova/vendor/filament/filament/routes/web.php:12}()
+#28 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(465): Illuminate\\Routing\\Router->loadRoutes()
+#29 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(194): Illuminate\\Routing\\Router->group()
+#30 /home/admin_ia/api/pavlova/vendor/filament/filament/routes/web.php(12): Illuminate\\Routing\\RouteRegistrar->group()
+#31 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php(152): require('...')
+#32 /home/admin_ia/api/pavlova/vendor/spatie/laravel-package-tools/src/Concerns/PackageServiceProvider/ProcessRoutes.php(14): Illuminate\\Support\\ServiceProvider->loadRoutesFrom()
+#33 /home/admin_ia/api/pavlova/vendor/spatie/laravel-package-tools/src/PackageServiceProvider.php(85): Spatie\\LaravelPackageTools\\PackageServiceProvider->bootPackageRoutes()
+#34 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Spatie\\LaravelPackageTools\\PackageServiceProvider->boot()
+#35 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#36 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#37 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#38 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate\\Container\\BoundMethod::call()
+#39 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1059): Illuminate\\Container\\Container->call()
+#40 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1040): Illuminate\\Foundation\\Application->bootProvider()
+#41 [internal function]: Illuminate\\Foundation\\Application->{closure:Illuminate\\Foundation\\Application::boot():1039}()
+#42 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1039): array_walk()
+#43 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate\\Foundation\\Application->boot()
+#44 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(286): Illuminate\\Foundation\\Bootstrap\\BootProviders->bootstrap()
+#45 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(447): Illuminate\\Foundation\\Application->bootstrapWith()
+#46 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(199): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#47 /home/admin_ia/api/pavlova/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#48 {main}
+"} 
+[2025-07-14 23:30:57] local.ERROR: Unmatched '}' {"exception":"[object] (ParseError(code: 0): Unmatched '}' at /home/admin_ia/api/pavlova/app/Filament/Widgets/WorkflowKanbanWidget.php:107)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/vendor/composer/ClassLoader.php(427): {closure:Composer\\Autoload\\ClassLoader::initializeIncludeClosure():575}()
+#1 [internal function]: Composer\\Autoload\\ClassLoader->loadClass()
+#2 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Panel/Concerns/HasComponents.php(438): class_exists()
+#3 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Panel/Concerns/HasComponents.php(334): Filament\\Panel->discoverComponents()
+#4 /home/admin_ia/api/pavlova/app/Providers/Filament/AdminPanelProvider.php(37): Filament\\Panel->discoverWidgets()
+#5 /home/admin_ia/api/pavlova/vendor/filament/filament/src/PanelProvider.php(15): App\\Providers\\Filament\\AdminPanelProvider->panel()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Collections/helpers.php(224): Filament\\PanelProvider->{closure:Filament\\PanelProvider::register():15}()
+#7 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Facades/Filament.php(140): value()
+#8 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1302): Filament\\Facades\\Filament::{closure:Filament\\Facades\\Filament::registerPanel():140}()
+#9 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1248): Illuminate\\Container\\Container->fireCallbackArray()
+#10 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(813): Illuminate\\Container\\Container->fireResolvingCallbacks()
+#11 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\\Container\\Container->resolve()
+#12 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\\Foundation\\Application->resolve()
+#13 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\\Container\\Container->make()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(120): Illuminate\\Foundation\\Application->make()
+#15 /home/admin_ia/api/pavlova/vendor/filament/filament/src/FilamentManager.php(51): app()
+#16 /home/admin_ia/api/pavlova/vendor/filament/filament/src/FilamentServiceProvider.php(48): Filament\\FilamentManager->__construct()
+#17 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(908): Filament\\FilamentServiceProvider->{closure:Filament\\FilamentServiceProvider::packageRegistered():47}()
+#18 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(795): Illuminate\\Container\\Container->build()
+#19 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\\Container\\Container->resolve()
+#20 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\\Foundation\\Application->resolve()
+#21 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\\Container\\Container->make()
+#22 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1454): Illuminate\\Foundation\\Application->make()
+#23 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(237): Illuminate\\Container\\Container->offsetGet()
+#24 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(208): Illuminate\\Support\\Facades\\Facade::resolveFacadeInstance()
+#25 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(349): Illuminate\\Support\\Facades\\Facade::getFacadeRoot()
+#26 /home/admin_ia/api/pavlova/vendor/filament/filament/routes/web.php(13): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#27 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(509): Illuminate\\Support\\ServiceProvider->{closure:/home/admin_ia/api/pavlova/vendor/filament/filament/routes/web.php:12}()
+#28 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(465): Illuminate\\Routing\\Router->loadRoutes()
+#29 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(194): Illuminate\\Routing\\Router->group()
+#30 /home/admin_ia/api/pavlova/vendor/filament/filament/routes/web.php(12): Illuminate\\Routing\\RouteRegistrar->group()
+#31 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php(152): require('...')
+#32 /home/admin_ia/api/pavlova/vendor/spatie/laravel-package-tools/src/Concerns/PackageServiceProvider/ProcessRoutes.php(14): Illuminate\\Support\\ServiceProvider->loadRoutesFrom()
+#33 /home/admin_ia/api/pavlova/vendor/spatie/laravel-package-tools/src/PackageServiceProvider.php(85): Spatie\\LaravelPackageTools\\PackageServiceProvider->bootPackageRoutes()
+#34 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Spatie\\LaravelPackageTools\\PackageServiceProvider->boot()
+#35 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#36 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#37 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#38 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate\\Container\\BoundMethod::call()
+#39 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1059): Illuminate\\Container\\Container->call()
+#40 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1040): Illuminate\\Foundation\\Application->bootProvider()
+#41 [internal function]: Illuminate\\Foundation\\Application->{closure:Illuminate\\Foundation\\Application::boot():1039}()
+#42 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1039): array_walk()
+#43 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate\\Foundation\\Application->boot()
+#44 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(286): Illuminate\\Foundation\\Bootstrap\\BootProviders->bootstrap()
+#45 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(447): Illuminate\\Foundation\\Application->bootstrapWith()
+#46 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(199): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#47 /home/admin_ia/api/pavlova/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#48 {main}
+"} 
+[2025-07-14 23:54:59] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-14 23:55:04] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-14 23:55:05] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-14 23:55:07] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-14 23:55:13] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-14 23:55:17] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-14 23:55:22] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-14 23:55:26] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:09:14] local.ERROR: Command "session:clear" is not defined.
+
+Did you mean one of these?
+    auth:clear-resets
+    cache:clear
+    config:clear
+    event:clear
+    filament:clear-cached-components
+    filament:optimize-clear
+    icons:clear
+    media-library:clean
+    media-library:clear
+    optimize:clear
+    queue:clear
+    route:clear
+    schedule:clear-cache
+    session:table
+    view:clear {"exception":"[object] (Symfony\\Component\\Console\\Exception\\CommandNotFoundException(code: 0): Command \"session:clear\" is not defined.
+
+Did you mean one of these?
+    auth:clear-resets
+    cache:clear
+    config:clear
+    event:clear
+    filament:clear-cached-components
+    filament:optimize-clear
+    icons:clear
+    media-library:clean
+    media-library:clear
+    optimize:clear
+    queue:clear
+    route:clear
+    schedule:clear-cache
+    session:table
+    view:clear at /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php:737)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(266): Symfony\\Component\\Console\\Application->find()
+#1 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#2 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#3 /home/admin_ia/api/pavlova/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#4 {main}
+"} 
+[2025-07-15 00:12:48] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:12:53] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:13:00] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:18:24] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:18:29] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:18:34] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:18:39] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:18:42] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:18:43] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:18:54] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:19:05] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 00:19:10] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 1 and "statut" = delivered limit 1)  
+[2025-07-15 19:51:14] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-15 19:51:19] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-15 19:51:24] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-15 19:51:29] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-15 19:51:32] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 11:02:33] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 11:02:38] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 11:02:43] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 11:02:48] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 11:02:50] local.ERROR: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select "demande_devis"."fournisseur_propose" as "nom", COUNT(*) as nb_commandes, AVG(DATEDIFF(commandes.updated_at, commandes.date_commande)) as delai_moyen, AVG(demande_devis.prix_total_ttc) as montant_moyen from "demande_devis" inner join "commandes" on "demande_devis"."id" = "commandes"."demande_devis_id" where "demande_devis"."statut" = delivered_confirmed and "demande_devis"."fournisseur_propose" is not null group by "demande_devis"."fournisseur_propose" having COUNT(*) >= 2 order by "nb_commandes" desc limit 8) {"userId":4,"exception":"[object] (Illuminate\\Database\\QueryException(code: HY000): SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select \"demande_devis\".\"fournisseur_propose\" as \"nom\", COUNT(*) as nb_commandes, AVG(DATEDIFF(commandes.updated_at, commandes.date_commande)) as delai_moyen, AVG(demande_devis.prix_total_ttc) as montant_moyen from \"demande_devis\" inner join \"commandes\" on \"demande_devis\".\"id\" = \"commandes\".\"demande_devis_id\" where \"demande_devis\".\"statut\" = delivered_confirmed and \"demande_devis\".\"fournisseur_propose\" is not null group by \"demande_devis\".\"fournisseur_propose\" having COUNT(*) >= 2 order by \"nb_commandes\" desc limit 8) at /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Connection.php:829)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Connection.php(783): Illuminate\\Database\\Connection->runQueryCallback()
+#1 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Connection.php(414): Illuminate\\Database\\Connection->run()
+#2 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2913): Illuminate\\Database\\Connection->select()
+#3 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2902): Illuminate\\Database\\Query\\Builder->runSelect()
+#4 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3456): Illuminate\\Database\\Query\\Builder->{closure:Illuminate\\Database\\Query\\Builder::get():2901}()
+#5 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2901): Illuminate\\Database\\Query\\Builder->onceWithColumns()
+#6 /home/admin_ia/api/pavlova/app/Filament/Widgets/FournisseurPerformanceWidget.php(62): Illuminate\\Database\\Query\\Builder->get()
+#7 /home/admin_ia/api/pavlova/app/Filament/Widgets/FournisseurPerformanceWidget.php(23): App\\Filament\\Widgets\\FournisseurPerformanceWidget->getTopFournisseurs()
+#8 /home/admin_ia/api/pavlova/vendor/filament/widgets/src/ChartWidget.php(58): App\\Filament\\Widgets\\FournisseurPerformanceWidget->getData()
+#9 /home/admin_ia/api/pavlova/vendor/filament/widgets/src/ChartWidget.php(50): Filament\\Widgets\\ChartWidget->getCachedData()
+#10 /home/admin_ia/api/pavlova/vendor/filament/widgets/src/ChartWidget.php(43): Filament\\Widgets\\ChartWidget->generateDataChecksum()
+#11 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Filament\\Widgets\\ChartWidget->mount()
+#12 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#13 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#15 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Wrapped.php(23): Illuminate\\Container\\BoundMethod::call()
+#16 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportLifecycleHooks/SupportLifecycleHooks.php(134): Livewire\\Wrapped->__call()
+#17 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportLifecycleHooks/SupportLifecycleHooks.php(20): Livewire\\Features\\SupportLifecycleHooks\\SupportLifecycleHooks->callHook()
+#18 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportLazyLoading/SupportLazyLoading.php(175): Livewire\\Features\\SupportLifecycleHooks\\SupportLifecycleHooks->mount()
+#19 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportLazyLoading/SupportLazyLoading.php(100): Livewire\\Features\\SupportLazyLoading\\SupportLazyLoading->callMountLifecycleMethod()
+#20 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/ComponentHook.php(41): Livewire\\Features\\SupportLazyLoading\\SupportLazyLoading->call()
+#21 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/ComponentHookRegistry.php(110): Livewire\\ComponentHook->callCall()
+#22 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/ComponentHookRegistry.php(65): Livewire\\ComponentHookRegistry::{closure:Livewire\\ComponentHookRegistry::proxyCallToHooks():106}()
+#23 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/EventBus.php(60): Livewire\\ComponentHookRegistry::{closure:Livewire\\ComponentHookRegistry::boot():64}()
+#24 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/helpers.php(98): Livewire\\EventBus->trigger()
+#25 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(453): Livewire\\trigger()
+#26 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(101): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->callMethods()
+#27 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/LivewireManager.php(102): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->update()
+#28 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleRequests/HandleRequests.php(94): Livewire\\LivewireManager->update()
+#29 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): Livewire\\Mechanisms\\HandleRequests\\HandleRequests->handleUpdate()
+#30 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\\Routing\\ControllerDispatcher->dispatch()
+#31 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate\\Routing\\Route->runController()
+#32 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate\\Routing\\Route->run()
+#33 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Routing\\Router->{closure:Illuminate\\Routing\\Router::runRouteWithinStack():805}()
+#34 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#35 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle()
+#36 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#37 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle()
+#38 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#39 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle()
+#40 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(121): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#41 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest()
+#42 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Session\\Middleware\\StartSession->handle()
+#43 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#44 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle()
+#45 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#46 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle()
+#47 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#48 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\\Pipeline\\Pipeline->then()
+#49 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack()
+#50 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\\Routing\\Router->runRoute()
+#51 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute()
+#52 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\\Routing\\Router->dispatch()
+#53 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}()
+#54 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportDisablingBackButtonCache/DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#55 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle()
+#56 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#57 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#58 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(36): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#59 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#60 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#61 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle()
+#62 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#63 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#64 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#65 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#66 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#67 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#68 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#69 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then()
+#70 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#71 /home/admin_ia/api/pavlova/public/index.php(19): Illuminate\\Foundation\\Http\\Kernel->handle()
+#72 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('...')
+#73 {main}
+
+[previous exception] [object] (PDOException(code: HY000): SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF at /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Connection.php:423)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Connection.php(423): PDO->prepare()
+#1 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Connection.php(816): Illuminate\\Database\\Connection->{closure:Illuminate\\Database\\Connection::select():414}()
+#2 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Connection.php(783): Illuminate\\Database\\Connection->runQueryCallback()
+#3 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Connection.php(414): Illuminate\\Database\\Connection->run()
+#4 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2913): Illuminate\\Database\\Connection->select()
+#5 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2902): Illuminate\\Database\\Query\\Builder->runSelect()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(3456): Illuminate\\Database\\Query\\Builder->{closure:Illuminate\\Database\\Query\\Builder::get():2901}()
+#7 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(2901): Illuminate\\Database\\Query\\Builder->onceWithColumns()
+#8 /home/admin_ia/api/pavlova/app/Filament/Widgets/FournisseurPerformanceWidget.php(62): Illuminate\\Database\\Query\\Builder->get()
+#9 /home/admin_ia/api/pavlova/app/Filament/Widgets/FournisseurPerformanceWidget.php(23): App\\Filament\\Widgets\\FournisseurPerformanceWidget->getTopFournisseurs()
+#10 /home/admin_ia/api/pavlova/vendor/filament/widgets/src/ChartWidget.php(58): App\\Filament\\Widgets\\FournisseurPerformanceWidget->getData()
+#11 /home/admin_ia/api/pavlova/vendor/filament/widgets/src/ChartWidget.php(50): Filament\\Widgets\\ChartWidget->getCachedData()
+#12 /home/admin_ia/api/pavlova/vendor/filament/widgets/src/ChartWidget.php(43): Filament\\Widgets\\ChartWidget->generateDataChecksum()
+#13 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Filament\\Widgets\\ChartWidget->mount()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#15 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#16 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#17 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Wrapped.php(23): Illuminate\\Container\\BoundMethod::call()
+#18 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportLifecycleHooks/SupportLifecycleHooks.php(134): Livewire\\Wrapped->__call()
+#19 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportLifecycleHooks/SupportLifecycleHooks.php(20): Livewire\\Features\\SupportLifecycleHooks\\SupportLifecycleHooks->callHook()
+#20 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportLazyLoading/SupportLazyLoading.php(175): Livewire\\Features\\SupportLifecycleHooks\\SupportLifecycleHooks->mount()
+#21 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportLazyLoading/SupportLazyLoading.php(100): Livewire\\Features\\SupportLazyLoading\\SupportLazyLoading->callMountLifecycleMethod()
+#22 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/ComponentHook.php(41): Livewire\\Features\\SupportLazyLoading\\SupportLazyLoading->call()
+#23 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/ComponentHookRegistry.php(110): Livewire\\ComponentHook->callCall()
+#24 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/ComponentHookRegistry.php(65): Livewire\\ComponentHookRegistry::{closure:Livewire\\ComponentHookRegistry::proxyCallToHooks():106}()
+#25 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/EventBus.php(60): Livewire\\ComponentHookRegistry::{closure:Livewire\\ComponentHookRegistry::boot():64}()
+#26 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/helpers.php(98): Livewire\\EventBus->trigger()
+#27 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(453): Livewire\\trigger()
+#28 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(101): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->callMethods()
+#29 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/LivewireManager.php(102): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->update()
+#30 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleRequests/HandleRequests.php(94): Livewire\\LivewireManager->update()
+#31 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): Livewire\\Mechanisms\\HandleRequests\\HandleRequests->handleUpdate()
+#32 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\\Routing\\ControllerDispatcher->dispatch()
+#33 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate\\Routing\\Route->runController()
+#34 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate\\Routing\\Route->run()
+#35 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Routing\\Router->{closure:Illuminate\\Routing\\Router::runRouteWithinStack():805}()
+#36 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#37 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle()
+#38 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#39 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle()
+#40 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#41 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle()
+#42 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(121): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#43 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest()
+#44 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Session\\Middleware\\StartSession->handle()
+#45 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#46 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle()
+#47 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#48 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle()
+#49 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#50 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\\Pipeline\\Pipeline->then()
+#51 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack()
+#52 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\\Routing\\Router->runRoute()
+#53 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute()
+#54 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\\Routing\\Router->dispatch()
+#55 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}()
+#56 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportDisablingBackButtonCache/DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#57 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle()
+#58 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#59 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#60 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(36): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#61 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#62 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#63 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle()
+#64 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#65 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#66 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#67 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#68 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#69 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#70 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#71 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then()
+#72 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#73 /home/admin_ia/api/pavlova/public/index.php(19): Illuminate\\Foundation\\Http\\Kernel->handle()
+#74 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('...')
+#75 {main}
+"} 
+[2025-07-18 11:02:53] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:30:54] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:30:59] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:31:00] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:31:11] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:31:17] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:31:22] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:31:32] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:31:37] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:31:43] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:31:48] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:31:53] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:31:58] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:03] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:08] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:13] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:18] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:23] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:29] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:34] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:39] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:44] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:49] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:54] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:32:59] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:33:04] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:33:09] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:33:14] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:33:19] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:33:24] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:33:29] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:33:34] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:33:39] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:33:44] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 12:33:49] local.WARNING: Error calculating delai moyen: SQLSTATE[HY000]: General error: 1 no such function: DATEDIFF (Connection: sqlite, SQL: select AVG(DATEDIFF(updated_at, created_at)) as avg_days from "demande_devis" where "service_demandeur_id" = 2 and "statut" = delivered limit 1)  
+[2025-07-18 13:10:36] local.ERROR: Unclosed '{' on line 10 does not match ')' {"exception":"[object] (ParseError(code: 0): Unclosed '{' on line 10 does not match ')' at /home/admin_ia/api/pavlova/app/Filament/Widgets/FournisseurPerformanceWidget.php:50)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/vendor/composer/ClassLoader.php(427): {closure:Composer\\Autoload\\ClassLoader::initializeIncludeClosure():575}()
+#1 [internal function]: Composer\\Autoload\\ClassLoader->loadClass()
+#2 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Panel/Concerns/HasComponents.php(438): class_exists()
+#3 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Panel/Concerns/HasComponents.php(334): Filament\\Panel->discoverComponents()
+#4 /home/admin_ia/api/pavlova/app/Providers/Filament/AdminPanelProvider.php(36): Filament\\Panel->discoverWidgets()
+#5 /home/admin_ia/api/pavlova/vendor/filament/filament/src/PanelProvider.php(15): App\\Providers\\Filament\\AdminPanelProvider->panel()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Collections/helpers.php(224): Filament\\PanelProvider->{closure:Filament\\PanelProvider::register():15}()
+#7 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Facades/Filament.php(140): value()
+#8 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1302): Filament\\Facades\\Filament::{closure:Filament\\Facades\\Filament::registerPanel():140}()
+#9 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1248): Illuminate\\Container\\Container->fireCallbackArray()
+#10 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(813): Illuminate\\Container\\Container->fireResolvingCallbacks()
+#11 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\\Container\\Container->resolve()
+#12 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\\Foundation\\Application->resolve()
+#13 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\\Container\\Container->make()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(120): Illuminate\\Foundation\\Application->make()
+#15 /home/admin_ia/api/pavlova/vendor/filament/filament/src/FilamentManager.php(51): app()
+#16 /home/admin_ia/api/pavlova/vendor/filament/filament/src/FilamentServiceProvider.php(48): Filament\\FilamentManager->__construct()
+#17 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(908): Filament\\FilamentServiceProvider->{closure:Filament\\FilamentServiceProvider::packageRegistered():47}()
+#18 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(795): Illuminate\\Container\\Container->build()
+#19 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\\Container\\Container->resolve()
+#20 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\\Foundation\\Application->resolve()
+#21 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\\Container\\Container->make()
+#22 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1454): Illuminate\\Foundation\\Application->make()
+#23 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(237): Illuminate\\Container\\Container->offsetGet()
+#24 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(208): Illuminate\\Support\\Facades\\Facade::resolveFacadeInstance()
+#25 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(349): Illuminate\\Support\\Facades\\Facade::getFacadeRoot()
+#26 /home/admin_ia/api/pavlova/vendor/filament/filament/src/FilamentServiceProvider.php(91): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#27 /home/admin_ia/api/pavlova/vendor/spatie/laravel-package-tools/src/PackageServiceProvider.php(91): Filament\\FilamentServiceProvider->packageBooted()
+#28 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Spatie\\LaravelPackageTools\\PackageServiceProvider->boot()
+#29 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#30 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#31 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#32 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate\\Container\\BoundMethod::call()
+#33 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1059): Illuminate\\Container\\Container->call()
+#34 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1040): Illuminate\\Foundation\\Application->bootProvider()
+#35 [internal function]: Illuminate\\Foundation\\Application->{closure:Illuminate\\Foundation\\Application::boot():1039}()
+#36 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1039): array_walk()
+#37 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate\\Foundation\\Application->boot()
+#38 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(286): Illuminate\\Foundation\\Bootstrap\\BootProviders->bootstrap()
+#39 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(447): Illuminate\\Foundation\\Application->bootstrapWith()
+#40 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(199): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#41 /home/admin_ia/api/pavlova/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#42 {main}
+"} 
+[2025-07-18 13:46:04] local.INFO: Création demande devis par: agent.IT@test.local {"user_id":1,"user_roles":["agent-service"],"service_id":1,"form_data":{"budget_ligne_id":"5","denomination":"voila un test de la ligne 5000","description":"voila un test de la ligne 5000","reference_produit":"voila un test de la ligne 5000","fournisseur_propose":"voila un test de la ligne 5000","quantite":1,"prix_unitaire_ht":"4500","prix_total_ttc":5400,"justification_besoin":"voila un test de la ligne 5000","urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":null,"documents_complementaires_upload":[]}} 
+[2025-07-18 13:46:04] local.ERROR: Erreur lors de la création d'une demande devis {"user_id":1,"exception":"Budget insuffisant sur la ligne sélectionnée. Restant: 5000€","trace":"#0 /home/admin_ia/api/pavlova/app/Filament/Resources/DemandeDevisResource/Pages/CreateDemandeDevis.php(60): Illuminate\\Validation\\ValidationException::withMessages()
+#1 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Resources/Pages/CreateRecord.php(88): App\\Filament\\Resources\\DemandeDevisResource\\Pages\\CreateDemandeDevis->mutateFormDataBeforeCreate()
+#2 /home/admin_ia/api/pavlova/app/Filament/Resources/DemandeDevisResource/Pages/CreateDemandeDevis.php(121): Filament\\Resources\\Pages\\CreateRecord->create()
+#3 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Filament\\Resources\\DemandeDevisResource\\Pages\\CreateDemandeDevis->create()
+#4 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#5 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#7 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Wrapped.php(23): Illuminate\\Container\\BoundMethod::call()
+#8 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(474): Livewire\\Wrapped->__call()
+#9 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(101): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->callMethods()
+#10 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/LivewireManager.php(102): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->update()
+#11 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleRequests/HandleRequests.php(94): Livewire\\LivewireManager->update()
+#12 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): Livewire\\Mechanisms\\HandleRequests\\HandleRequests->handleUpdate()
+#13 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\\Routing\\ControllerDispatcher->dispatch()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate\\Routing\\Route->runController()
+#15 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate\\Routing\\Route->run()
+#16 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Routing\\Router->{closure:Illuminate\\Routing\\Router::runRouteWithinStack():805}()
+#17 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#18 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle()
+#19 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#20 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle()
+#21 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#22 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle()
+#23 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(121): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#24 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest()
+#25 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Session\\Middleware\\StartSession->handle()
+#26 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#27 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle()
+#28 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#29 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle()
+#30 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#31 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\\Pipeline\\Pipeline->then()
+#32 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack()
+#33 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\\Routing\\Router->runRoute()
+#34 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute()
+#35 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\\Routing\\Router->dispatch()
+#36 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}()
+#37 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportDisablingBackButtonCache/DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#38 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle()
+#39 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#40 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#41 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(36): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#42 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#43 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#44 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle()
+#45 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#46 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#47 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#48 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#49 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#50 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#51 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#52 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then()
+#53 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#54 /home/admin_ia/api/pavlova/public/index.php(19): Illuminate\\Foundation\\Http\\Kernel->handle()
+#55 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('...')
+#56 {main}","form_data":{"service_demandeur_id":1,"budget_ligne_id":"5","denomination":"voila un test de la ligne 5000","description":"voila un test de la ligne 5000","reference_produit":"voila un test de la ligne 5000","fournisseur_propose":"voila un test de la ligne 5000","quantite":1,"prix_unitaire_ht":"4500","prix_total_ttc":5400,"budget_restant_info":null,"justification_besoin":"voila un test de la ligne 5000","urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":[],"documents_complementaires_upload":[],"commentaire_validation":null,"approval_status_info":null,"date_envoi_demande_fournisseur":null,"devis_fournisseur_recu":[],"date_reception_devis":null,"prix_fournisseur_final":null,"devis_fournisseur_valide":false,"numero_commande_fournisseur":null}} 
+[2025-07-18 13:46:58] local.INFO: Création demande devis par: agent.IT@test.local {"user_id":1,"user_roles":["agent-service"],"service_id":1,"form_data":{"budget_ligne_id":"5","denomination":"voila un test de la ligne 5000","description":"voila un test de la ligne 5000","reference_produit":"voila un test de la ligne 5000","fournisseur_propose":"voila un test de la ligne 5000","quantite":1,"prix_unitaire_ht":"4500","prix_total_ttc":5400,"justification_besoin":"voila un test de la ligne 5000","urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":null,"documents_complementaires_upload":[]}} 
+[2025-07-18 13:46:58] local.ERROR: Erreur lors de la création d'une demande devis {"user_id":1,"exception":"Budget insuffisant sur la ligne sélectionnée. Restant: 5000€","trace":"#0 /home/admin_ia/api/pavlova/app/Filament/Resources/DemandeDevisResource/Pages/CreateDemandeDevis.php(60): Illuminate\\Validation\\ValidationException::withMessages()
+#1 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Resources/Pages/CreateRecord.php(88): App\\Filament\\Resources\\DemandeDevisResource\\Pages\\CreateDemandeDevis->mutateFormDataBeforeCreate()
+#2 /home/admin_ia/api/pavlova/app/Filament/Resources/DemandeDevisResource/Pages/CreateDemandeDevis.php(121): Filament\\Resources\\Pages\\CreateRecord->create()
+#3 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Filament\\Resources\\DemandeDevisResource\\Pages\\CreateDemandeDevis->create()
+#4 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#5 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#7 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Wrapped.php(23): Illuminate\\Container\\BoundMethod::call()
+#8 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(474): Livewire\\Wrapped->__call()
+#9 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(101): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->callMethods()
+#10 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/LivewireManager.php(102): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->update()
+#11 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleRequests/HandleRequests.php(94): Livewire\\LivewireManager->update()
+#12 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): Livewire\\Mechanisms\\HandleRequests\\HandleRequests->handleUpdate()
+#13 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\\Routing\\ControllerDispatcher->dispatch()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate\\Routing\\Route->runController()
+#15 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate\\Routing\\Route->run()
+#16 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Routing\\Router->{closure:Illuminate\\Routing\\Router::runRouteWithinStack():805}()
+#17 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#18 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle()
+#19 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#20 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle()
+#21 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#22 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle()
+#23 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(121): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#24 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest()
+#25 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Session\\Middleware\\StartSession->handle()
+#26 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#27 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle()
+#28 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#29 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle()
+#30 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#31 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\\Pipeline\\Pipeline->then()
+#32 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack()
+#33 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\\Routing\\Router->runRoute()
+#34 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute()
+#35 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\\Routing\\Router->dispatch()
+#36 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}()
+#37 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportDisablingBackButtonCache/DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#38 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle()
+#39 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#40 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#41 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(36): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#42 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#43 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#44 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle()
+#45 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#46 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#47 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#48 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#49 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#50 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#51 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#52 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then()
+#53 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#54 /home/admin_ia/api/pavlova/public/index.php(19): Illuminate\\Foundation\\Http\\Kernel->handle()
+#55 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('...')
+#56 {main}","form_data":{"service_demandeur_id":1,"budget_ligne_id":"5","denomination":"voila un test de la ligne 5000","description":"voila un test de la ligne 5000","reference_produit":"voila un test de la ligne 5000","fournisseur_propose":"voila un test de la ligne 5000","quantite":1,"prix_unitaire_ht":"4500","prix_total_ttc":5400,"budget_restant_info":null,"justification_besoin":"voila un test de la ligne 5000","urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":[],"documents_complementaires_upload":[],"commentaire_validation":null,"approval_status_info":null,"date_envoi_demande_fournisseur":null,"devis_fournisseur_recu":[],"date_reception_devis":null,"prix_fournisseur_final":null,"devis_fournisseur_valide":false,"numero_commande_fournisseur":null}} 
+[2025-07-18 13:56:30] local.INFO: Création demande devis par: agent.IT@test.local {"user_id":1,"user_roles":["agent-service"],"service_id":1,"form_data":{"budget_ligne_id":"5","denomination":"voila un test de la ligne 5000","description":"voila un test de la ligne 5000","reference_produit":"voila un test de la ligne 5000","fournisseur_propose":"voila un test de la ligne 5000","quantite":1,"prix_unitaire_ht":"4500","prix_total_ttc":5400,"justification_besoin":"voila un test de la ligne 5000","urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":null,"documents_complementaires_upload":[]}} 
+[2025-07-18 13:56:30] local.ERROR: Erreur lors de la création d'une demande devis {"user_id":1,"exception":"Budget insuffisant sur la ligne sélectionnée. Restant: 5000€","trace":"#0 /home/admin_ia/api/pavlova/app/Filament/Resources/DemandeDevisResource/Pages/CreateDemandeDevis.php(60): Illuminate\\Validation\\ValidationException::withMessages()
+#1 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Resources/Pages/CreateRecord.php(88): App\\Filament\\Resources\\DemandeDevisResource\\Pages\\CreateDemandeDevis->mutateFormDataBeforeCreate()
+#2 /home/admin_ia/api/pavlova/app/Filament/Resources/DemandeDevisResource/Pages/CreateDemandeDevis.php(121): Filament\\Resources\\Pages\\CreateRecord->create()
+#3 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Filament\\Resources\\DemandeDevisResource\\Pages\\CreateDemandeDevis->create()
+#4 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#5 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#7 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Wrapped.php(23): Illuminate\\Container\\BoundMethod::call()
+#8 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(474): Livewire\\Wrapped->__call()
+#9 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(101): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->callMethods()
+#10 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/LivewireManager.php(102): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->update()
+#11 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleRequests/HandleRequests.php(94): Livewire\\LivewireManager->update()
+#12 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): Livewire\\Mechanisms\\HandleRequests\\HandleRequests->handleUpdate()
+#13 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\\Routing\\ControllerDispatcher->dispatch()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate\\Routing\\Route->runController()
+#15 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate\\Routing\\Route->run()
+#16 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Routing\\Router->{closure:Illuminate\\Routing\\Router::runRouteWithinStack():805}()
+#17 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#18 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle()
+#19 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#20 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle()
+#21 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#22 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle()
+#23 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(121): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#24 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest()
+#25 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Session\\Middleware\\StartSession->handle()
+#26 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#27 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle()
+#28 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#29 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle()
+#30 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#31 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\\Pipeline\\Pipeline->then()
+#32 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack()
+#33 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\\Routing\\Router->runRoute()
+#34 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute()
+#35 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\\Routing\\Router->dispatch()
+#36 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}()
+#37 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportDisablingBackButtonCache/DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#38 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle()
+#39 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#40 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#41 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(36): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#42 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#43 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#44 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle()
+#45 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#46 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#47 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#48 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#49 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#50 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#51 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#52 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then()
+#53 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#54 /home/admin_ia/api/pavlova/public/index.php(19): Illuminate\\Foundation\\Http\\Kernel->handle()
+#55 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('...')
+#56 {main}","form_data":{"service_demandeur_id":1,"budget_ligne_id":"5","denomination":"voila un test de la ligne 5000","description":"voila un test de la ligne 5000","reference_produit":"voila un test de la ligne 5000","fournisseur_propose":"voila un test de la ligne 5000","quantite":1,"prix_unitaire_ht":"4500","prix_total_ttc":5400,"budget_restant_info":null,"justification_besoin":"voila un test de la ligne 5000","urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":[],"documents_complementaires_upload":[],"commentaire_validation":null,"approval_status_info":null,"date_envoi_demande_fournisseur":null,"devis_fournisseur_recu":[],"date_reception_devis":null,"prix_fournisseur_final":null,"devis_fournisseur_valide":false,"numero_commande_fournisseur":null}} 
+[2025-07-18 14:00:18] local.INFO: Création demande devis par: agent.IT@test.local {"user_id":1,"user_roles":["agent-service"],"service_id":1,"form_data":{"budget_ligne_id":"5","denomination":"voila un test de la ligne 5000","description":"voila un test de la ligne 5000","reference_produit":"voila un test de la ligne 5000","fournisseur_propose":"voila un test de la ligne 5000","quantite":1,"prix_unitaire_ht":"4500","prix_total_ttc":5400,"justification_besoin":"voila un test de la ligne 5000","urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":null,"documents_complementaires_upload":[]}} 
+[2025-07-18 14:08:32] local.INFO: Création demande devis par: agent.IT@test.local {"user_id":1,"user_roles":["agent-service"],"service_id":1,"form_data":{"budget_ligne_id":"5","denomination":"test 5000 bis","description":"test 5000 bis","reference_produit":"test 5000 bis","fournisseur_propose":"test 5000 bis","quantite":1,"prix_unitaire_ht":"1000","prix_total_ttc":1200,"justification_besoin":"test 5000 bis","urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":null,"documents_complementaires_upload":[]}} 
+[2025-07-18 14:17:53] local.DEBUG: From: Budget & Workflow Demo <noreply@budget-demo.local>
+To: service.achat@test.local
+Subject: Nouvelle demande =?utf-8?Q?=C3=A0?= valider
+MIME-Version: 1.0
+Date: Fri, 18 Jul 2025 14:17:53 +0200
+Message-ID: <99565521024ef3af93b91565b8b7c136@budget-demo.local>
+Content-Type: multipart/alternative; boundary=A2avTjvm
+
+--A2avTjvm
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Budget & Workflow - DEMO: http://localhost:8000
+
+# Nouvelle demande à approuver
+
+La demande **#3** requiert votre validation.
+
+Voir la demande: http://127.0.0.1:8000/admin/demande-devis/3
+
+Merci,
+Budget & Workflow - DEMO
+
+© 2025 Budget & Workflow - DEMO. All rights reserved.
+
+--A2avTjvm
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Budget &amp; Workflow - DEMO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<style>
+@media only screen and (max-width: 600px) {
+.inner-body {
+width: 100% !important;
+}
+
+.footer {
+width: 100% !important;
+}
+}
+
+@media only screen and (max-width: 500px) {
+.button {
+width: 100% !important;
+}
+}
+</style>
+</head>
+<body style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -webkit-text-size-adjust: none; background-color: #ffffff; color: #718096; height: 100%; line-height: 1.4; margin: 0; padding: 0; width: 100% !important;">
+
+<table class="wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; background-color: #edf2f7; margin: 0; padding: 0; width: 100%;">
+<tr>
+<td align="center" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<table class="content" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; margin: 0; padding: 0; width: 100%;">
+<tr>
+<td class="header" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; padding: 25px 0; text-align: center;">
+<a href="http://localhost:8000" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3d4852; font-size: 19px; font-weight: bold; text-decoration: none; display: inline-block;">
+Budget &amp; Workflow - DEMO
+</a>
+</td>
+</tr>
+
+<!-- Email Body -->
+<tr>
+<td class="body" width="100%" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; background-color: #edf2f7; border-bottom: 1px solid #edf2f7; border-top: 1px solid #edf2f7; margin: 0; padding: 0; width: 100%; border: hidden !important;">
+<table class="inner-body" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 570px; background-color: #ffffff; border-color: #e8e5ef; border-radius: 2px; border-width: 1px; box-shadow: 0 2px 0 rgba(0, 0, 150, 0.025), 2px 4px 0 rgba(0, 0, 150, 0.015); margin: 0 auto; padding: 0; width: 570px;">
+<!-- Body content -->
+<tr>
+<td class="content-cell" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; max-width: 100vw; padding: 32px;">
+<h1 style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3d4852; font-size: 18px; font-weight: bold; margin-top: 0; text-align: left;">Nouvelle demande à approuver</h1>
+<p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">La demande <strong style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">#3</strong> requiert votre validation.</p>
+<table class="action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; margin: 30px auto; padding: 0; text-align: center; width: 100%;">
+<tr>
+<td align="center" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<tr>
+<td align="center" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<tr>
+<td style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<a href="http://127.0.0.1:8000/admin/demande-devis/3" class="button button-primary" target="_blank" rel="noopener" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -webkit-text-size-adjust: none; border-radius: 4px; color: #fff; display: inline-block; overflow: hidden; text-decoration: none; background-color: #2d3748; border-bottom: 8px solid #2d3748; border-left: 18px solid #2d3748; border-right: 18px solid #2d3748; border-top: 8px solid #2d3748;">Voir la demande</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">Merci,
+Budget &amp; Workflow - DEMO</p>
+
+
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+
+<tr>
+<td style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<table class="footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 570px; margin: 0 auto; padding: 0; text-align: center; width: 570px;">
+<tr>
+<td class="content-cell" align="center" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; max-width: 100vw; padding: 32px;">
+<p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; line-height: 1.5em; margin-top: 0; color: #b0adc5; font-size: 12px; text-align: center;">© 2025 Budget &amp; Workflow - DEMO. All rights reserved.</p>
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+--A2avTjvm--
+  
+[2025-07-18 14:17:58] local.INFO: 🔄 Début job RelanceLivraisonEnRetard  
+[2025-07-18 14:17:58] local.INFO: ✅ Job RelanceLivraisonEnRetard terminé {"livraisons_en_retard":0,"relances_envoyees":0,"date_execution":"2025-07-18 14:17:58"} 
+[2025-07-18 14:21:51] local.INFO: Création demande devis par: agent.IT@test.local {"user_id":1,"user_roles":["agent-service"],"service_id":1,"form_data":{"budget_ligne_id":"4","denomination":"tests 50 clavier PFS","description":"modéle ergo truc machin","reference_produit":"REF10","fournisseur_propose":"LYRECO","quantite":1,"prix_unitaire_ht":"1000","prix_total_ttc":1200,"justification_besoin":"parce que j'en ai besoin","urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":"devis/01K0EQQN3T4YQG9ANS8FBFVQ4V.pdf","documents_complementaires_upload":[]}} 
+[2025-07-18 14:24:48] local.DEBUG: From: Budget & Workflow Demo <noreply@budget-demo.local>
+To: service.achat@test.local
+Subject: Nouvelle demande =?utf-8?Q?=C3=A0?= valider
+MIME-Version: 1.0
+Date: Fri, 18 Jul 2025 14:24:48 +0200
+Message-ID: <05bc9688a460af1dab86ee344dda65c4@budget-demo.local>
+Content-Type: multipart/alternative; boundary=7hn_dENp
+
+--7hn_dENp
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Budget & Workflow - DEMO: http://localhost:8000
+
+# Nouvelle demande à approuver
+
+La demande **#4** requiert votre validation.
+
+Voir la demande: http://127.0.0.1:8000/admin/demande-devis/4
+
+Merci,
+Budget & Workflow - DEMO
+
+© 2025 Budget & Workflow - DEMO. All rights reserved.
+
+--7hn_dENp
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Budget &amp; Workflow - DEMO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<style>
+@media only screen and (max-width: 600px) {
+.inner-body {
+width: 100% !important;
+}
+
+.footer {
+width: 100% !important;
+}
+}
+
+@media only screen and (max-width: 500px) {
+.button {
+width: 100% !important;
+}
+}
+</style>
+</head>
+<body style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -webkit-text-size-adjust: none; background-color: #ffffff; color: #718096; height: 100%; line-height: 1.4; margin: 0; padding: 0; width: 100% !important;">
+
+<table class="wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; background-color: #edf2f7; margin: 0; padding: 0; width: 100%;">
+<tr>
+<td align="center" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<table class="content" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; margin: 0; padding: 0; width: 100%;">
+<tr>
+<td class="header" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; padding: 25px 0; text-align: center;">
+<a href="http://localhost:8000" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3d4852; font-size: 19px; font-weight: bold; text-decoration: none; display: inline-block;">
+Budget &amp; Workflow - DEMO
+</a>
+</td>
+</tr>
+
+<!-- Email Body -->
+<tr>
+<td class="body" width="100%" cellpadding="0" cellspacing="0" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; background-color: #edf2f7; border-bottom: 1px solid #edf2f7; border-top: 1px solid #edf2f7; margin: 0; padding: 0; width: 100%; border: hidden !important;">
+<table class="inner-body" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 570px; background-color: #ffffff; border-color: #e8e5ef; border-radius: 2px; border-width: 1px; box-shadow: 0 2px 0 rgba(0, 0, 150, 0.025), 2px 4px 0 rgba(0, 0, 150, 0.015); margin: 0 auto; padding: 0; width: 570px;">
+<!-- Body content -->
+<tr>
+<td class="content-cell" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; max-width: 100vw; padding: 32px;">
+<h1 style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3d4852; font-size: 18px; font-weight: bold; margin-top: 0; text-align: left;">Nouvelle demande à approuver</h1>
+<p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">La demande <strong style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">#4</strong> requiert votre validation.</p>
+<table class="action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; margin: 30px auto; padding: 0; text-align: center; width: 100%;">
+<tr>
+<td align="center" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<tr>
+<td align="center" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<tr>
+<td style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<a href="http://127.0.0.1:8000/admin/demande-devis/4" class="button button-primary" target="_blank" rel="noopener" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -webkit-text-size-adjust: none; border-radius: 4px; color: #fff; display: inline-block; overflow: hidden; text-decoration: none; background-color: #2d3748; border-bottom: 8px solid #2d3748; border-left: 18px solid #2d3748; border-right: 18px solid #2d3748; border-top: 8px solid #2d3748;">Voir la demande</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">Merci,
+Budget &amp; Workflow - DEMO</p>
+
+
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+
+<tr>
+<td style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative;">
+<table class="footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; -premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 570px; margin: 0 auto; padding: 0; text-align: center; width: 570px;">
+<tr>
+<td class="content-cell" align="center" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; max-width: 100vw; padding: 32px;">
+<p style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; line-height: 1.5em; margin-top: 0; color: #b0adc5; font-size: 12px; text-align: center;">© 2025 Budget &amp; Workflow - DEMO. All rights reserved.</p>
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+--7hn_dENp--
+  
+[2025-07-18 14:24:50] local.INFO: 🔄 Début job RelanceLivraisonEnRetard  
+[2025-07-18 14:24:50] local.INFO: ✅ Job RelanceLivraisonEnRetard terminé {"livraisons_en_retard":0,"relances_envoyees":0,"date_execution":"2025-07-18 14:24:50"} 
+[2025-07-18 16:47:52] local.INFO: 🏁 Finalisation livraison complète {"livraison_id":1} 
+[2025-07-18 16:47:52] local.INFO: 💰 Budget mis à jour automatiquement {"budget_ligne_id":5,"montant_ajoute":"1200.00","nouveau_total":"1200.00","livraison_id":1} 
+[2025-07-18 16:47:52] local.INFO: ✅ Demande devis finalisée {"demande_id":3,"livraison_id":1} 
+[2025-07-18 16:47:52] local.DEBUG: From: Budget & Workflow Demo <noreply@budget-demo.local>
+To: agent.IT@test.local
+Subject: =?utf-8?Q?=E2=9C=85?= Livraison conforme =?utf-8?Q?valid=C3=A9e?= -
+ Budget mis =?utf-8?Q?=C3=A0?= jour
+MIME-Version: 1.0
+Date: Fri, 18 Jul 2025 16:47:52 +0200
+Message-ID: <37875e24f2e9ad1ae567294204001ec2@budget-demo.local>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Livraison conforme validée</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
+        .success-badge { background: #28a745; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; display: inline-block; margin: 10px 0; }
+        .info-box { background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff; margin: 20px 0; }
+        .button { background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 15px 0; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+        .amount { font-size: 24px; font-weight: bold; color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Livraison Conforme Validée</h1>
+            <p>Votre demande a été finalisée avec succès</p>
+        </div>
+        
+        <div class="content">
+            <div class="success-badge">✅ LIVRAISON CONFIRMÉE</div>
+            
+            <p>Bonjour <strong>Agent IT</strong>,</p>
+            
+            <p>Votre livraison a été marquée comme <strong>conforme</strong> et le processus est maintenant terminé.</p>
+            
+            <div class="info-box">
+                <h3>📦 Détails de la livraison</h3>
+                <p><strong>Demande :</strong> test 5000 bis</p>
+                <p><strong>Référence :</strong> N/A</p>
+                <p><strong>Quantité :</strong> 1</p>
+                <p><strong>Service :</strong> IT</p>
+                <p><strong>Date livraison :</strong> N/A</p>
+            </div>
+            
+            <div class="info-box">
+                <h3>💰 Impact budgétaire</h3>
+                <p><strong>Montant budgété :</strong> 1,200.00€</p>
+                                    <p><strong>Montant réel fournisseur :</strong> <span class="amount">1,200.00€</span></p>
+                                                    <p><small>✅ Votre budget ligne a été automatiquement mis à jour</small></p>
+            </div>
+            
+            <p><a href="http://localhost:8000/admin/mes-demandes" class="button">📊 Voir mes demandes</a></p>
+            
+            <p>Merci d'avoir utilisé notre système de gestion budgétaire.</p>
+            
+            <p><small><em>📧 Email automatique envoyé le 18/07/2025 à 16:47</em></small></p>
+        </div>
+        
+        <div class="footer">
+            <p>Système de Gestion Budgétaire & Workflow d'Achat</p>
+            <p>Pour toute question, contactez votre responsable budget</p>
+        </div>
+    </div>
+</body>
+</html>
+  
+[2025-07-18 16:47:52] local.INFO: 📧 Notifications finales envoyées {"livraison_id":1} 
+[2025-07-18 16:47:52] local.INFO: ✔️ Log finalisation complète enregistré {"livraison_id":1,"user_id":7} 
+[2025-07-18 16:49:24] local.ERROR: Erreur de validation lors de la création d'une demande devis {"user_id":1,"errors":{"data.budget_ligne_id":["The ligne Budgétaire d'Imputation field is required."],"data.denomination":["The dénomination du besoin/produit/service field is required."]},"form_data":{"service_demandeur_id":1,"budget_ligne_id":null,"denomination":null,"description":null,"reference_produit":null,"fournisseur_propose":null,"quantite":1,"prix_unitaire_ht":null,"prix_total_ttc":null,"budget_restant_info":null,"justification_besoin":null,"urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":[],"documents_complementaires_upload":[],"commentaire_validation":null,"approval_status_info":null,"date_envoi_demande_fournisseur":null,"devis_fournisseur_recu":[],"date_reception_devis":null,"prix_fournisseur_final":null,"devis_fournisseur_valide":false,"numero_commande_fournisseur":null}} 
+[2025-07-18 16:56:50] local.INFO: Création demande devis par: agent.IT@test.local {"user_id":1,"user_roles":["agent-service"],"service_id":1,"form_data":{"budget_ligne_id":"4","denomination":"b","description":"b","reference_produit":"b","fournisseur_propose":"b","quantite":1,"prix_unitaire_ht":"10","prix_total_ttc":12,"justification_besoin":"f","lien_web":"http://www.perdu.com","urgence":"normale","date_besoin":"2025-07-18","devis_fournisseur_upload":null,"documents_complementaires_upload":[]}} 
+[2025-07-18 17:02:45] local.ERROR: Required. {"exception":"[object] (Laravel\\Prompts\\Exceptions\\NonInteractiveValidationException(code: 0): Required. at /home/admin_ia/api/pavlova/vendor/laravel/prompts/src/Concerns/Interactivity.php:32)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/vendor/laravel/prompts/src/Prompt.php(113): Laravel\\Prompts\\Prompt->default()
+#1 /home/admin_ia/api/pavlova/vendor/laravel/prompts/src/helpers.php(47): Laravel\\Prompts\\Prompt->prompt()
+#2 /home/admin_ia/api/pavlova/vendor/filament/widgets/src/Commands/MakeWidgetCommand.php(92): Laravel\\Prompts\\select()
+#3 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Filament\\Widgets\\Commands\\MakeWidgetCommand->handle()
+#4 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#5 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#7 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate\\Container\\BoundMethod::call()
+#8 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate\\Container\\Container->call()
+#9 /home/admin_ia/api/pavlova/vendor/symfony/console/Command/Command.php(326): Illuminate\\Console\\Command->execute()
+#10 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony\\Component\\Console\\Command\\Command->run()
+#11 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(1096): Illuminate\\Console\\Command->run()
+#12 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand()
+#13 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#15 /home/admin_ia/api/pavlova/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#16 {main}
+"} 
+[2025-07-18 17:02:50] local.ERROR: Required. {"exception":"[object] (Laravel\\Prompts\\Exceptions\\NonInteractiveValidationException(code: 0): Required. at /home/admin_ia/api/pavlova/vendor/laravel/prompts/src/Concerns/Interactivity.php:32)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/vendor/laravel/prompts/src/Prompt.php(113): Laravel\\Prompts\\Prompt->default()
+#1 /home/admin_ia/api/pavlova/vendor/laravel/prompts/src/helpers.php(47): Laravel\\Prompts\\Prompt->prompt()
+#2 /home/admin_ia/api/pavlova/vendor/filament/widgets/src/Commands/MakeWidgetCommand.php(49): Laravel\\Prompts\\select()
+#3 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Filament\\Widgets\\Commands\\MakeWidgetCommand->handle()
+#4 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#5 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#7 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate\\Container\\BoundMethod::call()
+#8 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate\\Container\\Container->call()
+#9 /home/admin_ia/api/pavlova/vendor/symfony/console/Command/Command.php(326): Illuminate\\Console\\Command->execute()
+#10 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony\\Component\\Console\\Command\\Command->run()
+#11 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(1096): Illuminate\\Console\\Command->run()
+#12 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand()
+#13 /home/admin_ia/api/pavlova/vendor/symfony/console/Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#15 /home/admin_ia/api/pavlova/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#16 {main}
+"} 
+[2025-07-18 17:12:22] local.ERROR: Method Filament\Navigation\NavigationItem::badgeColor does not exist. {"exception":"[object] (BadMethodCallException(code: 0): Method Filament\\Navigation\\NavigationItem::badgeColor does not exist. at /home/admin_ia/api/pavlova/vendor/filament/support/src/Concerns/Macroable.php:77)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/app/Providers/Filament/AdminPanelProvider.php(91): Filament\\Support\\Components\\Component->__call()
+#1 /home/admin_ia/api/pavlova/vendor/filament/filament/src/PanelProvider.php(15): App\\Providers\\Filament\\AdminPanelProvider->panel()
+#2 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Collections/helpers.php(224): Filament\\PanelProvider->{closure:Filament\\PanelProvider::register():15}()
+#3 /home/admin_ia/api/pavlova/vendor/filament/filament/src/Facades/Filament.php(140): value()
+#4 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1302): Filament\\Facades\\Filament::{closure:Filament\\Facades\\Filament::registerPanel():140}()
+#5 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1248): Illuminate\\Container\\Container->fireCallbackArray()
+#6 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(813): Illuminate\\Container\\Container->fireResolvingCallbacks()
+#7 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\\Container\\Container->resolve()
+#8 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\\Foundation\\Application->resolve()
+#9 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\\Container\\Container->make()
+#10 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(120): Illuminate\\Foundation\\Application->make()
+#11 /home/admin_ia/api/pavlova/vendor/filament/filament/src/FilamentManager.php(51): app()
+#12 /home/admin_ia/api/pavlova/vendor/filament/filament/src/FilamentServiceProvider.php(48): Filament\\FilamentManager->__construct()
+#13 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(908): Filament\\FilamentServiceProvider->{closure:Filament\\FilamentServiceProvider::packageRegistered():47}()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(795): Illuminate\\Container\\Container->build()
+#15 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\\Container\\Container->resolve()
+#16 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\\Foundation\\Application->resolve()
+#17 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\\Container\\Container->make()
+#18 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(1454): Illuminate\\Foundation\\Application->make()
+#19 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(237): Illuminate\\Container\\Container->offsetGet()
+#20 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(208): Illuminate\\Support\\Facades\\Facade::resolveFacadeInstance()
+#21 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(349): Illuminate\\Support\\Facades\\Facade::getFacadeRoot()
+#22 /home/admin_ia/api/pavlova/vendor/filament/filament/src/FilamentServiceProvider.php(91): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#23 /home/admin_ia/api/pavlova/vendor/spatie/laravel-package-tools/src/PackageServiceProvider.php(91): Filament\\FilamentServiceProvider->packageBooted()
+#24 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Spatie\\LaravelPackageTools\\PackageServiceProvider->boot()
+#25 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#26 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#27 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#28 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate\\Container\\BoundMethod::call()
+#29 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1059): Illuminate\\Container\\Container->call()
+#30 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1040): Illuminate\\Foundation\\Application->bootProvider()
+#31 [internal function]: Illuminate\\Foundation\\Application->{closure:Illuminate\\Foundation\\Application::boot():1039}()
+#32 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1039): array_walk()
+#33 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate\\Foundation\\Application->boot()
+#34 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(286): Illuminate\\Foundation\\Bootstrap\\BootProviders->bootstrap()
+#35 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(186): Illuminate\\Foundation\\Application->bootstrapWith()
+#36 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(170): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#37 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#38 /home/admin_ia/api/pavlova/public/index.php(19): Illuminate\\Foundation\\Http\\Kernel->handle()
+#39 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('...')
+#40 {main}
+"} 
+[2025-07-18 17:38:38] local.ERROR: Call to a member function hasRole() on null {"exception":"[object] (Error(code: 0): Call to a member function hasRole() on null at /home/admin_ia/api/pavlova/app/Filament/Widgets/NotificationCenterWidget.php:22)
+[stacktrace]
+#0 /home/admin_ia/api/pavlova/app/Filament/Widgets/NotificationCenterWidget.php(99): App\\Filament\\Widgets\\NotificationCenterWidget->getNotifications()
+#1 /home/admin_ia/api/pavlova/vendor/filament/widgets/src/Widget.php(73): App\\Filament\\Widgets\\NotificationCenterWidget->getViewData()
+#2 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Filament\\Widgets\\Widget->render()
+#3 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#4 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#5 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#6 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Wrapped.php(23): Illuminate\\Container\\BoundMethod::call()
+#7 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(271): Livewire\\Wrapped->__call()
+#8 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(231): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->getView()
+#9 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleComponents/HandleComponents.php(104): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->render()
+#10 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/LivewireManager.php(102): Livewire\\Mechanisms\\HandleComponents\\HandleComponents->update()
+#11 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Mechanisms/HandleRequests/HandleRequests.php(94): Livewire\\LivewireManager->update()
+#12 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): Livewire\\Mechanisms\\HandleRequests\\HandleRequests->handleUpdate()
+#13 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(259): Illuminate\\Routing\\ControllerDispatcher->dispatch()
+#14 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Route.php(205): Illuminate\\Routing\\Route->runController()
+#15 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(806): Illuminate\\Routing\\Route->run()
+#16 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Routing\\Router->{closure:Illuminate\\Routing\\Router::runRouteWithinStack():805}()
+#17 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#18 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle()
+#19 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#20 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle()
+#21 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#22 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle()
+#23 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(121): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#24 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest()
+#25 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Session\\Middleware\\StartSession->handle()
+#26 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#27 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle()
+#28 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#29 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle()
+#30 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#31 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\\Pipeline\\Pipeline->then()
+#32 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack()
+#33 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\\Routing\\Router->runRoute()
+#34 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute()
+#35 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\\Routing\\Router->dispatch()
+#36 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->{closure:Illuminate\\Foundation\\Http\\Kernel::dispatchToRouter():197}()
+#37 /home/admin_ia/api/pavlova/vendor/livewire/livewire/src/Features/SupportDisablingBackButtonCache/DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->{closure:Illuminate\\Pipeline\\Pipeline::prepareDestination():142}()
+#38 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle()
+#39 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#40 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#41 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(36): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#42 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#43 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#44 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle()
+#45 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#46 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#47 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#48 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#49 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#50 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#51 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->{closure:{closure:Illuminate\\Pipeline\\Pipeline::carry():158}:159}()
+#52 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then()
+#53 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#54 /home/admin_ia/api/pavlova/public/index.php(19): Illuminate\\Foundation\\Http\\Kernel->handle()
+#55 /home/admin_ia/api/pavlova/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('...')
+#56 {main}
+"} 
+[2025-07-18 17:50:15] local.INFO: Relance annulée - commande déjà livrée {"commande_id":2} 

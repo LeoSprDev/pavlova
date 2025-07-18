@@ -152,12 +152,24 @@ class DemandeDevisResource extends Resource
                             ->label('Budget Restant sur Ligne Sélectionnée')
                             ->content(function (Forms\Get $get): HtmlString {
                                 $budgetLigneId = $get('budget_ligne_id');
+                                $prixTotalTTC = $get('prix_total_ttc');
                                 if ($budgetLigneId) {
                                     $ligne = BudgetLigne::find($budgetLigneId);
                                     if ($ligne) {
                                         $restant = $ligne->calculateBudgetRestant();
                                         $color = $restant >= 0 ? 'text-green-600' : 'text-red-600';
-                                        return new HtmlString("<span class='font-semibold $color'>" . number_format($restant, 2, ',', ' ') . " €</span>");
+                                        $warning = '';
+                                        
+                                        // Avertissement si la demande dépasse le budget restant
+                                        if ($prixTotalTTC && $prixTotalTTC > $restant) {
+                                            $depassement = $prixTotalTTC - $restant;
+                                            $warning = "<div class='mt-2 p-2 bg-orange-100 border border-orange-400 rounded text-orange-800 text-sm'>
+                                                <strong>⚠️ AVERTISSEMENT :</strong> Cette demande dépasse le budget de <strong>" . number_format($depassement, 2, ',', ' ') . " €</strong>.
+                                                <br>La demande sera créée mais les valideurs seront alertés.
+                                            </div>";
+                                        }
+                                        
+                                        return new HtmlString("<span class='font-semibold $color'>" . number_format($restant, 2, ',', ' ') . " €</span>" . $warning);
                                     }
                                 }
                                 return new HtmlString("<span class='text-gray-500'>Sélectionnez une ligne budgétaire.</span>");
@@ -169,6 +181,12 @@ class DemandeDevisResource extends Resource
                             ->label('Justification du besoin')
                             ->required()
                             ->rows(4)
+                            ->columnSpanFull(),
+                        TextInput::make('lien_web')
+                            ->label('Lien web (optionnel)')
+                            ->url()
+                            ->placeholder('https://exemple.com/produit')
+                            ->helperText('Lien vers le produit, fournisseur ou documentation')
                             ->columnSpanFull(),
                         Select::make('urgence')
                             ->options([
@@ -298,6 +316,30 @@ class DemandeDevisResource extends Resource
                         'rejected' => 'Rejeté',
                         default => $state,
                     }),
+                BadgeColumn::make('budget_warning')
+                    ->label('Budget')
+                    ->getStateUsing(function ($record) {
+                        if ($record->budgetLigne) {
+                            $restant = $record->budgetLigne->calculateBudgetRestant();
+                            $depassement = $record->prix_total_ttc - $restant;
+                            if ($depassement > 0) {
+                                return 'DÉPASSEMENT: +' . number_format($depassement, 0, ',', ' ') . '€';
+                            }
+                        }
+                        return 'OK';
+                    })
+                    ->color(fn ($state) => $state === 'OK' ? 'success' : 'warning')
+                    ->visible(fn () => auth()->user()->hasAnyRole(['responsable-service', 'responsable-budget', 'service-achat', 'administrateur'])),
+                TextColumn::make('lien_web')
+                    ->label('Lien')
+                    ->formatStateUsing(function ($state) {
+                        if ($state) {
+                            return new HtmlString('<a href="' . $state . '" target="_blank" class="text-blue-600 hover:text-blue-800">🔗 Voir le lien</a>');
+                        }
+                        return '-';
+                    })
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Créé le')
                     ->dateTime()
